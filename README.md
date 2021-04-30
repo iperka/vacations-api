@@ -11,6 +11,7 @@ Access iperka vacations with the API. This API is built with Java Spring Boot an
   - [Installation 💽](#installation-)
   - [Deployment 🐳](#deployment-)
   - [Usage 🚀](#usage-)
+  - [Deployment 🛰](#deployment--1)
   - [Built With 📦](#built-with-)
   - [Authors 👨‍💻](#authors-)
   - [License 📃](#license-)
@@ -22,7 +23,7 @@ Access iperka vacations with the API. This API is built with Java Spring Boot an
 Build a docker image with given Dockerfile.
 
 ```bash
-$ docker build -t iperka/vacations-api .
+$ docker build -t iperka/vacations-api:latest .
 ```
 
 After docker has completed the build the image can be accessed via docker.
@@ -33,7 +34,7 @@ It is recommended to use this API as docker container within a cluster.
 
 ## Usage 🚀
 
-Run docker container locally with "production" profile activated.
+Run docker container locally with "production" profile activated, for local testing. Keep in mind that a MySQL instance must be running. For production see [Deployment](#deployment--1).
 
 ```bash
 $ docker run -e "SPRING_PROFILES_ACTIVE=production" -p 8080:8080 -t iperka/vacations-api
@@ -41,14 +42,51 @@ $ docker run -e "SPRING_PROFILES_ACTIVE=production" -p 8080:8080 -t iperka/vacat
 
 Now the API should be accessible via `http://localhost:8080`.
 
+## Deployment 🛰
+
+Create Overlay Network:
+
+```bash
+$ docker network create --driver overlay app-network
+```
+
+Create secrets (passwords) for MySQL instance:
+
+```bash
+$ openssl rand -base64 12 | docker secret create mysql_root_password -
+$ openssl rand -base64 12 | docker secret create mysql_user_password -
+```
+
+Test if secrets are created:
+
+```bash
+$ docker secret ls
+$ docker secret inspect mysql_root_password
+$ docker secret inspect mysql_user_password
+```
+
+Create directory for MySQL data:
+
+```bash
+$ mkdir -p /opt/docker/volumes/mysql
+```
+
+Deploy stack:
+
+```
+$ docker stack deploy -c docker-compose.yml apps
+```
+
+*Source: https://blog.ruanbekker.com/blog/2017/11/23/use-docker-secrets-with-mysql-on-docker-swarm/*
+
 ## Built With 📦
 
-* [Maven](https://maven.apache.org/) - Dependency Management
-* [Spring Boot](https://spring.io/) - Java Framework
+- [Maven](https://maven.apache.org/) - Dependency Management
+- [Spring Boot](https://spring.io/) - Java Framework
 
 ## Authors 👨‍💻
 
-* **Michael Beutler** - *Initial work* - [MichaelBeutler](https://github.com/MichaelBeutler)
+- **Michael Beutler** - _Initial work_ - [MichaelBeutler](https://github.com/MichaelBeutler)
 
 ## License 📃
 
@@ -62,7 +100,7 @@ Please make sure to update tests as appropriate.
 
 ## Acknowledgments 🐛
 
-* Ingrate vacations into your calendar.
-* Add new workflows to your company.
-* Simplify vacations.
-* etc...
+- Ingrate vacations into your calendar.
+- Add new workflows to your company.
+- Simplify vacations.
+- etc...
