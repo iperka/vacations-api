@@ -1,0 +1,21 @@
+spring:
+  profiles:
+    active: development
+  main:
+    banner-mode: off
+---
+spring:
+  config.activate.on-profile: development
+  h2:
+    console:
+      enabled: true
+  datasource:
+    url: jdbc:h2:mem:vacations-development
+    driverClassName: org.h2.Driver
+    username: sa
+    password:
+---
+spring:
+  config.activate.on-profile: production
+  devtools:
+    add-properties: false
