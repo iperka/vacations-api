@@ -1,3 +1,5 @@
+[![CI](https://github.com/iperka/vacations.api/actions/workflows/main.yml/badge.svg?branch=main)](https://github.com/iperka/vacations.api/actions/workflows/main.yml)
+
 # Vacations API 📅
 
 Access iperka vacations with the API. This API is built with Java Spring Boot and is built with scalability in mind.
