@@ -1,6 +1,10 @@
 package com.iperka.vacations.api.users;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import java.util.Optional;
+import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -10,7 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 @ExtendWith(MockitoExtension.class)
-public class UserServiceImplTest {
+class UserServiceImplTest {
 
     @Mock
     private UserRepository userRepository;
@@ -19,14 +23,16 @@ public class UserServiceImplTest {
     private UserServiceImpl userService;
 
     @Test
-    public void contextLoads() {
-    }
-
-    @Test
-    public void shouldThrowsUsernameNotFoundException() {
+    void shouldThrowsUsernameNotFoundException() {
         assertThrows(UsernameNotFoundException.class, () -> {
             userService.loadUserByUsername("invalid");
         });
+    }
+
+    @Test
+    void shouldReturnOptional() {
+        Optional<User> uOptional = userService.findByUUID(UUID.randomUUID());
+        assertFalse(uOptional.isPresent());
     }
 
 }

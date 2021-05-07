@@ -40,7 +40,7 @@ public class UserServiceImpl implements UserService {
         User user = uOptional.get();
 
         // TODO get authorities from separate entity / repository
-        List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
+        List<GrantedAuthority> authorities = new ArrayList<>();
 
         // Returns user with granted authorities
         return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(),

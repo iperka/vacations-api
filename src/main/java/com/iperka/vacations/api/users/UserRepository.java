@@ -43,4 +43,10 @@ public interface UserRepository extends PagingAndSortingRepository<User, UUID> {
      * @return Optional
      */
     public Optional<User> findByUsername(String username);
+
+    /**
+     * Saves given {@link com.iperka.vacations.api.users.User} object to datasource.
+     * This method should not be used without DTO.
+     */
+    public User save(User user);
 }
