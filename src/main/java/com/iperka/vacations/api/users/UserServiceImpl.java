@@ -54,6 +54,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Optional<User> findByUUID(UUID uuid) {
-        return this.userRepository.findByUUID(uuid);
+        return this.userRepository.findById(uuid);
     }
 }

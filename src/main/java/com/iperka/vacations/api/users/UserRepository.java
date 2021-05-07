@@ -33,7 +33,7 @@ public interface UserRepository extends PagingAndSortingRepository<User, UUID> {
      * @param uuid Users uuid.
      * @return Optional
      */
-    public Optional<User> findByUUID(UUID uuid);
+    public Optional<User> findById(UUID uuid);
 
     /**
      * Returns the user object matching the given username as
