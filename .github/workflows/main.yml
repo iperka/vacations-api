@@ -1,4 +1,3 @@
-<<<<<<< Updated upstream
 name: Continuous Integration
 
 on:
@@ -48,54 +47,3 @@ jobs:
           java-version: 11
       - name: Build with Maven
         run: mvn -B package --file pom.xml -Dmaven.test.skip=true
-=======
-name: Continuous Integration Main
-
-on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
-
-jobs:
-  compile:
-    runs-on: ubuntu-latest
-    name: Running Java ${{ matrix.java }} compile
-    steps:
-      - uses: actions/checkout@v2
-      - name: Setup JDK
-        uses: actions/setup-java@v2
-        with:
-          distribution: adopt
-          java-version: 11
-      - name: Compile code
-        run: mvn compile
-    
-  test:
-    runs-on: ubuntu-latest
-    name: Running tests
-    needs: compile
-    steps:
-      - uses: actions/checkout@v2
-      - name: Setup JDK
-        uses: actions/setup-java@v2
-        with:
-          distribution: adopt
-          java-version: 11
-      - name: Run unit tests
-        run: mvn test
-
-  build:
-    runs-on: ubuntu-latest
-    name: Run mvn build
-    needs: test
-    steps:
-      - uses: actions/checkout@v2
-      - name: Setup JDK
-        uses: actions/setup-java@v2
-        with:
-          distribution: adopt
-          java-version: 11
-      - name: Build with Maven
-        run: mvn -B package --file pom.xml -Dmaven.test.skip=true
->>>>>>> Stashed changes
