@@ -2,6 +2,7 @@ package com.iperka.vacations.api.users;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -24,9 +25,11 @@ class UserServiceImplTest {
 
     @Test
     void shouldThrowsUsernameNotFoundException() {
-        assertThrows(UsernameNotFoundException.class, () -> {
+        Exception exception = assertThrows(UsernameNotFoundException.class, () -> {
             userService.loadUserByUsername("invalid");
         });
+
+        assertTrue(exception.getMessage().contains("invalid"));
     }
 
     @Test
