@@ -7,7 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 class VacationsApiApplicationTests {
 
 	@Test
-	void contextLoads() {
+	public void contextLoads() {
 	}
 
 }
