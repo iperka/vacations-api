@@ -20,6 +20,16 @@ Access iperka vacations with the API. This API is built with Java Spring Boot an
 
 ## Installation 💽
 
+Package the Java application with maven.
+
+```bash
+# Windows
+.\mvnw.cmd package
+
+# Linux / MacOS
+$ ./mvnw package
+```
+
 Build a docker image with given Dockerfile.
 
 ```bash
@@ -77,7 +87,7 @@ Deploy stack:
 $ docker stack deploy -c docker-compose.yml apps
 ```
 
-*Source: https://blog.ruanbekker.com/blog/2017/11/23/use-docker-secrets-with-mysql-on-docker-swarm/*
+_Source: https://blog.ruanbekker.com/blog/2017/11/23/use-docker-secrets-with-mysql-on-docker-swarm/_
 
 ## Built With 📦
 
