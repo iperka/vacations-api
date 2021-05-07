@@ -1,4 +1,4 @@
-[![CI](https://github.com/iperka/vacations.api/actions/workflows/main.yml/badge.svg?branch=main)](https://github.com/iperka/vacations.api/actions/workflows/main.yml)
+[![Continuous Integration](https://github.com/iperka/vacations-api/actions/workflows/main.yml/badge.svg)](https://github.com/iperka/vacations-api/actions/workflows/main.yml) [![Continuous Integration Development](https://github.com/iperka/vacations-api/actions/workflows/develop.yml/badge.svg)](https://github.com/iperka/vacations-api/actions/workflows/develop.yml)
 
 # Vacations API 📅
 
