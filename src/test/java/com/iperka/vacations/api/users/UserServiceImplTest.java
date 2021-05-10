@@ -24,7 +24,7 @@ class UserServiceImplTest {
     private UserServiceImpl userService;
 
     @Test
-    void shouldThrowsUsernameNotFoundException() {
+    void shouldThrowUsernameNotFoundException() {
         Exception exception = assertThrows(UsernameNotFoundException.class, () -> {
             userService.loadUserByUsername("invalid");
         });
