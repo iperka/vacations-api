@@ -48,5 +48,6 @@ public interface UserRepository extends PagingAndSortingRepository<User, UUID> {
      * Saves given {@link com.iperka.vacations.api.users.User} object to datasource.
      * This method should not be used without DTO.
      */
-    public User save(User user);
+    public <S extends User> S save(User user);
+
 }
