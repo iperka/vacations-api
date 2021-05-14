@@ -15,7 +15,7 @@ import com.iperka.vacations.api.users.User;
  * encoder. This should be done on the service layer.
  * 
  * @author Michael Beutler
- * @version 0.0.2
+ * @version 0.0.3
  * @since 2021-05-12
  */
 public class UserDTO implements DTO<User> {
@@ -64,6 +64,15 @@ public class UserDTO implements DTO<User> {
      */
     public String getPassword() {
         return password;
+    }
+
+    /**
+     * Returns the username for user DTO.
+     * 
+     * @return Username.
+     */
+    public String getUsername() {
+        return username;
     }
 
 }
