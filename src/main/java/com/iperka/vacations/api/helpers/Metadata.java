@@ -25,7 +25,7 @@ import org.springframework.data.domain.Page;
 public class Metadata {
     private long totalElements = 0;
     private long totalPages = 0;
-    private long page = 1;
+    private long page = 1L;
     private long perPage = 0;
 
     public Metadata(long totalElements, long totalPages, long page, long perPage) {
@@ -40,7 +40,7 @@ public class Metadata {
         this.totalPages = page.getTotalPages();
 
         // Add one to slice number to achieve page 1
-        this.page = page.getNumber() + 1;
+        this.page = page.getNumber() + 1L;
         this.perPage = page.getSize();
     }
 
