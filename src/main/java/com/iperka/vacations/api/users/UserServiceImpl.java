@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.GrantedAuthority;
@@ -18,23 +21,35 @@ import org.springframework.stereotype.Service;
  * to manage the user entity and authentication / authorization. model.
  * 
  * @author Michael Beutler
- * @version 0.0.1
+ * @version 0.0.2
  * @since 2021-05-07
  */
 @Service
 public class UserServiceImpl implements UserService {
+
+    private final Logger logger = LoggerFactory.getLogger(UserService.class);
+
+    @Autowired
     private UserRepository userRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         // Search user in database with repository
-        Optional<User> uOptional = this.userRepository.findByUsername(username);
+        Optional<User> uOptional = userRepository.findByUsername(username);
 
         // Check if user with given username exists
         if (!uOptional.isPresent()) {
+            String message = String.format("User with username '%s' can not be found.", username);
+
+            // Log message
+            logger.info(message);
+
             // Throw UsernameNotFoundException
-            throw new UsernameNotFoundException(String.format("User with username '%s' can not be found.", username));
+            throw new UsernameNotFoundException(message);
         }
+
+        // only debug
+        logger.debug("User with username '%s' found.", username);
 
         // Get user
         User user = uOptional.get();
