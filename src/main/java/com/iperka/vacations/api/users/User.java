@@ -21,7 +21,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * authorization and specification of user details and states.
  * 
  * @author Michael Beutler
- * @version 0.0.2
+ * @version 0.0.3
  * @since 2021-05-07
  */
 @Entity
@@ -85,7 +85,7 @@ public class User {
     /**
      * Will be true if the user credentials is marked as expired.
      */
-    @Column(nullable = false)
+    @Column(nullable = false, name = "credentials_expired")
     @NotNull
     private boolean credentialsExpired = false;
 
