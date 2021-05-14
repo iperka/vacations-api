@@ -27,7 +27,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserServiceImpl implements UserService {
 
-    private final Logger logger = LoggerFactory.getLogger(UserService.class);
+    private final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
     @Autowired
     private UserRepository userRepository;
@@ -49,7 +49,7 @@ public class UserServiceImpl implements UserService {
         }
 
         // only debug
-        logger.debug("User with username '%s' found.", username);
+        logger.debug(String.format("User with username '%s' found.", username));
 
         // Get user
         User user = uOptional.get();
