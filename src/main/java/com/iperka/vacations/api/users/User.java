@@ -21,7 +21,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * authorization and specification of user details and states.
  * 
  * @author Michael Beutler
- * @version 0.0.2
+ * @version 0.0.3
  * @since 2021-05-07
  */
 @Entity
@@ -85,7 +85,7 @@ public class User {
     /**
      * Will be true if the user credentials is marked as expired.
      */
-    @Column(nullable = false)
+    @Column(nullable = false, name = "credentials_expired")
     @NotNull
     private boolean credentialsExpired = false;
 
@@ -126,7 +126,7 @@ public class User {
      * @param username Users username.
      * @param password Users password. Should already be hashed.
      */
-    public User(@Min(4) @Max(100) @NotNull String username, @NotNull String password) {
+    public User(@Min(4) @Max(100) @NotNull final String username, @NotNull final String password) {
         this.username = username;
         this.password = password;
     }
@@ -135,7 +135,7 @@ public class User {
         return uuid;
     }
 
-    public void setUuid(UUID uuid) {
+    public void setUuid(final UUID uuid) {
         this.uuid = uuid;
     }
 
@@ -143,7 +143,7 @@ public class User {
         return username;
     }
 
-    public void setUsername(String username) {
+    public void setUsername(final String username) {
         this.username = username;
     }
 
@@ -151,7 +151,7 @@ public class User {
         return password;
     }
 
-    public void setPassword(String password) {
+    public void setPassword(final String password) {
         this.password = password;
     }
 
@@ -159,7 +159,7 @@ public class User {
         return enabled;
     }
 
-    public void setEnabled(boolean enabled) {
+    public void setEnabled(final boolean enabled) {
         this.enabled = enabled;
     }
 
@@ -167,7 +167,7 @@ public class User {
         return locked;
     }
 
-    public void setLocked(boolean locked) {
+    public void setLocked(final boolean locked) {
         this.locked = locked;
     }
 
@@ -175,7 +175,7 @@ public class User {
         return expired;
     }
 
-    public void setExpired(boolean expired) {
+    public void setExpired(final boolean expired) {
         this.expired = expired;
     }
 
@@ -183,7 +183,7 @@ public class User {
         return credentialsExpired;
     }
 
-    public void setCredentialsExpired(boolean credentialsExpired) {
+    public void setCredentialsExpired(final boolean credentialsExpired) {
         this.credentialsExpired = credentialsExpired;
     }
 
@@ -191,7 +191,7 @@ public class User {
         return created;
     }
 
-    public void setCreated(Date created) {
+    public void setCreated(final Date created) {
         this.created = created;
     }
 
@@ -199,7 +199,7 @@ public class User {
         return updated;
     }
 
-    public void setUpdated(Date updated) {
+    public void setUpdated(final Date updated) {
         this.updated = updated;
     }
 }
