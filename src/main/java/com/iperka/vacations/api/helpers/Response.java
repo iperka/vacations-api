@@ -18,7 +18,7 @@ import org.springframework.http.ResponseEntity;
  * return the object itself.
  * 
  * @author Michael Beutler
- * @version 0.0.1
+ * @version 0.0.2
  * @since 2021-05-14
  */
 public class Response<T> {
@@ -42,7 +42,7 @@ public class Response<T> {
     }
 
     public static <T> Response<List<T>> fromPage(HttpStatus status, Page<T> page) {
-        Response<List<T>> response = new Response<List<T>>(status);
+        Response<List<T>> response = new Response<>(status);
         response.data = page.getContent();
         response.metadata = new Metadata(page);
 

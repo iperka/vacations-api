@@ -49,7 +49,7 @@ public class UserServiceImpl implements UserService {
         }
 
         // only debug
-        logger.debug(String.format("User with username '%s' found.", username));
+        logger.debug("User with username '{}' found.", username);
 
         // Get user
         User user = uOptional.get();
