@@ -18,7 +18,7 @@ import org.springframework.http.ResponseEntity;
  * return the object itself.
  * 
  * @author Michael Beutler
- * @version 0.0.2
+ * @version 0.0.3
  * @since 2021-05-14
  */
 public class Response<T> {
@@ -39,6 +39,7 @@ public class Response<T> {
 
     public Response(HttpStatus status) {
         this.status = status;
+        this.message = status.getReasonPhrase();
     }
 
     public static <T> Response<List<T>> fromPage(HttpStatus status, Page<T> page) {
