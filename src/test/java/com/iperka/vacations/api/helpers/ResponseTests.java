@@ -57,6 +57,12 @@ class ResponseTests {
     }
 
     @Test
+    void shouldApplyReasonPhraseIfMessageEmpty() {
+        Response<String> response = new Response<>(HttpStatus.OK);
+        assertEquals(HttpStatus.OK.getReasonPhrase(), response.build().getBody().getMessage());
+    }
+
+    @Test
     void shouldReturnMessage() {
         Response<?> response = new Response<>(HttpStatus.OK);
         response.setMessage("Test");
