@@ -44,7 +44,7 @@ public class UserDTO implements DTO<User> {
      */
     @Override
     public User toObject() {
-        final User user = new User();
+        final var user = new User();
 
         // Set user fields
         user.setUuid(UUID.randomUUID());

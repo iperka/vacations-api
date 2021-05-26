@@ -39,7 +39,7 @@ public class UserServiceImpl implements UserService {
 
         // Check if user with given username exists
         if (!uOptional.isPresent()) {
-            String message = String.format("User with username '%s' can not be found.", username);
+            var message = String.format("User with username '%s' can not be found.", username);
 
             // Log message
             logger.info(message);
@@ -52,7 +52,7 @@ public class UserServiceImpl implements UserService {
         logger.debug("User with username '{}' found.", username);
 
         // Get user
-        User user = uOptional.get();
+        var user = uOptional.get();
 
         // TODO get authorities from separate entity / repository
         List<GrantedAuthority> authorities = new ArrayList<>();
