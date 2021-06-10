@@ -32,4 +32,13 @@ public interface UserService extends UserDetailsService {
      * @return Optional
      */
     public Optional<User> findByUUID(UUID uuid);
+
+    /**
+     * Returns the user object matching the given username as
+     * {@link java.util.Optional}.
+     * 
+     * @param username Users uuid.
+     * @return Optional
+     */
+    public Optional<User> findByUsername(String username);
 }

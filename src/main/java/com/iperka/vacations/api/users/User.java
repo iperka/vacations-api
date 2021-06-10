@@ -9,11 +9,13 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import org.hibernate.envers.Audited;
 
 /**
  * The {@link com.iperka.vacations.api.users.User} class defines the structure
@@ -21,9 +23,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * authorization and specification of user details and states.
  * 
  * @author Michael Beutler
- * @version 0.0.3
+ * @version 0.0.5
  * @since 2021-05-07
  */
+@Audited
 @Entity
 @Table(name = "users")
 public class User {
@@ -45,10 +48,17 @@ public class User {
      * in or displaying user accounts.
      */
     @Column(unique = true, nullable = false, length = 100)
-    @Min(4)
-    @Max(100)
     @NotNull
     private String username;
+
+    /**
+     * Unique string also used for authentication and better user experience when
+     * logging in or displaying user accounts.
+     */
+    @Column(unique = true, nullable = false, length = 250)
+    @NotNull
+    @Email
+    private String email;
 
     /**
      * Stores the hashed password for user account. This fields should NOT be
@@ -66,6 +76,7 @@ public class User {
      */
     @Column(nullable = false)
     @NotNull
+    @JsonProperty("isEnabled")
     private boolean enabled = false;
 
     /**
@@ -73,6 +84,7 @@ public class User {
      */
     @Column(nullable = false)
     @NotNull
+    @JsonProperty("isLocked")
     private boolean locked = false;
 
     /**
@@ -80,6 +92,7 @@ public class User {
      */
     @Column(nullable = false)
     @NotNull
+    @JsonProperty("isExpired")
     private boolean expired = false;
 
     /**
@@ -87,7 +100,16 @@ public class User {
      */
     @Column(nullable = false, name = "credentials_expired")
     @NotNull
+    @JsonProperty("isCredentialsExpired")
     private boolean credentialsExpired = false;
+
+    /**
+     * Will be true if the user credentials is marked as expired.
+     */
+    @Column(nullable = false, name = "email_confirmed")
+    @NotNull
+    @JsonProperty("isEmailConfirmed")
+    private boolean emailConfirmed = false;
 
     /**
      * Stores the date time when the user object has been created.
@@ -126,7 +148,7 @@ public class User {
      * @param username Users username.
      * @param password Users password. Should already be hashed.
      */
-    public User(@Min(4) @Max(100) @NotNull final String username, @NotNull final String password) {
+    public User(@NotNull final String username, @NotNull final String password) {
         this.username = username;
         this.password = password;
     }
@@ -149,6 +171,14 @@ public class User {
 
     public String getPassword() {
         return password;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public void setPassword(final String password) {
@@ -185,6 +215,14 @@ public class User {
 
     public void setCredentialsExpired(final boolean credentialsExpired) {
         this.credentialsExpired = credentialsExpired;
+    }
+
+    public boolean isEmailConfirmed() {
+        return emailConfirmed;
+    }
+
+    public void setEmailConfirmed(boolean emailConfirmed) {
+        this.emailConfirmed = emailConfirmed;
     }
 
     public Date getCreated() {

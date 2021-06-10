@@ -21,10 +21,10 @@ import org.springframework.stereotype.Service;
  * to manage the user entity and authentication / authorization. model.
  * 
  * @author Michael Beutler
- * @version 0.0.2
+ * @version 0.0.4
  * @since 2021-05-07
  */
-@Service
+@Service("userService")
 public class UserServiceImpl implements UserService {
 
     private final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
@@ -39,7 +39,7 @@ public class UserServiceImpl implements UserService {
 
         // Check if user with given username exists
         if (!uOptional.isPresent()) {
-            var message = String.format("User with username '%s' can not be found.", username);
+            var message = String.format("User with username '%s' can't be found.", username);
 
             // Log message
             logger.info(message);
@@ -59,7 +59,7 @@ public class UserServiceImpl implements UserService {
 
         // Returns user with granted authorities
         return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(),
-                user.isEnabled(), !user.isExpired(), !user.isCredentialsExpired(), user.isLocked(), authorities);
+                user.isEnabled(), !user.isExpired(), !user.isCredentialsExpired(), !user.isLocked(), authorities);
     }
 
     @Override
@@ -70,5 +70,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public Optional<User> findByUUID(UUID uuid) {
         return this.userRepository.findById(uuid);
+    }
+
+    @Override
+    public Optional<User> findByUsername(String username) {
+        return this.userRepository.findByUsername(username);
     }
 }

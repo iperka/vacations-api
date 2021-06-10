@@ -42,6 +42,12 @@ public class Response<T> {
         this.message = status.getReasonPhrase();
     }
 
+    public Response(HttpStatus status, T data) {
+        this.status = status;
+        this.message = status.getReasonPhrase();
+        this.data = data;
+    }
+
     public static <T> Response<List<T>> fromPage(HttpStatus status, Page<T> page) {
         Response<List<T>> response = new Response<>(status);
         response.data = page.getContent();
