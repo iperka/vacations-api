@@ -1,4 +1,18 @@
 spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          auth0:
+            client-id: YOUR_CLIENT_ID
+            client-secret: YOUR_CLIENT_SECRET
+            scope:
+              - openid
+              - profile
+              - email
+        provider:
+          auth0:
+            issuer-uri: YOUR_ISSUER_URL
   profiles:
     active: development
   main:
