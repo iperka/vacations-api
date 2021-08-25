@@ -23,4 +23,4 @@ INSERT INTO `users` (
     CURRENT_TIMESTAMP, 
     CURRENT_TIMESTAMP
 );
-/** eb_<wj>g?^qKzb1$_8kiLr1Xwmi */
+/** pw eb_<wj>g?^qKzb1$_8kiLr1Xwmi */
