@@ -3,6 +3,13 @@ spring:
     active: development
   main:
     banner-mode: off
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: MY_ISSUER_URL
+auth0:
+  audience: MY_AUDIENCE_URL
 ---
 spring:
   config.activate.on-profile: development
