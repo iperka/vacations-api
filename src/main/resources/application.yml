@@ -1,22 +1,19 @@
 spring:
-  security:
-    oauth2:
-      client:
-        registration:
-          auth0:
-            client-id: YOUR_CLIENT_ID
-            client-secret: YOUR_CLIENT_SECRET
-            scope:
-              - openid
-              - profile
-              - email
-        provider:
-          auth0:
-            issuer-uri: YOUR_ISSUER_URL
   profiles:
     active: development
   main:
     banner-mode: off
+  mvc:
+    throw-exception-if-no-handler-found: true
+  resources:
+    add-mappings: false
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://iperka.eu.auth0.com/
+auth0:
+  audience: https://api.iperka.com/vacations/
 ---
 spring:
   config.activate.on-profile: development
