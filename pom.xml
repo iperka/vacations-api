@@ -11,7 +11,7 @@
 	</parent>
 	<groupId>com.iperka.vacations</groupId>
 	<artifactId>api</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.2-SNAPSHOT</version>
 	<name>Vacations API</name>
 	<description>Vacations API</description>
 	<properties>

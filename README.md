@@ -99,6 +99,7 @@ _Source: https://blog.ruanbekker.com/blog/2017/11/23/use-docker-secrets-with-mys
 
 - [Maven](https://maven.apache.org/) - Dependency Management
 - [Spring Boot](https://spring.io/) - Java Framework
+- [Auth0](https://auth0.com/) - Authentication Provider
 
 ## Authors 👨‍💻
 
