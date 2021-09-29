@@ -59,7 +59,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .csrf(AbstractHttpConfigurer::disable)
             .authorizeRequests(authorize -> authorize  
                 // .mvcMatchers(HttpMethod.GET, "/public").permitAll()  
-                .mvcMatchers(HttpMethod.GET, "/private").authenticated()
+                .mvcMatchers("/organizations").authenticated()
                 .mvcMatchers(HttpMethod.GET, "/private-scoped").hasAuthority("SCOPE_read:vacations")
                 .anyRequest().authenticated()  
             ) 
@@ -73,8 +73,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedMethods(List.of(HttpMethod.GET.name(), HttpMethod.PUT.name(), HttpMethod.POST.name(),
-                HttpMethod.DELETE.name()));
+        // @formatter:off
+        configuration.setAllowedMethods(List.of(
+            HttpMethod.GET.name(), 
+            HttpMethod.PUT.name(), 
+            HttpMethod.POST.name(),
+            HttpMethod.DELETE.name(), 
+            HttpMethod.OPTIONS.name()
+        ));
+        // @formatter:on
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration.applyPermitDefaultValues());

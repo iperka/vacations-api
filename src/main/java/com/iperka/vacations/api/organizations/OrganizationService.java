@@ -12,7 +12,7 @@ import org.springframework.data.domain.Pageable;
  * {@link com.iperka.vacations.api.organisations.OrganisationRepository} model.
  * 
  * @author Michael Beutler
- * @version 0.0.1
+ * @version 0.0.4
  * @since 2021-09-29
  */
 public interface OrganizationService {
@@ -27,8 +27,18 @@ public interface OrganizationService {
      * Returns the user object matching the given uuid as
      * {@link java.util.Optional}.
      * 
-     * @param uuid Users uuid.
+     * @param uuid Objects uuid.
      * @return Optional
      */
     public Optional<Organization> findByUUID(UUID uuid);
+
+    /**
+     * Saves a given object to database. This will create a new one if it doesn't
+     * exists.
+     * 
+     * 
+     * @param organization Organization object.
+     * @return created organization
+     */
+    public Organization create(Organization organization);
 }

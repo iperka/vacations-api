@@ -4,9 +4,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import javax.print.attribute.standard.Media;
+import javax.validation.Valid;
 
 import com.iperka.vacations.api.helpers.Response;
+import com.iperka.vacations.api.organizations.dto.OrganizationDTO;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -15,11 +16,13 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(path = { "/organizations/" }, produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(path = { "/organizations" }, produces = MediaType.APPLICATION_JSON_VALUE)
 public class OrganizationController {
 
     private final OrganizationService organizationService;
@@ -34,7 +37,7 @@ public class OrganizationController {
         return Response.fromPage(HttpStatus.OK, this.organizationService.findAll(pageable)).build();
     }
 
-    @GetMapping(value = "{uuid}")
+    @GetMapping(value = "/{uuid}")
     public ResponseEntity<Response<Organization>> getOrganizationById(@PathVariable("uuid") UUID uuid) {
         Optional<Organization> optional = organizationService.findByUUID(uuid);
 
@@ -44,6 +47,17 @@ public class OrganizationController {
 
         Response<Organization> response = new Response<>(HttpStatus.OK);
         response.setData(optional.get());
+
+        return response.build();
+    }
+
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Response<Organization>> createOrganisation(
+            @Valid @RequestBody(required = true) OrganizationDTO organizationDTO) {
+        Organization organization = organizationDTO.toObject();
+
+        Response<Organization> response = new Response<Organization>(HttpStatus.CREATED);
+        response.setData(this.organizationService.create(organization));
 
         return response.build();
     }

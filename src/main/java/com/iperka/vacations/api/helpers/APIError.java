@@ -38,6 +38,15 @@ public class APIError {
         this.code = code;
     }
 
+    public APIError(String type, String message, String cause, String field, int code) {
+        this.type = type;
+        this.message = message;
+        this.cause = cause;
+        this.field = field;
+        this.code = code;
+    }
+
+
     public String getType() {
         return type;
     }

@@ -29,7 +29,7 @@ public class Response<T> {
     private final Date timestamp = new Date();
     private T data;
     private Metadata metadata;
-    private List<APIError> errors = new ArrayList<APIError>();
+    private List<APIError> errors = null;
 
     public Response(HttpStatus status, String message, String version, T data, Metadata metadata) {
         this.status = status;
@@ -77,10 +77,16 @@ public class Response<T> {
     }
 
     public void addError(APIError error) {
+        if (this.errors == null) {
+            this.errors = new ArrayList<>();
+        }
         this.errors.add(error);
     }
 
     public void addError(Exception exception) {
+        if (this.errors == null) {
+            this.errors = new ArrayList<>();
+        }
         this.errors.add(new APIError(exception));
     }
 
