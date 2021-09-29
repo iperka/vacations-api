@@ -1,5 +1,7 @@
 package com.iperka.vacations.api;
 
+import java.text.MessageFormat;
+
 import com.iperka.vacations.api.helpers.APIError;
 import com.iperka.vacations.api.helpers.Response;
 
@@ -59,7 +61,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         Response response = new Response<>(HttpStatus.UNSUPPORTED_MEDIA_TYPE);
         ex.getSupportedMediaTypes()
                 .forEach(t -> response.addError(new APIError("UnsupportedMediaType",
-                        "The content type '%s' is not supported by this resource.".formatted(t.toString()),
+                        MessageFormat.format("The content type '{}' is not supported by this resource.", t.toString()),
                         "The request body content type is not supported by this resource.",
                         HttpStatus.UNSUPPORTED_MEDIA_TYPE.value())));
 
