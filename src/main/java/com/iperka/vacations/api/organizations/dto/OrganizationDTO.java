@@ -5,8 +5,11 @@ import javax.validation.constraints.NotNull;
 import com.iperka.vacations.api.helpers.DTO;
 import com.iperka.vacations.api.organizations.Organization;
 
+import org.hibernate.validator.constraints.Length;
+
 public class OrganizationDTO implements DTO<Organization> {
 
+    @Length(min = 4, max = 100)
     @NotNull
     private String name;
 

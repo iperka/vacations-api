@@ -14,7 +14,7 @@ import org.springframework.stereotype.Repository;
  * {@link com.iperka.vacations.api.organizations.Organization} model.
  * 
  * @author Michael Beutler
- * @version 0.0.1
+ * @version 0.0.3
  * @since 2021-09-29
  */
 @Repository
@@ -36,17 +36,20 @@ public interface OrganizationRepository extends PagingAndSortingRepository<Organ
     public Optional<Organization> findById(UUID uuid);
 
     /**
-     * Returns the organization object matching the given username as
-     * {@link java.util.Optional}. This method will be used for authentication.
+     * Returns the user object matching the given name as
+     * {@link java.util.Optional}.
      * 
      * @param name Organization name.
      * @return Optional
      */
-    public Optional<Organization> findByName(String name);
+    public Optional<Organization> findByNameIgnoreCase(String name);
 
     /**
-     * Saves given {@link com.iperka.vacations.api.users.User} object to datasource.
-     * This method should not be used without DTO.
+     * Returns the organization objects matching the given name as
+     * {@link java.util.Page}.
+     * 
+     * @param name Organization name.
+     * @return Page
      */
-    public <S extends Organization> S save(Organization organization);
+    public Page<Organization> findByNameContainingIgnoreCase(Pageable pageable, String name);
 }

@@ -16,9 +16,15 @@ public class APIError {
                 this.code = 400;
                 this.field = "URL";
                 break;
+            case "org.springframework.dao.DataIntegrityViolationException":
+                this.type = "DataIntegrityViolationException";
+                this.cause = "Invalid type provided in URL argument.";
+                this.message = "An unhandled exception has been occurred.";
+                this.code = 500;
+                break;
 
             default:
-                this.type = exception.getClass().getName();
+                this.type = exception.getClass().getSimpleName();
                 break;
         }
 
@@ -45,7 +51,6 @@ public class APIError {
         this.field = field;
         this.code = code;
     }
-
 
     public String getType() {
         return type;

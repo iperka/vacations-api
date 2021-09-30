@@ -59,6 +59,15 @@ public class Response<T> {
         return response;
     }
 
+    public static <T> Response<List<T>> fromPage(HttpStatus status, Page<T> page, String query) {
+        Response<List<T>> response = new Response<>(status);
+
+        response.data = page.getContent();
+        response.metadata = new Metadata(page, query);
+
+        return response;
+    }
+
     public static <T> Response<T> notFound(String message) {
         Response<T> response = new Response<T>(HttpStatus.NOT_FOUND);
 

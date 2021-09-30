@@ -73,7 +73,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             final WebRequest request) {
 
         final Response response = new Response<>(HttpStatus.BAD_REQUEST);
-        response.addError(new APIError("RequestParameterException", "Required parameter missing.",
+        response.addError(new APIError(ex.getClass().getSimpleName(), "Required parameter missing.",
                 ex.getParameterName() + " parameter is missing", ex.getParameterName(), 400));
 
         return response.build();
@@ -85,7 +85,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
         final Response response = new Response<>(HttpStatus.BAD_REQUEST);
         ex.getBindingResult().getFieldErrors().stream()
-                .forEach(e -> response.addError(new APIError("Validation", "Invalid value provided.",
+                .forEach(e -> response.addError(new APIError(ex.getClass().getSimpleName(), "Invalid value provided.",
                         String.format("Field '%s' %s.", e.getField(), e.getDefaultMessage()), e.getField(), 400)));
 
         return response.build();
@@ -96,7 +96,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             HttpHeaders headers, HttpStatus status, WebRequest request) {
 
         final Response response = new Response<>(HttpStatus.BAD_REQUEST);
-        response.addError(new APIError("InvalidBody", "Cannot deserialize body value.", ex.getLocalizedMessage(), 400));
+        response.addError(new APIError(ex.getClass().getSimpleName(), "Cannot deserialize body value.",
+                ex.getLocalizedMessage(), 400));
 
         return response.build();
     }
@@ -106,7 +107,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             final HttpHeaders headers, final HttpStatus status, final WebRequest request) {
 
         final Response response = new Response<>(HttpStatus.UNSUPPORTED_MEDIA_TYPE);
-        ex.getSupportedMediaTypes().forEach(t -> response.addError(new APIError("UnsupportedMediaType",
+        ex.getSupportedMediaTypes().forEach(t -> response.addError(new APIError(ex.getClass().getSimpleName(),
                 MessageFormat.format("The content type '{}' is not supported by this resource.", t),
                 "The request body content type is not supported by this resource.",
                 HttpStatus.UNSUPPORTED_MEDIA_TYPE.value())));
@@ -119,8 +120,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             final HttpHeaders headers, final HttpStatus status, final WebRequest request) {
 
         final Response response = new Response<>(HttpStatus.NOT_FOUND);
-        response.addError(new APIError("NotFound", "No endpoint found for the requested method / location.",
-                "Invalid request method and / or location.", 404));
+        response.addError(
+                new APIError(ex.getClass().getSimpleName(), "No endpoint found for the requested method / location.",
+                        "Invalid request method and / or location.", 404));
 
         return response.build();
 
@@ -132,8 +134,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             final WebRequest request) {
 
         final Response response = new Response<>(HttpStatus.NOT_FOUND);
-        response.addError(new APIError("NotFound", "No endpoint found for the requested method / location.",
-                "Invalid request method and / or location.", 404));
+        response.addError(
+                new APIError(ex.getClass().getSimpleName(), "No endpoint found for the requested method / location.",
+                        "Invalid request method and / or location.", 404));
 
         return response.build();
     }

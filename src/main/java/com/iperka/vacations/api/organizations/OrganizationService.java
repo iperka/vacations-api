@@ -24,6 +24,13 @@ public interface OrganizationService {
     public Page<Organization> findAll(Pageable pageable);
 
     /**
+     * Retrieves all organizations matching the given name as
+     * {@link org.springframework.data.domain.Page} object. Bare in mind that these
+     * method should be explicit to administrative roles.
+     */
+    public Page<Organization> findByNameContainingIgnoreCase(Pageable pageable, String name);
+
+    /**
      * Returns the user object matching the given uuid as
      * {@link java.util.Optional}.
      * 
@@ -31,6 +38,15 @@ public interface OrganizationService {
      * @return Optional
      */
     public Optional<Organization> findByUUID(UUID uuid);
+
+    /**
+     * Returns the user object matching the given name as
+     * {@link java.util.Optional}.
+     * 
+     * @param name Objects name.
+     * @return Optional
+     */
+    public Optional<Organization> findByNameIgnoreCase(String name);
 
     /**
      * Saves a given object to database. This will create a new one if it doesn't

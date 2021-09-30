@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
  * and is used to manage the organization.
  * 
  * @author Michael Beutler
- * @version 0.0.2
+ * @version 0.0.3
  * @since 2021-09-29
  */
 @Service
@@ -34,6 +34,12 @@ public class OrganizationServiceImpl implements OrganizationService {
     }
 
     @Override
+    public Page<Organization> findByNameContainingIgnoreCase(Pageable pageable, String name) {
+        logger.debug("findAllByName called");
+        return this.organizationRepository.findByNameContainingIgnoreCase(pageable, name);
+    }
+
+    @Override
     public Optional<Organization> findByUUID(UUID uuid) {
         logger.debug("findByUUID called");
         return this.organizationRepository.findById(uuid);
@@ -42,6 +48,18 @@ public class OrganizationServiceImpl implements OrganizationService {
     @Override
     public Organization create(Organization organization) {
         logger.debug("create called");
+
+        if (this.findByNameIgnoreCase(organization.getName()).isPresent()) {
+            // TODO: Throw custom error for duplicate name
+            return null;
+        }
+
         return this.organizationRepository.save(organization);
+    }
+
+    @Override
+    public Optional<Organization> findByNameIgnoreCase(String name) {
+        logger.debug("findByNameIgnoreCase called");
+        return this.organizationRepository.findByNameIgnoreCase(name);
     }
 }

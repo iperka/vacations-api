@@ -9,9 +9,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+
+import org.hibernate.validator.constraints.Length;
 
 /**
  * The {@link com.iperka.vacations.api.organizations.Organization} class defines
@@ -33,7 +33,6 @@ public class Organization {
      */
     @Id
     @GeneratedValue
-    @NotNull
     @Column(columnDefinition = "BINARY(16)", nullable = false, unique = true)
     private UUID uuid;
 
@@ -41,8 +40,7 @@ public class Organization {
      * Unique string used for naming the organization.
      */
     @Column(unique = true, nullable = false, length = 100)
-    @Min(4)
-    @Max(100)
+    @Length(min = 4, max = 100)
     @NotNull
     private String name;
 
@@ -54,6 +52,13 @@ public class Organization {
     @Column(nullable = false)
     @NotNull
     private boolean enabled = false;
+
+    /**
+     * Defines the resource owner for this object.
+     */
+    @Column(nullable = false)
+    @NotNull
+    private String owner;
 
     /**
      * Stores the date time when the organization object has been created.
@@ -96,6 +101,14 @@ public class Organization {
 
     public void setEnabled(final boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public String getOwner() {
+        return owner;
+    }
+
+    public void setOwner(String owner) {
+        this.owner = owner;
     }
 
     public Date getCreated() {

@@ -61,7 +61,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 // .mvcMatchers(HttpMethod.GET, "/public").permitAll()  
                 .mvcMatchers("/organizations").authenticated()
                 .mvcMatchers(HttpMethod.GET, "/private-scoped").hasAuthority("SCOPE_read:vacations")
-                .anyRequest().authenticated()  
+                .anyRequest().authenticated()
             ) 
             .cors().configurationSource(corsConfigurationSource())
             .and().oauth2ResourceServer()
@@ -69,6 +69,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .accessDeniedHandler(new CustomOAuth2AccessDeniedHandler())
             .jwt();
         // @formatter:on
+
+        http.headers().frameOptions().disable();
     }
 
     CorsConfigurationSource corsConfigurationSource() {
