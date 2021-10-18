@@ -62,6 +62,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .mvcMatchers("/organizations").authenticated()
                 .mvcMatchers(HttpMethod.GET, "/private-scoped").hasAuthority("SCOPE_read:vacations")
                 .anyRequest().authenticated()
+
             ) 
             .cors().configurationSource(corsConfigurationSource())
             .and().oauth2ResourceServer()
