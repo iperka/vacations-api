@@ -3,13 +3,20 @@ spring:
     active: development
   main:
     banner-mode: off
+  mvc:
+    throw-exception-if-no-handler-found: true
+  resources:
+    add-mappings: false
+  data:
+    web.pageable.max-page-size: 100
+    rest.max-page-size: 100
   security:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: MY_ISSUER_URL
+          issuer-uri: https://iperka.eu.auth0.com/
 auth0:
-  audience: MY_AUDIENCE_URL
+  audience: https://api.iperka.com/vacations/
 ---
 spring:
   config.activate.on-profile: development

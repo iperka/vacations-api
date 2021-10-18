@@ -1,5 +1,6 @@
 package com.iperka.vacations.api.helpers;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -22,12 +23,13 @@ import org.springframework.http.ResponseEntity;
  * @since 2021-05-14
  */
 public class Response<T> {
+    private String version = "v1";
     private HttpStatus status;
     private String message;
-    private String version = "v0.0.1";
     private final Date timestamp = new Date();
-    private T data = null;
-    private Metadata metadata = null;
+    private T data;
+    private Metadata metadata;
+    private List<APIError> errors = null;
 
     public Response(HttpStatus status, String message, String version, T data, Metadata metadata) {
         this.status = status;
@@ -42,10 +44,34 @@ public class Response<T> {
         this.message = status.getReasonPhrase();
     }
 
+    public Response(HttpStatus status, T data) {
+        this.status = status;
+        this.message = status.getReasonPhrase();
+        this.data = data;
+    }
+
     public static <T> Response<List<T>> fromPage(HttpStatus status, Page<T> page) {
         Response<List<T>> response = new Response<>(status);
+
         response.data = page.getContent();
         response.metadata = new Metadata(page);
+
+        return response;
+    }
+
+    public static <T> Response<List<T>> fromPage(HttpStatus status, Page<T> page, String query) {
+        Response<List<T>> response = new Response<>(status);
+
+        response.data = page.getContent();
+        response.metadata = new Metadata(page, query);
+
+        return response;
+    }
+
+    public static <T> Response<T> notFound(String message) {
+        Response<T> response = new Response<T>(HttpStatus.NOT_FOUND);
+
+        response.addError(new APIError("NotFound", message, 404));
 
         return response;
     }
@@ -57,6 +83,20 @@ public class Response<T> {
         }
 
         return ResponseEntity.status(status).body(this);
+    }
+
+    public void addError(APIError error) {
+        if (this.errors == null) {
+            this.errors = new ArrayList<>();
+        }
+        this.errors.add(error);
+    }
+
+    public void addError(Exception exception) {
+        if (this.errors == null) {
+            this.errors = new ArrayList<>();
+        }
+        this.errors.add(new APIError(exception));
     }
 
     public int getStatus() {
@@ -106,6 +146,14 @@ public class Response<T> {
     public Response<T> setMetadata(Metadata metadata) {
         this.metadata = metadata;
         return this;
+    }
+
+    public List<APIError> getErrors() {
+        return errors;
+    }
+
+    public void setErrors(List<APIError> errors) {
+        this.errors = errors;
     }
 
 }

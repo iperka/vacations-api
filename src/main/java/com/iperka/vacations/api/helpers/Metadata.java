@@ -8,8 +8,7 @@ import org.springframework.data.domain.Page;
  * {@link org.springframework.data.domain.Page} objects and describe their
  * metadata. Use the special constructor to create a object from page object.
  * 
- * Will be serialized as:
- * <code>
+ * Will be serialized as: <code>
  * "metadata": {
  *   "totalElements": 0,
  *   "totalPages": 0,
@@ -19,7 +18,7 @@ import org.springframework.data.domain.Page;
  * </code>
  * 
  * @author Michael Beutler
- * @version 0.0.1
+ * @version 0.0.2
  * @since 2021-05-14
  */
 public class Metadata {
@@ -27,12 +26,21 @@ public class Metadata {
     private long totalPages = 0;
     private long page = 1L;
     private long perPage = 0;
+    private String query;
 
     public Metadata(long totalElements, long totalPages, long page, long perPage) {
         this.totalElements = totalElements;
         this.totalPages = totalPages;
         this.page = page;
         this.perPage = perPage;
+    }
+
+    public Metadata(long totalElements, long totalPages, long page, long perPage, String query) {
+        this.totalElements = totalElements;
+        this.totalPages = totalPages;
+        this.page = page;
+        this.perPage = perPage;
+        this.query = query;
     }
 
     public Metadata(Page<?> page) {
@@ -42,6 +50,16 @@ public class Metadata {
         // Add one to slice number to achieve page 1
         this.page = page.getNumber() + 1L;
         this.perPage = page.getSize();
+    }
+
+    public Metadata(Page<?> page, String query) {
+        this.totalElements = page.getTotalElements();
+        this.totalPages = page.getTotalPages();
+
+        // Add one to slice number to achieve page 1
+        this.page = page.getNumber() + 1L;
+        this.perPage = page.getSize();
+        this.query = query;
     }
 
     public long getTotalElements() {
@@ -74,6 +92,14 @@ public class Metadata {
 
     public void setPerPage(long perPage) {
         this.perPage = perPage;
+    }
+
+    public String getQuery() {
+        return query;
+    }
+
+    public void setQuery(String query) {
+        this.query = query;
     }
 
 }
