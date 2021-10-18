@@ -59,9 +59,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .csrf(AbstractHttpConfigurer::disable)
             .authorizeRequests(authorize -> authorize  
                 // .mvcMatchers(HttpMethod.GET, "/public").permitAll()  
-                // .mvcMatchers(HttpMethod.POST, "/private").authenticated()
-                // .mvcMatchers(HttpMethod.GET, "/private-scoped").hasAuthority("SCOPE_read:vacations")
-                .anyRequest().authenticated()  
+                .mvcMatchers("/organizations").authenticated()
+                .mvcMatchers(HttpMethod.GET, "/private-scoped").hasAuthority("SCOPE_read:vacations")
+                .anyRequest().authenticated()
+
             ) 
             .cors().configurationSource(corsConfigurationSource())
             .and().oauth2ResourceServer()
@@ -69,12 +70,21 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .accessDeniedHandler(new CustomOAuth2AccessDeniedHandler())
             .jwt();
         // @formatter:on
+
+        http.headers().frameOptions().disable();
     }
 
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedMethods(List.of(HttpMethod.GET.name(), HttpMethod.PUT.name(), HttpMethod.POST.name(),
-                HttpMethod.DELETE.name()));
+        // @formatter:off
+        configuration.setAllowedMethods(List.of(
+            HttpMethod.GET.name(), 
+            HttpMethod.PUT.name(), 
+            HttpMethod.POST.name(),
+            HttpMethod.DELETE.name(), 
+            HttpMethod.OPTIONS.name()
+        ));
+        // @formatter:on
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration.applyPermitDefaultValues());

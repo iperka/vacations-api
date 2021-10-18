@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.iperka.vacations.api.helpers.APIError;
 import com.iperka.vacations.api.helpers.Response;
 
 import org.slf4j.Logger;
@@ -23,7 +24,7 @@ import org.springframework.security.web.access.AccessDeniedHandler;
  * TODO: Extend Error message object.
  * 
  * @author Michael Beutler
- * @version 0.0.1
+ * @version 0.0.2
  * @since 2021-09-29
  */
 public class CustomOAuth2AccessDeniedHandler implements AccessDeniedHandler {
@@ -35,13 +36,15 @@ public class CustomOAuth2AccessDeniedHandler implements AccessDeniedHandler {
         logger.error(e.getLocalizedMessage(), e);
 
         String errorMessage = e.getLocalizedMessage();
-
+        String cause = null;
         if (request.getUserPrincipal() instanceof AbstractOAuth2TokenAuthenticationToken) {
             errorMessage = "The request requires higher privileges than provided by the access token.";
+            cause = "The authenticated user has not been granted the required scope(s).";
         }
 
         ObjectMapper mapper = new ObjectMapper();
         Response<?> responseObject = new Response<>(HttpStatus.FORBIDDEN);
+        responseObject.addError(new APIError("OAuthException", errorMessage, cause, 403));
 
         response.setStatus(HttpStatus.FORBIDDEN.value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
