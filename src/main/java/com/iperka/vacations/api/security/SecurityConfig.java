@@ -2,6 +2,8 @@ package com.iperka.vacations.api.security;
 
 import java.util.List;
 
+import javax.annotation.security.PermitAll;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -64,10 +66,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .authorizeRequests(authorize -> authorize
                 .mvcMatchers(HttpMethod.GET, "/openapi/v3/").permitAll()  
                 .mvcMatchers(HttpMethod.GET, "/swagger-ui/**").permitAll()
+                .mvcMatchers(HttpMethod.GET, "/actuator/**").permitAll()
                 .mvcMatchers("/organizations").authenticated()
                 .mvcMatchers(HttpMethod.GET, "/private-scoped").hasAuthority("SCOPE_vacations:read")
                 .anyRequest().authenticated()
-
             ) 
             .cors().configurationSource(corsConfigurationSource())
             .and().oauth2ResourceServer()

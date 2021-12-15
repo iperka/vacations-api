@@ -20,10 +20,14 @@ auth0:
 springdoc:
   api-docs.path: /openapi/v3
   show-actuator: true
+  use-management-port: false
   swagger-ui:
     url: /openapi/v3/
     layout: BaseLayout
     oauth2RedirectUrl: http://localhost:8080/static/oauth2-redirect.html
+management:
+  server:
+    port: 8081
 ---
 spring:
   config.activate.on-profile: development
