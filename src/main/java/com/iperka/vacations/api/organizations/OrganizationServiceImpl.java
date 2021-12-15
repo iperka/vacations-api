@@ -56,7 +56,7 @@ public class OrganizationServiceImpl implements OrganizationService {
 
         if (this.findByNameIgnoreCase(organization.getName()).isPresent()) {
             // TODO: Throw custom error for duplicate name
-            logger.warn("There is already an organization named '{}'.", organization.getName());
+            logger.warn("There is already an organization with the same name.");
             return null;
         }
 

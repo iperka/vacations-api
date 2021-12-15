@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.iperka.vacations.api.VacationsApiApplication;
+
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,14 +22,12 @@ import org.springframework.http.ResponseEntity;
  * return the object itself.
  * 
  * @author Michael Beutler
- * @version 0.0.4
+ * @version 0.0.5
  * @since 2021-05-14
  */
 public class Response<T> {
-    private final Logger logger = LoggerFactory.getLogger(Response.class);
-
-    private String version = "v1";
-    private String host = "unknown";
+    private String version = "v" + VacationsApiApplication.class.getPackage().getImplementationVersion();
+    private String host = getHostname();
     private HttpStatus status;
     private String message;
     private final Date timestamp = new Date();
@@ -37,41 +35,31 @@ public class Response<T> {
     private Metadata metadata;
     private List<APIError> errors = null;
 
+    private static String getHostname() {
+        try {
+            return InetAddress.getLocalHost().getHostName();
+        } catch (Exception e) {
+            return "unknown";
+        }
+    }
+
     public Response(HttpStatus status, String message, String version, T data, Metadata metadata) {
         this.status = status;
         this.message = message;
         this.version = version;
         this.data = data;
         this.metadata = metadata;
-
-        try {
-            this.host = InetAddress.getLocalHost().getHostName();
-        } catch (Exception e) {
-            logger.warn("Unable to retrieve host.", e);
-        }
     }
 
     public Response(HttpStatus status) {
         this.status = status;
         this.message = status.getReasonPhrase();
-
-        try {
-            this.host = InetAddress.getLocalHost().getHostName();
-        } catch (Exception e) {
-            logger.warn("Unable to retrieve host.", e);
-        }
     }
 
     public Response(HttpStatus status, T data) {
         this.status = status;
         this.message = status.getReasonPhrase();
         this.data = data;
-
-        try {
-            this.host = InetAddress.getLocalHost().getHostName();
-        } catch (Exception e) {
-            logger.warn("Unable to retrieve host.", e);
-        }
     }
 
     public static <T> Response<List<T>> fromPage(HttpStatus status, Page<T> page) {

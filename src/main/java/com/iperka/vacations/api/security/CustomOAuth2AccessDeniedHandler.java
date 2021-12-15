@@ -33,7 +33,7 @@ public class CustomOAuth2AccessDeniedHandler implements AccessDeniedHandler {
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException e)
             throws IOException {
-        logger.error(e.getLocalizedMessage(), e);
+        logger.warn("Request from user {} has been blocked due to insufficient privilegs.", request.getRemoteAddr());
 
         String errorMessage = e.getLocalizedMessage();
         String cause = null;

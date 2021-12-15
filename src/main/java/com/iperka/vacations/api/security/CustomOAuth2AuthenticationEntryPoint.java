@@ -34,7 +34,8 @@ public class CustomOAuth2AuthenticationEntryPoint implements AuthenticationEntry
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException e)
             throws IOException {
-        logger.error(e.getLocalizedMessage(), e);
+        logger.warn("Request from user {} has been blocked due to insufficient authentication.",
+                request.getRemoteAddr());
 
         String errorMessage = "Insufficient authentication details.";
         if (e instanceof InvalidBearerTokenException) {
@@ -43,7 +44,8 @@ public class CustomOAuth2AuthenticationEntryPoint implements AuthenticationEntry
 
         ObjectMapper mapper = new ObjectMapper();
         Response<?> responseObject = new Response<>(HttpStatus.UNAUTHORIZED);
-        responseObject.addError(new APIError("OAuthException", errorMessage, "Missing or invalid Bearer Token in Authentication header.", 401));
+        responseObject.addError(new APIError("OAuthException", errorMessage,
+                "Missing or invalid Bearer Token in Authentication header.", 401));
 
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);

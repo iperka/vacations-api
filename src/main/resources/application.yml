@@ -54,5 +54,9 @@ spring:
       hibernate:
         dialect: ${JPA_HIBERNATE_DIALECT}
 springdoc:
-  api-docs.enabled: false
-  swagger-ui.enabled: false
+  api-docs.enabled: ${API_DOCS_ENABLED:false}
+  # Requires API_DOCS_ENABLED
+  swagger-ui.enabled: ${SWAGGER_UI_ENABLED:false}
+auth0:
+  audience: ${AUTH0_AUDIENCE:https://api.iperka.com/vacations/}
+  domain: ${AUTH0_DOMAIN:https://iperka.eu.auth0.com/}
