@@ -14,6 +14,8 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.Length;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * The {@link com.iperka.vacations.api.organizations.Organization} class defines
  * the structure of a basic organisation.
@@ -37,6 +39,7 @@ public class Organization {
     @Id
     @GeneratedValue
     @Column(columnDefinition = "BINARY(16)", nullable = false, unique = true)
+    @Schema(description = "Unique identifier of the Organization.", example = "67394e83-1ea5-495e-adf3-80ee93514f92", required = true)
     private UUID uuid;
 
     /**
@@ -45,6 +48,7 @@ public class Organization {
     @Column(unique = true, nullable = false, length = 100)
     @Length(min = 4, max = 100)
     @NotNull
+    @Schema(description = "Unique human readable identifier of the Organization.", example = "iperka", required = true)
     private String name;
 
     /**
@@ -54,6 +58,7 @@ public class Organization {
      */
     @Column(nullable = false)
     @NotNull
+    @Schema(description = "Defines if the Organization is enabled or not.", example = "true", required = true)
     private boolean enabled = false;
 
     /**
@@ -61,6 +66,7 @@ public class Organization {
      */
     @Column(nullable = false)
     @NotNull
+    @Schema(description = "Owner of the Organzitation.", example = "iperka@example.com|2dawd2", required = true)
     private String owner;
 
     /**

@@ -28,7 +28,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
  * validating given JWT's.
  * 
  * @author Michael Beutler
- * @version 0.0.2
+ * @version 0.0.4
  * @since 2021-09-29
  */
 @Configuration
@@ -61,8 +61,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .httpBasic().disable()  
             .formLogin(AbstractHttpConfigurer::disable)  
             .csrf(AbstractHttpConfigurer::disable)
-            .authorizeRequests(authorize -> authorize  
-                // .mvcMatchers(HttpMethod.GET, "/public").permitAll()  
+            .authorizeRequests(authorize -> authorize
+                .mvcMatchers(HttpMethod.GET, "/openapi/v3/").permitAll()  
+                .mvcMatchers(HttpMethod.GET, "/swagger-ui/**").permitAll()
                 .mvcMatchers("/organizations").authenticated()
                 .mvcMatchers(HttpMethod.GET, "/private-scoped").hasAuthority("SCOPE_vacations:read")
                 .anyRequest().authenticated()

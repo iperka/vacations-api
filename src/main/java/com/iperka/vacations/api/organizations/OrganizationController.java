@@ -27,8 +27,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
 @RequestMapping(path = { "/organizations" }, produces = MediaType.APPLICATION_JSON_VALUE)
+@Tag(name = "Organizations", description = "Endpoints for managing organizations.")
 public class OrganizationController {
     private final Logger logger = LoggerFactory.getLogger(OrganizationController.class);
 
@@ -40,10 +48,16 @@ public class OrganizationController {
     }
 
     @GetMapping
+    @Operation(summary = "Finds all organizations", description = "Finds all organizations owned by authenticated user.", tags = {
+            "Organizations" }, responses = {
+                    @ApiResponse(description = "Success", responseCode = "200", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class))),
+                    @ApiResponse(description = "Not found", responseCode = "404", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class))),
+                    @ApiResponse(description = "Internal server error", responseCode = "500", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class)))
+            })
     public ResponseEntity<Response<List<Organization>>> getAllOrganizations(
     // @formatter:off
         Pageable pageable,
-        @RequestParam(required = false) String name
+        @RequestParam(required = false) @Parameter(description = "Filter owned organizations by name.") String name
     // @formatter:on
     ) {
         if (StringUtils.hasText(name)) {
