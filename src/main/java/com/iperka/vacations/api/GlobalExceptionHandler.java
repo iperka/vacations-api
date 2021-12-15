@@ -7,11 +7,14 @@ import com.iperka.vacations.api.helpers.Response;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -23,6 +26,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+@Order(Ordered.HIGHEST_PRECEDENCE)
 @ControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
@@ -33,7 +37,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     /**
      * 
-     * /** Handle Resource Not Found Exception: That way, we tell Spring Boot to
+     * Handle Resource Not Found Exception: That way, we tell Spring Boot to
      * return an HTTP response with NOT_FOUND status code when
      * ResourceNotFoundException is raised!
      * 
@@ -45,8 +49,27 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
         final Response<Object> response = new Response<>(HttpStatus.NOT_FOUND);
         response.addError(new APIError(ex));
+        logger.info("Resource not found.", ex);
 
         return response.build();
+    }
+
+    /**
+     * 
+     * Handle authorization Exceptions raised by method level.
+     * 
+     * @param ex {@link AccessDeniedException}
+     * @return {@link ResponseEntity}
+     */
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<Response<Object>> handleAccessDeniedException(final AccessDeniedException ex) {
+        String errorMessage = "The request requires higher privileges than provided by the access token.";
+        String cause = "The authenticated user has not been granted the required scope(s).";
+
+        Response<Object> responseObject = new Response<Object>(HttpStatus.FORBIDDEN);
+        responseObject.addError(new APIError("OAuthException", errorMessage, cause, 403));
+
+        return responseObject.build();
     }
 
     /**
@@ -63,6 +86,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
         final Response<Object> response = new Response<>(HttpStatus.BAD_REQUEST);
         response.addError(new APIError(ex));
+        logger.info("Method Argument mismatch.", ex);
 
         return response.build();
     }

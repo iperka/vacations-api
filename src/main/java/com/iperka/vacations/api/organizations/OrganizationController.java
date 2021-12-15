@@ -42,7 +42,6 @@ public class OrganizationController {
     @GetMapping
     public ResponseEntity<Response<List<Organization>>> getAllOrganizations(
     // @formatter:off
-       
         Pageable pageable,
         @RequestParam(required = false) String name
     // @formatter:on

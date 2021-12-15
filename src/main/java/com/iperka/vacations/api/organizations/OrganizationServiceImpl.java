@@ -5,27 +5,31 @@ import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 /**
- * The {@link com.iperka.vacations.api.organizations.OrganizationServiceImpl}
+ * The
+ * {@link com.iperka.vacations.api.organizations.OrganizationServiceImpl}
  * class implements the
  * {@link com.iperka.vacations.api.organizations.OrganizationService} interface
  * and is used to manage the organization.
  * 
  * @author Michael Beutler
- * @version 0.0.3
+ * @version 0.0.5
  * @since 2021-09-29
  */
 @Service
 public class OrganizationServiceImpl implements OrganizationService {
     private final Logger logger = LoggerFactory.getLogger(OrganizationServiceImpl.class);
 
-    @Autowired
     private OrganizationRepository organizationRepository;
+
+    public OrganizationServiceImpl(OrganizationRepository organizationRepository) {
+        this.organizationRepository = organizationRepository;
+    }
 
     @Override
     public Page<Organization> findAll(Pageable pageable) {
@@ -46,11 +50,13 @@ public class OrganizationServiceImpl implements OrganizationService {
     }
 
     @Override
+    @PreAuthorize("hasAuthority('SCOPE_organizations:write')")
     public Organization create(Organization organization) {
         logger.debug("create called");
 
         if (this.findByNameIgnoreCase(organization.getName()).isPresent()) {
             // TODO: Throw custom error for duplicate name
+            logger.warn("There is already an organization named '{}'.", organization.getName());
             return null;
         }
 
