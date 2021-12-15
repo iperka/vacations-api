@@ -43,6 +43,16 @@ spring:
   config.activate.on-profile: production
   devtools:
     add-properties: false
+  datasource:
+    url: ${DATASOURCE_URL}
+    driver-class-name: ${DATASOURCE_DRIVER}
+    username: ${DATASOURCE_USERNAME}
+    password: ${DATASOURCE_PASSWORD}
+  jpa:
+    hibernate.ddl-auto: ${JPA_DDL_AUTO}
+    properties:
+      hibernate:
+        dialect: ${JPA_HIBERNATE_DIALECT}
 springdoc:
   api-docs.enabled: false
   swagger-ui.enabled: false
