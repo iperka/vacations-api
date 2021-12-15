@@ -3,6 +3,9 @@ name: 🐳 Publish Docker image
 on:
   release:
     types: [published]
+  push:
+    tags:
+      - "*"
 
 env:
   REGISTRY: ghcr.io
