@@ -1,7 +1,19 @@
-FROM adoptopenjdk/openjdk11:alpine-jre
-RUN addgroup -S spring && adduser -S spring -G spring
-USER spring:spring
-ARG JAR_FILE=target/*.jar
-COPY ${JAR_FILE} app.jar
+FROM maven:3.6.3-jdk-11-slim AS build
+
+RUN mkdir /project
+COPY . /project
+WORKDIR /project
+RUN mvn clean package -DskipTests spring-boot:repackage -DskipTests
+
+FROM adoptopenjdk/openjdk11:jre-11.0.9.1_1-alpine
+RUN apk add dumb-init
+RUN mkdir /app
+RUN addgroup --system spring && adduser -S -s /bin/false -G spring spring
+COPY --from=build /project/target/patFormsAPI.jar /app/java-application.jar
+WORKDIR /app
+RUN chown -R spring:spring /app
+USER spring
+
 EXPOSE 8080
-ENTRYPOINT ["java","-jar","/app.jar"]
+
+CMD "dumb-init" "java" "-jar" "java-application.jar"
