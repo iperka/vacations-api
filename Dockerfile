@@ -9,7 +9,7 @@ FROM adoptopenjdk/openjdk11:jre-11.0.9.1_1-alpine
 RUN apk add dumb-init
 RUN mkdir /app
 RUN addgroup --system spring && adduser -S -s /bin/false -G spring spring
-COPY --from=build /project/target/patFormsAPI.jar /app/java-application.jar
+COPY --from=build /project/target/*.jar /app/java-application.jar
 WORKDIR /app
 RUN chown -R spring:spring /app
 USER spring
