@@ -165,7 +165,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return response.build();
     }
 
-    @ExceptionHandler({ Exception.class })
+    @ExceptionHandler(Exception.class)
     public ResponseEntity<Response<Object>> handleAll(final Exception ex, final WebRequest request) {
 
         final Response<Object> response = new Response<>(HttpStatus.INTERNAL_SERVER_ERROR);

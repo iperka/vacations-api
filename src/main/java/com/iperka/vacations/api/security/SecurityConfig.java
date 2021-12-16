@@ -62,7 +62,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .formLogin(AbstractHttpConfigurer::disable)  
             .csrf(AbstractHttpConfigurer::disable)
             .authorizeRequests(authorize -> authorize
-                .mvcMatchers(HttpMethod.GET, "/openapi/v3**").permitAll()  
+                .mvcMatchers(HttpMethod.GET, "/openapi/v3").permitAll()  
                 .mvcMatchers(HttpMethod.GET, "/swagger-ui/**").permitAll()
                 .mvcMatchers(HttpMethod.GET, "/actuator/**").permitAll()
                 .mvcMatchers(HttpMethod.GET,"/favicon.ico").permitAll()

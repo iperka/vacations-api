@@ -5,6 +5,9 @@ spring:
     banner-mode: off
   mvc:
     throw-exception-if-no-handler-found: true
+  web:
+    resources:
+      add-mappings: false
   data:
     web.pageable.max-page-size: ${REST_MAX_PAGE_SIZE:100}
     rest.max-page-size: ${REST_MAX_PAGE_SIZE:100}
@@ -23,7 +26,7 @@ springdoc:
   use-management-port: false
   default-produces-media-type: application/json
   produces-to-match:
-  - application/json
+    - application/json
   swagger-ui:
     url: ${SWAGGER_API_DOCS_PATH:/openapi/v3}
     layout: BaseLayout
@@ -31,6 +34,7 @@ springdoc:
 management:
   server:
     port: ${MANAGEMENT_SERVER_PORT:8081}
+server.error.whitelabel.enabled: false
 ---
 spring:
   config.activate.on-profile: development

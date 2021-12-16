@@ -24,7 +24,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * return the object itself.
  * 
  * @author Michael Beutler
- * @version 0.0.6
+ * @version 0.0.7
  * @since 2021-05-14
  */
 public class Response<T> {
@@ -35,7 +35,7 @@ public class Response<T> {
     private final Date timestamp = new Date();
     private T data;
     private Metadata metadata;
-    private List<APIError> errors = List.of();
+    private List<APIError> errors = new ArrayList<APIError>();
 
     private static String getHostname() {
         try {
