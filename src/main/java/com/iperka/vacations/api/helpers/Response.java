@@ -11,6 +11,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * The {@link com.iperka.vacations.api.helpers.Response} class defines the
  * default structure for responses. It includes the status, a message,
@@ -22,7 +24,7 @@ import org.springframework.http.ResponseEntity;
  * return the object itself.
  * 
  * @author Michael Beutler
- * @version 0.0.5
+ * @version 0.0.6
  * @since 2021-05-14
  */
 public class Response<T> {
@@ -33,7 +35,7 @@ public class Response<T> {
     private final Date timestamp = new Date();
     private T data;
     private Metadata metadata;
-    private List<APIError> errors = null;
+    private List<APIError> errors = List.of();
 
     private static String getHostname() {
         try {
@@ -111,6 +113,7 @@ public class Response<T> {
         this.errors.add(new APIError(exception));
     }
 
+    @Schema(description = "HTTP Status code.", example = "200", required = true)
     public int getStatus() {
         return status.value();
     }
@@ -129,6 +132,7 @@ public class Response<T> {
         return this;
     }
 
+    @Schema(description = "API version.", example = "v1.0.2", required = true)
     public String getVersion() {
         return version;
     }
@@ -138,10 +142,12 @@ public class Response<T> {
         return this;
     }
 
+    @Schema(description = "Response generation time.", example = "1639640722592", required = true)
     public long getTimestamp() {
         return timestamp.getTime();
     }
 
+    @Schema(description = "Response data.", required = true)
     public T getData() {
         return data;
     }
@@ -160,6 +166,7 @@ public class Response<T> {
         return this;
     }
 
+    @Schema(description = "Response error objects.", example = "[]", required = true)
     public List<APIError> getErrors() {
         return errors;
     }
@@ -168,6 +175,7 @@ public class Response<T> {
         this.errors = errors;
     }
 
+    @Schema(description = "Kubernetes pod name or API Host hostname.", example = "vacations-api-xxxxxxxxxx-xxxxx", required = true)
     public String getHost() {
         return host;
     }

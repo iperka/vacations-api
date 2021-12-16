@@ -29,9 +29,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
@@ -50,9 +50,10 @@ public class OrganizationController {
     @GetMapping
     @Operation(summary = "Finds all organizations", description = "Finds all organizations owned by authenticated user.", tags = {
             "Organizations" }, responses = {
-                    @ApiResponse(description = "Success", responseCode = "200", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class))),
-                    @ApiResponse(description = "Not found", responseCode = "404", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class))),
-                    @ApiResponse(description = "Internal server error", responseCode = "500", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class)))
+                    @ApiResponse(description = "Success", responseCode = "200", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OrganizationsListResponse.class))),
+                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content(mediaType = "application/json")),
+                    @ApiResponse(description = "Forbidden", responseCode = "403", content = @Content(mediaType = "application/json")),
+                    @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content(mediaType = "application/json"))
             })
     public ResponseEntity<Response<List<Organization>>> getAllOrganizations(
     // @formatter:off
@@ -71,6 +72,14 @@ public class OrganizationController {
     }
 
     @GetMapping(value = "/{uuid}")
+    @Operation(summary = "Finds organizations with given UUID.", description = "Finds organizations with given UUID owned by authenticated user.", tags = {
+            "Organizations" }, responses = {
+                    @ApiResponse(description = "Success", responseCode = "200", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OrganizationResponse.class))),
+                    @ApiResponse(description = "Not Found", responseCode = "404", content = @Content(mediaType = "application/json")),
+                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content(mediaType = "application/json")),
+                    @ApiResponse(description = "Forbidden", responseCode = "403", content = @Content(mediaType = "application/json")),
+                    @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content(mediaType = "application/json"))
+            })
     public ResponseEntity<Response<Organization>> getOrganizationById(@PathVariable("uuid") UUID uuid) {
         Optional<Organization> optional = organizationService.findByUUID(uuid);
 
@@ -85,8 +94,16 @@ public class OrganizationController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Creates a new organizations with given name.", description = "Creates a new organizations with given name and owned by authenticated user.", tags = {
+            "Organizations" }, responses = {
+                    @ApiResponse(description = "Created", responseCode = "201", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OrganizationResponse.class))),
+                    @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content(mediaType = "application/json")),
+                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content(mediaType = "application/json")),
+                    @ApiResponse(description = "Forbidden", responseCode = "403", content = @Content(mediaType = "application/json")),
+                    @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content(mediaType = "application/json"))
+            })
     public ResponseEntity<Response<Organization>> createOrganisation(Authentication authentication,
-            @Valid @RequestBody(required = true) OrganizationDTO organizationDTO) {
+            @Valid @RequestBody(required = true) @Schema(implementation = OrganizationDTO.class) OrganizationDTO organizationDTO) {
         Organization organization = organizationDTO.toObject();
         organization.setOwner(((Jwt) authentication.getPrincipal()).getSubject());
 
@@ -96,4 +113,15 @@ public class OrganizationController {
         return response.build();
     }
 
+    private final class OrganizationsListResponse extends Response<List<Organization>> {
+        public OrganizationsListResponse(HttpStatus status) {
+            super(status);
+        }
+    };
+
+    private final class OrganizationResponse extends Response<Organization> {
+        public OrganizationResponse(HttpStatus status) {
+            super(status);
+        }
+    };
 }

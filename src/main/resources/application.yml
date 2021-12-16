@@ -6,28 +6,31 @@ spring:
   mvc:
     throw-exception-if-no-handler-found: true
   data:
-    web.pageable.max-page-size: 100
-    rest.max-page-size: 100
+    web.pageable.max-page-size: ${REST_MAX_PAGE_SIZE:100}
+    rest.max-page-size: ${REST_MAX_PAGE_SIZE:100}
   security:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: https://iperka.eu.auth0.com/
+          issuer-uri: ${auth0.domain}
   jpa.open-in-view: false
 auth0:
-  audience: https://api.iperka.com/vacations/
-  domain: https://iperka.eu.auth0.com/
+  audience: ${AUTH0_AUDIENCE:https://api.iperka.com/vacations/}
+  domain: ${AUTH0_DOMAIN:https://iperka.eu.auth0.com/}
 springdoc:
-  api-docs.path: /openapi/v3
-  show-actuator: true
+  api-docs.path: ${API_DOCS_PATH:/openapi/v3}
+  show-actuator: ${API_DOCS_SHOW_ACTUATOR:false}
   use-management-port: false
+  default-produces-media-type: application/json
+  produces-to-match:
+  - application/json
   swagger-ui:
-    url: /openapi/v3/
+    url: ${SWAGGER_API_DOCS_PATH:/openapi/v3}
     layout: BaseLayout
     oauth2RedirectUrl: http://localhost:8080/static/oauth2-redirect.html
 management:
   server:
-    port: 8081
+    port: ${MANAGEMENT_SERVER_PORT:8081}
 ---
 spring:
   config.activate.on-profile: development
@@ -53,7 +56,7 @@ spring:
     username: ${DATASOURCE_USERNAME}
     password: ${DATASOURCE_PASSWORD}
   jpa:
-    hibernate.ddl-auto: ${JPA_DDL_AUTO}
+    hibernate.ddl-auto: ${JPA_DDL_AUTO:update}
     properties:
       hibernate:
         dialect: ${JPA_HIBERNATE_DIALECT}
@@ -61,6 +64,3 @@ springdoc:
   api-docs.enabled: ${API_DOCS_ENABLED:false}
   # Requires API_DOCS_ENABLED
   swagger-ui.enabled: ${SWAGGER_UI_ENABLED:false}
-auth0:
-  audience: ${AUTH0_AUDIENCE:https://api.iperka.com/vacations/}
-  domain: ${AUTH0_DOMAIN:https://iperka.eu.auth0.com/}

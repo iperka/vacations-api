@@ -2,8 +2,6 @@ package com.iperka.vacations.api.security;
 
 import java.util.List;
 
-import javax.annotation.security.PermitAll;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,7 +28,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
  * validating given JWT's.
  * 
  * @author Michael Beutler
- * @version 0.0.4
+ * @version 0.0.5
  * @since 2021-09-29
  */
 @Configuration
@@ -64,9 +62,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .formLogin(AbstractHttpConfigurer::disable)  
             .csrf(AbstractHttpConfigurer::disable)
             .authorizeRequests(authorize -> authorize
-                .mvcMatchers(HttpMethod.GET, "/openapi/v3/").permitAll()  
+                .mvcMatchers(HttpMethod.GET, "/openapi/v3**").permitAll()  
                 .mvcMatchers(HttpMethod.GET, "/swagger-ui/**").permitAll()
                 .mvcMatchers(HttpMethod.GET, "/actuator/**").permitAll()
+                .mvcMatchers(HttpMethod.GET,"/favicon.ico").permitAll()
+                .mvcMatchers(HttpMethod.GET,"/oauth2-redirect.html").permitAll()
                 .mvcMatchers("/organizations").authenticated()
                 .mvcMatchers(HttpMethod.GET, "/private-scoped").hasAuthority("SCOPE_vacations:read")
                 .anyRequest().authenticated()
