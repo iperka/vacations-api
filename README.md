@@ -72,7 +72,6 @@ $ docker run \
     -e "DATASOURCE_PASSWORD=secret" \
     -e "JPA_DDL_AUTO=update" \
     -e "JPA_HIBERNATE_DIALECT=org.hibernate.dialect.MySQL5InnoDBDialect" \
-    -e "SPRING_PROFILES_ACTIVE=production" \
     -p 8080:8080 ghcr.io/iperka/vacations-api:latest
 ```
 
