@@ -1,6 +1,8 @@
 package com.iperka.vacations.api;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -31,20 +33,23 @@ public class OpenApiConfig {
     @Value("${auth0.domain}")
     private String domain;
 
+    @Value("${auth0.audience}")
+    private String audience;
+
     @Bean
     public OpenAPI customOpenAPI() {
         // @formatter:off
         OpenAPI openAPI = new OpenAPI();
 
         openAPI
-        .addSecurityItem(new SecurityRequirement().addList("oauth2", Arrays.asList("organizations:read", "organizations:write")))
+        .addSecurityItem(new SecurityRequirement().addList("OAuth2", Arrays.asList("organizations:read", "organizations:write")))
         .components(new Components()
-        .addSecuritySchemes("oauth2",
+        .addSecuritySchemes("OAuth2",
         new SecurityScheme()
             .type(Type.OAUTH2)
             .flows(new OAuthFlows()
                 .implicit(new OAuthFlow()
-                    .authorizationUrl(domain + "authorize")
+                    .authorizationUrl(domain + "authorize?audience=" + audience)
                     .tokenUrl(domain + "oauth/token")
                     .scopes(
                        new Scopes()
@@ -55,14 +60,13 @@ public class OpenApiConfig {
             ).in(In.HEADER)
             .bearerFormat("JWT")
             .name("OAuth2")
-        ))
+        )).security(List.of(new SecurityRequirement().addList("OAuth2")))
         .info(new Info()
         .title("Vacations API")
         .description("REST API for iperka vacations solution.")
         .version("v1")
         .contact(new Contact().name("Support").email("support@iperka.com")))
         .addServersItem(new Server().url("https://api.vacations.iperka.com/v1/").description("Main Production Server"))
-        .addServersItem(new Server().url("https://api.iperka.com/vacations/v1/").description("Production Server Alias"))
         .addServersItem(new Server().url("http://localhost:8080/").description("Local Test Server"));
 
         return openAPI;

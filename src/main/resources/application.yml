@@ -30,7 +30,7 @@ springdoc:
   swagger-ui:
     url: ${SWAGGER_API_DOCS_PATH:/openapi/v3}
     layout: BaseLayout
-    oauth2RedirectUrl: http://localhost:8080/static/oauth2-redirect.html
+    oauth2RedirectUrl: ${SWAGGER_UI_OAUTH2_REDIRECT_URL:http://localhost:8080/oauth2-redirect.html}
 management:
   server:
     port: ${MANAGEMENT_SERVER_PORT:8081}
