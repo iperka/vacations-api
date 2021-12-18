@@ -12,6 +12,7 @@ import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.security.OAuthFlow;
 import io.swagger.v3.oas.models.security.OAuthFlows;
+import io.swagger.v3.oas.models.security.Scopes;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.security.SecurityScheme.In;
@@ -42,9 +43,14 @@ public class OpenApiConfig {
         new SecurityScheme()
             .type(Type.OAUTH2)
             .flows(new OAuthFlows()
-                .authorizationCode(new OAuthFlow()
+                .implicit(new OAuthFlow()
                     .authorizationUrl(domain + "authorize")
                     .tokenUrl(domain + "oauth/token")
+                    .scopes(
+                       new Scopes()
+                       .addString("organizations:read", "Read owned organizations.")
+                       .addString("organizations:write", "Create, update and delete owned organizations.") 
+                    )
                 )
             ).in(In.HEADER)
             .bearerFormat("JWT")
