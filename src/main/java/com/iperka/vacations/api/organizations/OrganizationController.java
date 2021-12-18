@@ -19,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,6 +35,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
+/**
+ * REST Controller for Organizations domain.
+ */
 @RestController
 @RequestMapping(path = { "/organizations" }, produces = MediaType.APPLICATION_JSON_VALUE)
 @Tag(name = "Organizations", description = "Endpoints for managing organizations.")
@@ -109,6 +113,31 @@ public class OrganizationController {
 
         Response<Organization> response = new Response<Organization>(HttpStatus.CREATED);
         response.setData(this.organizationService.create(organization));
+
+        return response.build();
+    }
+
+    @DeleteMapping(value = "/{uuid}")
+    @Operation(summary = "Deletes organization with given UUID.", description = "Deletes organizations with given UUID and owned by authenticated user.", tags = {
+            "Organizations" }, responses = {
+                    @ApiResponse(description = "OK", responseCode = "200", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class))),
+                    @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content(mediaType = "application/json")),
+                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content(mediaType = "application/json")),
+                    @ApiResponse(description = "Forbidden", responseCode = "403", content = @Content(mediaType = "application/json")),
+                    @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content(mediaType = "application/json"))
+            })
+    public ResponseEntity<Response<Organization>> deleteOrganizationById(@PathVariable("uuid") UUID uuid) {
+        Optional<Organization> optional = organizationService.findByUUID(uuid);
+
+        if (!optional.isPresent()) {
+            return Response.<Organization>notFound("No organization found with given id.").build();
+        }
+
+        // Delete
+        organizationService.deleteByUUID(uuid);
+
+        Response<Organization> response = new Response<>(HttpStatus.OK);
+        response.setData(optional.get());
 
         return response.build();
     }

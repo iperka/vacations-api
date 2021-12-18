@@ -12,7 +12,7 @@ import org.springframework.data.domain.Pageable;
  * {@link com.iperka.vacations.api.organisations.OrganisationRepository} model.
  * 
  * @author Michael Beutler
- * @version 0.0.4
+ * @version 0.0.6
  * @since 2021-09-29
  */
 public interface OrganizationService {
@@ -20,6 +20,10 @@ public interface OrganizationService {
      * Retrieves all organizations as {@link org.springframework.data.domain.Page}
      * object. Bare in mind that these method should be explicit to administrative
      * roles.
+     * 
+     * Required scopes: organizations:read || organizations:write
+     * 
+     * @return Page object.
      */
     public Page<Organization> findAll(Pageable pageable);
 
@@ -27,12 +31,18 @@ public interface OrganizationService {
      * Retrieves all organizations matching the given name as
      * {@link org.springframework.data.domain.Page} object. Bare in mind that these
      * method should be explicit to administrative roles.
+     * 
+     * Required scopes: organizations:read || organizations:write
+     * 
+     * @return Page object.
      */
     public Page<Organization> findByNameContainingIgnoreCase(Pageable pageable, String name);
 
     /**
-     * Returns the user object matching the given uuid as
+     * Returns the organization object matching the given uuid as
      * {@link java.util.Optional}.
+     * 
+     * Required scopes: organizations:read || organizations:write
      * 
      * @param uuid Objects uuid.
      * @return Optional
@@ -40,8 +50,10 @@ public interface OrganizationService {
     public Optional<Organization> findByUUID(UUID uuid);
 
     /**
-     * Returns the user object matching the given name as
+     * Returns the organization object matching the given name as
      * {@link java.util.Optional}.
+     * 
+     * Required scopes: organizations:read || organizations:write
      * 
      * @param name Objects name.
      * @return Optional
@@ -52,9 +64,19 @@ public interface OrganizationService {
      * Saves a given object to database. This will create a new one if it doesn't
      * exists.
      * 
+     * Required scopes: organizations:write
      * 
      * @param organization Organization object.
      * @return created organization
      */
     public Organization create(Organization organization);
+
+    /**
+     * Deletes the organization object matching the given uuid.
+     * 
+     * Required scopes: organizations:write
+     * 
+     * @param uuid Objects uuid.
+     */
+    public void deleteByUUID(UUID uuid);
 }

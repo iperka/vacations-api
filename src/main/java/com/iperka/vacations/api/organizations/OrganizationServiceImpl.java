@@ -32,18 +32,21 @@ public class OrganizationServiceImpl implements OrganizationService {
     }
 
     @Override
+    @PreAuthorize("hasAuthority('SCOPE_organizations:read')")
     public Page<Organization> findAll(Pageable pageable) {
         logger.debug("findAll called");
         return this.organizationRepository.findAll(pageable);
     }
 
     @Override
+    @PreAuthorize("hasAuthority('SCOPE_organizations:read')")
     public Page<Organization> findByNameContainingIgnoreCase(Pageable pageable, String name) {
         logger.debug("findAllByName called");
         return this.organizationRepository.findByNameContainingIgnoreCase(pageable, name);
     }
 
     @Override
+    @PreAuthorize("hasAuthority('SCOPE_organizations:read')")
     public Optional<Organization> findByUUID(UUID uuid) {
         logger.debug("findByUUID called");
         return this.organizationRepository.findById(uuid);
@@ -64,8 +67,15 @@ public class OrganizationServiceImpl implements OrganizationService {
     }
 
     @Override
+    @PreAuthorize("hasAuthority('SCOPE_organizations:read')")
     public Optional<Organization> findByNameIgnoreCase(String name) {
         logger.debug("findByNameIgnoreCase called");
         return this.organizationRepository.findByNameIgnoreCase(name);
+    }
+
+    @Override
+    @PreAuthorize("hasAuthority('SCOPE_organizations:write')")
+    public void deleteByUUID(UUID uuid) {
+        this.organizationRepository.deleteById(uuid);
     }
 }
