@@ -16,8 +16,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RestController
 @RequestMapping(value = "/")
 public class HelperController {
-    @Autowired
-    private ResourceLoader resourceLoader;
 
     @Value("classpath:static/oauth2-redirect.html")
     private Resource oauthRedirect;
