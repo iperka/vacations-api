@@ -9,6 +9,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Helper controller to serve static files.
+ * Even if its bad practice...
+ * 
+ * @author Michael Beutler
+ * @version 0.0.1
+ * @since 2021-12-19
+ */
 @RestController
 @RequestMapping(value = "/")
 public class HelperController {
@@ -16,9 +24,12 @@ public class HelperController {
     @Value("classpath:static/oauth2-redirect.html")
     private Resource oauthRedirect;
 
-    @GetMapping(value = "oauth2-redirect.html", produces = MediaType.TEXT_HTML_VALUE)
+    @Value("classpath:static/favicon.ico")
+    private Resource favicon;
+
+    @GetMapping(value = "/favicon.ico", produces = MediaType.ALL_VALUE)
     public byte[] getOauthRedirect() throws IOException {
-        return oauthRedirect.getInputStream().readAllBytes();
+        return favicon.getInputStream().readAllBytes();
     }
 
 }
