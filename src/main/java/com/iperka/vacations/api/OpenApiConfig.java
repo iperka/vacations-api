@@ -24,7 +24,7 @@ import io.swagger.v3.oas.models.servers.Server;
  * OpenAPI SpringDoc Configuration Bean.
  * 
  * @author Michael Beutler
- * @version 0.0.2
+ * @version 0.0.3
  * @since 2021-12-15
  */
 @Configuration
@@ -64,8 +64,8 @@ public class OpenApiConfig {
         .title("Vacations API")
         .description("REST API for iperka vacations solution.")
         .version("v1")
-        .contact(new Contact().name("Support").email("support@iperka.com")))
-        .addServersItem(new Server().url("https://api.vacations.iperka.com/v1/").description("Main Production Server"))
+        .contact(new Contact().name("Support").email("support@iperka.com").url("https://iperka.com")))
+        .addServersItem(new Server().url("https://api.vacations.iperka.com/v1/").description("Main Production Server v1"))
         .addServersItem(new Server().url("http://localhost:8080/").description("Local Test Server"));
 
         return openAPI;

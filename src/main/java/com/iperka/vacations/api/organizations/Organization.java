@@ -39,7 +39,7 @@ public class Organization {
     @Id
     @GeneratedValue
     @Column(columnDefinition = "BINARY(16)", nullable = false, unique = true)
-    @Schema(description = "Unique identifier of the Organization.", example = "67394e83-1ea5-495e-adf3-80ee93514f92", required = true)
+    @Schema(description = "Unique identifier of the Organization.", example = "67394e83-1ea5-495e-adf3-80ee93514f92", required = true, format = "uuid")
     private UUID uuid;
 
     /**

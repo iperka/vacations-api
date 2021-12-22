@@ -11,8 +11,10 @@ import com.iperka.vacations.api.organizations.dto.OrganizationDTO;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -63,7 +65,7 @@ public class OrganizationController {
                     })
     public ResponseEntity<Response<List<Organization>>> getAllOrganizations(
     // @formatter:off
-        Pageable pageable,
+        @ParameterObject @PageableDefault(size = 20, sort = "name") Pageable pageable,
         @RequestParam(required = false) @Parameter(description = "Filter owned organizations by name.") String name
     // @formatter:on
     ) {

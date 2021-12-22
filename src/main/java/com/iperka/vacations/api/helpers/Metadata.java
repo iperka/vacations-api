@@ -2,6 +2,8 @@ package com.iperka.vacations.api.helpers;
 
 import org.springframework.data.domain.Page;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * The {@link com.iperka.vacations.api.helpers.Metadata} class defines the
  * structure of a metadata object. This object is mostly used for
@@ -18,7 +20,7 @@ import org.springframework.data.domain.Page;
  * </code>
  * 
  * @author Michael Beutler
- * @version 0.0.2
+ * @version 0.0.3
  * @since 2021-05-14
  */
 public class Metadata {
@@ -62,6 +64,7 @@ public class Metadata {
         this.query = query;
     }
 
+    @Schema(description = "Total amount of items matching request.", example = "200", required = true)
     public long getTotalElements() {
         return totalElements;
     }
@@ -70,6 +73,7 @@ public class Metadata {
         this.totalElements = totalElements;
     }
 
+    @Schema(description = "Maximum amount of pages relative to page size.", example = "2", required = true)
     public long getTotalPages() {
         return totalPages;
     }
@@ -78,6 +82,7 @@ public class Metadata {
         this.totalPages = totalPages;
     }
 
+    @Schema(description = "Page according to page request.", example = "1", required = true)
     public long getPage() {
         return page;
     }
@@ -86,6 +91,7 @@ public class Metadata {
         this.page = page;
     }
 
+    @Schema(description = "Response object page size.", example = "20", required = true)
     public long getPerPage() {
         return perPage;
     }
@@ -94,6 +100,7 @@ public class Metadata {
         this.perPage = perPage;
     }
 
+    @Schema(description = "If the request uses a specific filter query it will be represented.", example = "name=Test", required = true)
     public String getQuery() {
         return query;
     }
