@@ -37,7 +37,6 @@ The API is now running on port `8080` and should be accessible via `http://local
 
 - Swagger UI: http://localhost:8080/swagger-ui/index.html#/
 - OpenAPI: http://localhost:8080/openapi/v3/
-- Postman Collection: [JSON](./postman_collection.json)
 
 ## 1.3. Installation 💽
 
@@ -127,3 +126,4 @@ Please note that some default values are also provided by configuration profiles
 | `JPA_DDL_AUTO`                   | JPA DDL automation setting.                                            | `string`                    | `update`                                     |
 | `JPA_HIBERNATE_DIALECT`          | JPA Hibernate dialect.                                                 | `string`                    | -                                            |
 | `SWAGGER_UI_OAUTH2_REDIRECT_URL` | Swagger UI OAuth2 redirect URL.                                        | `string`                    | `http://localhost:8080/oauth2-redirect.html` |
+| `SERVER_SERVLET_CONTEXT_PATH`    | Servelt context path.                                                  | `string`                    | `/v1`                                        |

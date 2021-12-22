@@ -28,8 +28,12 @@ public class HelperController {
     private Resource favicon;
 
     @GetMapping(value = "/favicon.ico", produces = MediaType.ALL_VALUE)
-    public byte[] getOauthRedirect() throws IOException {
+    public byte[] getFavicon() throws IOException {
         return favicon.getInputStream().readAllBytes();
     }
 
+    @GetMapping(value = "/oauth2-redirect.html", produces = MediaType.TEXT_HTML_VALUE)
+    public byte[] getOauthRedirect() throws IOException {
+        return oauthRedirect.getInputStream().readAllBytes();
+    }
 }
