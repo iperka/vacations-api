@@ -9,7 +9,8 @@ spring:
     resources:
       add-mappings: false
   data:
-    web.pageable.max-page-size: ${REST_MAX_PAGE_SIZE:100}
+    web.pageable:
+      max-page-size: ${REST_MAX_PAGE_SIZE:100}
     rest.max-page-size: ${REST_MAX_PAGE_SIZE:100}
   security:
     oauth2:
@@ -35,7 +36,7 @@ management:
   server:
     port: ${MANAGEMENT_SERVER_PORT:8081}
 server:
-  servlet.context-path: ${SERVER_SERVLET_CONTEXT_PATH:/v1}
+  servlet.context-path: ${SERVER_SERVLET_CONTEXT_PATH:/}
   error.whitelabel.enabled: false
 ---
 spring:
