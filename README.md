@@ -107,23 +107,23 @@ Please make sure to update tests as appropriate and meet the quality gate requir
 
 Please note that some default values are also provided by configuration profiles. For example if the profile is set to `development` the datasource will be an in memory database ready to test but with non persistent data.
 
-| Name                             | Description                                                            | Type                        | Default                                      |
-| -------------------------------- | ---------------------------------------------------------------------- | --------------------------- | -------------------------------------------- |
-| `SPRING_PROFILES_ACTIVE`         | Application configuration profile.                                     | `development \| production` | `development`                                |
-| `REST_MAX_PAGE_SIZE`             | Defines the maximum page size for `Pagable` parameters.                | `int`                       | `100`                                        |
-| `AUTH0_AUDIENCE`                 | Auth0 Audience configured in your Auth0 API. (Must end with `/`.)      | `string`                    | `https://api.vacations.iperka.com/`          |
-| `AUTH0_DOMAIN`                   | Auth0 Domain provided by Auth0. (Must end with `/`.)                   | `string`                    | `https://iperka.eu.auth0.com/`               |
-| `API_DOCS_PATH`                  | Relative path to provide OpenAPI v3 JSON.                              | `string`                    | `/openapi/v3`                                |
-| `API_DOCS_SHOW_ACTUATOR`         | When set to `true` the actuator routes will also be documented.        | `boolean`                   | `false`                                      |
-| `API_DOCS_ENABLED`               | API Docs endpoint is enabled.                                          | `boolean`                   | `false`                                      |
-| `SWAGGER_UI_ENABLED`             | Swagger UI endpoint is enabled. (Requires API Docs to be enabled too.) | `boolean`                   | `false`                                      |
-| `SWAGGER_API_DOCS_PATH`          | Relative path for OpenAPI docs.                                        | `string`                    | `/openapi/v3`                                |
-| `MANAGEMENT_SERVER_PORT`         | Management Server port. (Will be used to expose actuator endpoints.)   | `int`                       | `8081`                                       |
-| `DATASOURCE_URL`                 | Spring Boot Datasource connection URL.                                 | `string`                    | -                                            |
-| `DATASOURCE_DRIVER`              | Spring Boot Datasource driver class name.                              | `string`                    | -                                            |
-| `DATASOURCE_USERNAME`            | Spring Boot Datasource username.                                       | `string`                    | -                                            |
-| `DATASOURCE_PASSWORD`            | Spring Boot Datasource password.                                       | `string`                    | -                                            |
-| `JPA_DDL_AUTO`                   | JPA DDL automation setting.                                            | `string`                    | `update`                                     |
-| `JPA_HIBERNATE_DIALECT`          | JPA Hibernate dialect.                                                 | `string`                    | -                                            |
-| `SWAGGER_UI_OAUTH2_REDIRECT_URL` | Swagger UI OAuth2 redirect URL.                                        | `string`                    | `http://localhost:8080/oauth2-redirect.html` |
-| `SERVER_SERVLET_CONTEXT_PATH`    | Servelt context path.                                                  | `string`                    | `/`                                          |
+| Name                             | Description                                                            | Type                        | Default                             |
+| -------------------------------- | ---------------------------------------------------------------------- | --------------------------- | ----------------------------------- |
+| `SPRING_PROFILES_ACTIVE`         | Application configuration profile.                                     | `development \| production` | `development`                       |
+| `REST_MAX_PAGE_SIZE`             | Defines the maximum page size for `Pagable` parameters.                | `int`                       | `100`                               |
+| `AUTH0_AUDIENCE`                 | Auth0 Audience configured in your Auth0 API. (Must end with `/`.)      | `string`                    | `https://api.vacations.iperka.com/` |
+| `AUTH0_DOMAIN`                   | Auth0 Domain provided by Auth0. (Must end with `/`.)                   | `string`                    | `https://iperka.eu.auth0.com/`      |
+| `API_DOCS_PATH`                  | Relative path to provide OpenAPI v3 JSON.                              | `string`                    | `/openapi/v3`                       |
+| `API_DOCS_SHOW_ACTUATOR`         | When set to `true` the actuator routes will also be documented.        | `boolean`                   | `false`                             |
+| `API_DOCS_ENABLED`               | API Docs endpoint is enabled.                                          | `boolean`                   | `false`                             |
+| `SWAGGER_UI_ENABLED`             | Swagger UI endpoint is enabled. (Requires API Docs to be enabled too.) | `boolean`                   | `false`                             |
+| `SWAGGER_API_DOCS_PATH`          | Relative path for OpenAPI docs.                                        | `string`                    | `/openapi/v3`                       |
+| `MANAGEMENT_SERVER_PORT`         | Management Server port. (Will be used to expose actuator endpoints.)   | `int`                       | `8081`                              |
+| `DATASOURCE_URL`                 | Spring Boot Datasource connection URL.                                 | `string`                    | -                                   |
+| `DATASOURCE_DRIVER`              | Spring Boot Datasource driver class name.                              | `string`                    | -                                   |
+| `DATASOURCE_USERNAME`            | Spring Boot Datasource username.                                       | `string`                    | -                                   |
+| `DATASOURCE_PASSWORD`            | Spring Boot Datasource password.                                       | `string`                    | -                                   |
+| `JPA_DDL_AUTO`                   | JPA DDL automation setting.                                            | `string`                    | `update`                            |
+| `JPA_HIBERNATE_DIALECT`          | JPA Hibernate dialect.                                                 | `string`                    | -                                   |
+| `SWAGGER_UI_OAUTH2_REDIRECT_URL` | Swagger UI OAuth2 redirect URL.                                        | `string`                    | `/oauth2-redirect.html`             |
+| `SERVER_SERVLET_CONTEXT_PATH`    | Servelt context path.                                                  | `string`                    | `/`                                 |

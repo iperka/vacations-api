@@ -1,0 +1,128 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.metadata.name | default "vacations-api" }}
+  namespace: {{ .Values.metadata.namespace | default "default" }}
+spec:
+  progressDeadlineSeconds: 600
+  replicas: {{ .Values.spec.replicas | default 4 }}
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      workload.user.cattle.io/workloadselector: apps.deployment-default-{{ .Values.metadata.name | default "vacations-api" }}
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        workload.user.cattle.io/workloadselector: apps.deployment-default-{{ .Values.metadata.name | default "vacations-api" }}
+    spec:
+      containers:
+        - env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: {{ .Values.spring.config.activate.onProfile | default "development" | quote }}
+            - name: MANAGEMENT_SERVER_PORT
+              value: {{ .Values.management.server.port | default 8081 }}
+            - name: REST_MAX_PAGE_SIZE
+              value: {{ .Values.spring.data.rest.maxPageSize | default 100 }}
+            - name: AUTH0_AUDIENCE
+              value: {{ .Values.auth0.audience | default "https://api.iperka.com/vacations/" | quote }}
+            - name: AUTH0_DOMAIN
+              value: {{ .Values.auth0.domain | default "https://iperka.eu.auth0.com/" | quote }}
+            - name: DATASOURCE_URL
+              value: {{ .Values.spring.datasource.url | default "jdbc:h2:mem:vacations-development" | quote }}
+            - name: DATASOURCE_DRIVER
+              value: {{ .Values.spring.datasource.driverClassName | default "org.h2.Driver" | quote }}
+            - name: DATASOURCE_USERNAME
+              value: {{ .Values.spring.datasource.username | default "sa" | quote }}
+            - name: DATASOURCE_PASSWORD
+              value: {{ .Values.spring.datasource.password | default "" | quote }}
+            - name: JPA_DDL_AUTO
+              value: {{ .Values.spring.jpa.hibernate.ddlAuto | default "validate" | quote }}
+            - name: JPA_HIBERNATE_DIALECT
+              value: {{ .Values.spring.jpa.properties.hibernate.dialect | default "" | quote }}
+            - name: API_DOCS_ENABLED
+              value: {{ .Values.springdoc.apiDocs.enabled | default true | quote }}
+            - name: API_DOCS_SHOW_ACTUATOR
+              value: {{ .Values.springdoc.showActuator | default false | quote }}
+            - name: SWAGGER_UI_ENABLED
+              value: {{ .Values.springdoc.swaggerUi.enabled | default true | quote }}
+            - name: SWAGGER_API_DOCS_PATH
+              value: {{ .Values.springdoc.swaggerUi.url | default "../openapi/v3" | quote }}
+            - name: SWAGGER_UI_OAUTH2_REDIRECT_URL
+              value:  {{ .Values.springdoc.swaggerUi.oauth2RedirectUrl | default "/oauth2-redirect.html" | quote }}
+            - name: SERVER_SERVLET_CONTEXT_PATH
+              value: {{ .Values.server.servlet.contextPath | default "/" | quote }}
+          image: ghcr.io/iperka/vacations-api:latest
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /actuator/health/liveness
+              port: {{ .Values.management.server.port | default 8081 }}
+              scheme: HTTP
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: container-0
+          ports:
+            - containerPort: 8080
+              name: 8080tcp
+              protocol: TCP
+            - containerPort: {{ .Values.management.server.port | default 8081 }}
+              name: {{ .Values.management.server.port | default 8081 }}tcp
+              protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /actuator/health/readiness
+              port: {{ .Values.management.server.port | default 8081 }}
+              scheme: HTTP
+            initialDelaySeconds: 20
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      imagePullSecrets: {{ .Values.imagePullSecrets }}
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/app-root: /v1
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      rewrite ^/favicon.ico https://api.vacations.iperka.com/v1/favicon.ico permanent;
+      rewrite ^/oauth2-redirect.html https://api.vacations.iperka.com/v1/oauth2-redirect.html permanent;
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+  name: vacations-ingress
+  namespace: {{ .Values.metadata.namespace | default "default" | quote }}
+spec:
+  rules:
+  - host: api.vacations.iperka.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: {{ .Values.metadata.name | default "vacations-api" }}
+            port:
+              number: 8080
+        path: /
+        pathType: Prefix
+      - backend:
+          service:
+            name: {{ .Values.metadata.name | default "vacations-api" }}
+            port:
+              number: 8080
+        path: /v1(/|$)(.*)
+        pathType: Prefix
