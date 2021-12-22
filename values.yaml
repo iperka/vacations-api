@@ -1,3 +1,4 @@
+domain: api.vacations.iperka.com
 metadata:
   name: vacations-api
   namespace: default

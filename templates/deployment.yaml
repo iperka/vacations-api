@@ -109,7 +109,7 @@ metadata:
   namespace: {{ .Values.metadata.namespace | default "default" | quote }}
 spec:
   rules:
-  - host: api.vacations.iperka.com
+  - host:  {{ .Values.domain | default "api.vacations.iperka.com" | quote }}
     http:
       paths:
       - backend:
