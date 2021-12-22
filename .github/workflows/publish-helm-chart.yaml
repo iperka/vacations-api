@@ -1,10 +1,8 @@
 name: Publish Helm Chart 🐳
 on:
-  release:
-    types: [published]
   push:
-    tags:
-      - "*"
+    branches:
+      - main
 
 jobs:
   release:

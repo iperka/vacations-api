@@ -16,8 +16,8 @@ Access iperka vacations with the API. This API is built with Java Spring Boot an
   - [1.1. Table of Contents 🧾](#11-table-of-contents-)
   - [1.2. Getting Started 🚀](#12-getting-started-)
   - [1.3. Installation 💽](#13-installation-)
-  - [1.4. Deployment 🐳](#14-deployment-)
-  - [1.5. Usage 🎉](#15-usage-)
+  - [1.4. Local Deployment 🐳](#14-local-deployment-)
+  - [1.5. Deployment ⛴](#15-deployment-)
   - [1.6. Built With 📦](#16-built-with-)
   - [1.7. Authors 👨‍💻](#17-authors-)
   - [1.8. License 📃](#18-license-)
@@ -52,11 +52,7 @@ Package the Java application with maven.
 $ ./mvnw package
 ```
 
-## 1.4. Deployment 🐳
-
-It is recommended to use this API as docker container within a Kubernetes cluster.
-
-## 1.5. Usage 🎉
+## 1.4. Local Deployment 🐳
 
 Run docker container locally with "production" profile activated, for local testing. Keep in mind that a MySQL instance must be running. For production see [Deployment](#deployment--1).
 
@@ -75,6 +71,28 @@ $ docker run \
 ```
 
 Now the API should be accessible via `http://localhost:8080`.
+
+## 1.5. Deployment ⛴
+
+It is recommended to use this API as docker container within a Kubernetes cluster.
+
+[Helm](https://helm.sh) must be installed to use the charts. Please refer to
+Helm's [documentation](https://helm.sh/docs) to get started.
+
+Once Helm has been set up correctly, add the repo as follows:
+
+helm repo add <alias> https://<orgname>.github.io/helm-charts
+
+If you had already added this repo earlier, run `helm repo update` to retrieve
+the latest versions of the packages. You can then run `helm search repo <alias>` to see the charts.
+
+To install the <chart-name> chart:
+
+    helm install my-<chart-name> <alias>/<chart-name>
+
+To uninstall the chart:
+
+    helm delete my-<chart-name>
 
 ## 1.6. Built With 📦
 
