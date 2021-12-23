@@ -54,19 +54,23 @@ $ ./mvnw package
 
 ## 1.4. Local Deployment 🐳
 
-Run docker container locally with "production" profile activated, for local testing. Keep in mind that a MySQL instance must be running. For production see [Deployment](#deployment--1).
+Run docker container locally with `production` profile activated, for local testing. For production see [Deployment](#deployment--1).
 
 To run a docker container with the image in production mode use the following command (should not be used in production).
 
 ```bash
+# Adjust values to your needs
 $ docker run \
     -e "SPRING_PROFILES_ACTIVE=production" \
-    -e "DATASOURCE_URL=jdbc:mysql://mysql-server:3306/vacations" \
-    -e "DATASOURCE_DRIVER=com.mysql.jdbc.Driver" \
-    -e "DATASOURCE_USERNAME=vacations" \
+    -e "DATASOURCE_URL=jdbc:h2:mem:vacations-development" \
+    -e "DATASOURCE_DRIVER=org.h2.Driver" \
+    -e "DATASOURCE_USERNAME=sa" \
     -e "DATASOURCE_PASSWORD=secret" \
     -e "JPA_DDL_AUTO=update" \
-    -e "JPA_HIBERNATE_DIALECT=org.hibernate.dialect.MySQL5InnoDBDialect" \
+    -e "AUTH0_DOMAIN=https://my-domain.eu.auth0.com/" \
+    -e "AUTH0_AUDIENCE=https://api.example.com/vacations/" \
+    -e "API_SERVER_URL=http://localhost:8080/" \
+    --restart unless-stopped -d \
     -p 8080:8080 ghcr.io/iperka/vacations-api:latest
 ```
 
@@ -125,23 +129,24 @@ Please make sure to update tests as appropriate and meet the quality gate requir
 
 Please note that some default values are also provided by configuration profiles. For example if the profile is set to `development` the datasource will be an in memory database ready to test but with non persistent data.
 
-| Name                             | Description                                                            | Type                        | Default                             |
-| -------------------------------- | ---------------------------------------------------------------------- | --------------------------- | ----------------------------------- |
-| `SPRING_PROFILES_ACTIVE`         | Application configuration profile.                                     | `development \| production` | `development`                       |
-| `REST_MAX_PAGE_SIZE`             | Defines the maximum page size for `Pagable` parameters.                | `int`                       | `100`                               |
-| `AUTH0_AUDIENCE`                 | Auth0 Audience configured in your Auth0 API. (Must end with `/`.)      | `string`                    | `https://api.vacations.iperka.com/` |
-| `AUTH0_DOMAIN`                   | Auth0 Domain provided by Auth0. (Must end with `/`.)                   | `string`                    | `https://iperka.eu.auth0.com/`      |
-| `API_DOCS_PATH`                  | Relative path to provide OpenAPI v3 JSON.                              | `string`                    | `/openapi/v3`                       |
-| `API_DOCS_SHOW_ACTUATOR`         | When set to `true` the actuator routes will also be documented.        | `boolean`                   | `false`                             |
-| `API_DOCS_ENABLED`               | API Docs endpoint is enabled.                                          | `boolean`                   | `false`                             |
-| `SWAGGER_UI_ENABLED`             | Swagger UI endpoint is enabled. (Requires API Docs to be enabled too.) | `boolean`                   | `false`                             |
-| `SWAGGER_API_DOCS_PATH`          | Relative path for OpenAPI docs.                                        | `string`                    | `/openapi/v3`                       |
-| `MANAGEMENT_SERVER_PORT`         | Management Server port. (Will be used to expose actuator endpoints.)   | `int`                       | `8081`                              |
-| `DATASOURCE_URL`                 | Spring Boot Datasource connection URL.                                 | `string`                    | -                                   |
-| `DATASOURCE_DRIVER`              | Spring Boot Datasource driver class name.                              | `string`                    | -                                   |
-| `DATASOURCE_USERNAME`            | Spring Boot Datasource username.                                       | `string`                    | -                                   |
-| `DATASOURCE_PASSWORD`            | Spring Boot Datasource password.                                       | `string`                    | -                                   |
-| `JPA_DDL_AUTO`                   | JPA DDL automation setting.                                            | `string`                    | `update`                            |
-| `JPA_HIBERNATE_DIALECT`          | JPA Hibernate dialect.                                                 | `string`                    | -                                   |
-| `SWAGGER_UI_OAUTH2_REDIRECT_URL` | Swagger UI OAuth2 redirect URL.                                        | `string`                    | `/oauth2-redirect.html`             |
-| `SERVER_SERVLET_CONTEXT_PATH`    | Servelt context path.                                                  | `string`                    | `/`                                 |
+| Name                             | Description                                                            | Type                        | Default                                |
+| -------------------------------- | ---------------------------------------------------------------------- | --------------------------- | -------------------------------------- |
+| `SPRING_PROFILES_ACTIVE`         | Application configuration profile.                                     | `development \| production` | `development`                          |
+| `REST_MAX_PAGE_SIZE`             | Defines the maximum page size for `Pagable` parameters.                | `int`                       | `100`                                  |
+| `AUTH0_AUDIENCE`                 | Auth0 Audience configured in your Auth0 API. (Must end with `/`.)      | `string`                    | `https://api.vacations.iperka.com/`    |
+| `AUTH0_DOMAIN`                   | Auth0 Domain provided by Auth0. (Must end with `/`.)                   | `string`                    | `https://iperka.eu.auth0.com/`         |
+| `API_DOCS_PATH`                  | Relative path to provide OpenAPI v3 JSON.                              | `string`                    | `/openapi/v3`                          |
+| `API_DOCS_SHOW_ACTUATOR`         | When set to `true` the actuator routes will also be documented.        | `boolean`                   | `false`                                |
+| `API_DOCS_ENABLED`               | API Docs endpoint is enabled.                                          | `boolean`                   | `false`                                |
+| `SWAGGER_UI_ENABLED`             | Swagger UI endpoint is enabled. (Requires API Docs to be enabled too.) | `boolean`                   | `false`                                |
+| `SWAGGER_API_DOCS_PATH`          | Relative path for OpenAPI docs.                                        | `string`                    | `/openapi/v3`                          |
+| `MANAGEMENT_SERVER_PORT`         | Management Server port. (Will be used to expose actuator endpoints.)   | `int`                       | `8081`                                 |
+| `DATASOURCE_URL`                 | Spring Boot Datasource connection URL.                                 | `string`                    | -                                      |
+| `DATASOURCE_DRIVER`              | Spring Boot Datasource driver class name.                              | `string`                    | -                                      |
+| `DATASOURCE_USERNAME`            | Spring Boot Datasource username.                                       | `string`                    | -                                      |
+| `DATASOURCE_PASSWORD`            | Spring Boot Datasource password.                                       | `string`                    | -                                      |
+| `JPA_DDL_AUTO`                   | JPA DDL automation setting.                                            | `string`                    | `update`                               |
+| `JPA_HIBERNATE_DIALECT`          | JPA Hibernate dialect.                                                 | `string`                    | -                                      |
+| `SWAGGER_UI_OAUTH2_REDIRECT_URL` | Swagger UI OAuth2 redirect URL.                                        | `string`                    | `/oauth2-redirect.html`                |
+| `SERVER_SERVLET_CONTEXT_PATH`    | Servelt context path.                                                  | `string`                    | `/`                                    |
+| `API_SERVER_URL`                 | API Server url for OpenAPI requests.                                   | `string`                    | `https://api.vacations.iperka.com/v1/` |

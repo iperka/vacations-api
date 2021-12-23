@@ -16,7 +16,6 @@ import io.swagger.v3.oas.models.security.OAuthFlows;
 import io.swagger.v3.oas.models.security.Scopes;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
-import io.swagger.v3.oas.models.security.SecurityScheme.In;
 import io.swagger.v3.oas.models.security.SecurityScheme.Type;
 import io.swagger.v3.oas.models.servers.Server;
 
@@ -24,7 +23,7 @@ import io.swagger.v3.oas.models.servers.Server;
  * OpenAPI SpringDoc Configuration Bean.
  * 
  * @author Michael Beutler
- * @version 0.0.4
+ * @version 0.0.5
  * @since 2021-12-15
  */
 @Configuration
@@ -35,10 +34,25 @@ public class OpenApiConfig {
     @Value("${auth0.audience}")
     private String audience;
 
+    @Value("${api.serverUrl}")
+    private String apiServerUrl;
+
+    @Value("${spring.profiles.active}")
+    private String activeProfile;
+
     @Bean
     public OpenAPI customOpenAPI() {
         // @formatter:off
         OpenAPI openAPI = new OpenAPI();
+
+        Server server = new Server();
+        if (activeProfile.equals("development")) {
+            server.url("http://localhost:8080/");
+            server.description("Local Development Server");
+        } else {
+            server.url(apiServerUrl);
+            server.description("Main Production Server");
+        }
 
         openAPI
         .addSecurityItem(new SecurityRequirement().addList("OAuth2", Arrays.asList("organizations:read", "organizations:write")))
@@ -62,8 +76,7 @@ public class OpenApiConfig {
         .description("REST API for iperka vacations solution.")
         .version("v1")
         .contact(new Contact().name("Support").email("support@iperka.com").url("https://iperka.com")))
-        .addServersItem(new Server().url("https://api.vacations.iperka.com/v1/").description("Main Production Server v1"))
-        .addServersItem(new Server().url("http://localhost:8080/").description("Local Test Server"));
+        .addServersItem(server);
 
         return openAPI;
         // @formatter:on
