@@ -24,7 +24,7 @@ import io.swagger.v3.oas.models.servers.Server;
  * OpenAPI SpringDoc Configuration Bean.
  * 
  * @author Michael Beutler
- * @version 0.0.3
+ * @version 0.0.4
  * @since 2021-12-15
  */
 @Configuration
@@ -49,16 +49,13 @@ public class OpenApiConfig {
             .flows(new OAuthFlows()
                 .implicit(new OAuthFlow()
                     .authorizationUrl(domain + "authorize?audience=" + audience)
-                    .tokenUrl(domain + "oauth/token")
                     .scopes(
                        new Scopes()
                        .addString("organizations:read", "Read owned organizations.")
                        .addString("organizations:write", "Create, update and delete owned organizations.") 
                     )
                 )
-            ).in(In.HEADER)
-            .bearerFormat("JWT")
-            .name("OAuth2")
+            )
         )).security(List.of(new SecurityRequirement().addList("OAuth2")))
         .info(new Info()
         .title("Vacations API")
