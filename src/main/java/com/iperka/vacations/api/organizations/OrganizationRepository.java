@@ -14,7 +14,7 @@ import org.springframework.stereotype.Repository;
  * {@link com.iperka.vacations.api.organizations.Organization} model.
  * 
  * @author Michael Beutler
- * @version 0.0.3
+ * @version 0.0.4
  * @since 2021-09-29
  */
 @Repository
@@ -27,17 +27,39 @@ public interface OrganizationRepository extends PagingAndSortingRepository<Organ
     public Page<Organization> findAll(Pageable pageable);
 
     /**
+     * Retrieves all organizations owned by given user as
+     * {@link org.springframework.data.domain.Page}
+     * object.
+     * 
+     * @param pageable Pageable object.
+     * @param owner    user ID of owner.
+     */
+    public Page<Organization> findAllByOwner(Pageable pageable, String owner);
+
+    /**
      * Returns the user object matching the given uuid as
-     * {@link java.util.Optional}.
+     * {@link java.util.Optional}. Bare in mind that these method should be explicit
+     * to administrative roles.
      * 
      * @param uuid Organization uuid.
      * @return Optional
      */
-    public Optional<Organization> findById(UUID uuid);
+    public Optional<Organization> findByUuid(UUID uuid);
+
+    /**
+     * Returns the user object matching the given uuid and owner as
+     * {@link java.util.Optional}.
+     * 
+     * @param uuid  Organization uuid.
+     * @param owner user ID of owner.
+     * @return Optional
+     */
+    public Optional<Organization> findByUuidAndOwner(UUID uuid, String owner);
 
     /**
      * Returns the user object matching the given name as
-     * {@link java.util.Optional}.
+     * {@link java.util.Optional}. Bare in mind that these method should be explicit
+     * to administrative roles.
      * 
      * @param name Organization name.
      * @return Optional
@@ -45,11 +67,51 @@ public interface OrganizationRepository extends PagingAndSortingRepository<Organ
     public Optional<Organization> findByNameIgnoreCase(String name);
 
     /**
-     * Returns the organization objects matching the given name as
-     * {@link java.util.Page}.
+     * Returns the user object matching the given name and owner as
+     * {@link java.util.Optional}.
      * 
-     * @param name Organization name.
+     * @param name  Organization name.
+     * @param owner user ID of owner.
+     * @return Optional
+     */
+    public Optional<Organization> findByNameIgnoreCaseAndOwner(String name, String owner);
+
+    /**
+     * Returns the organization objects matching the given name as
+     * {@link java.util.Page}. Bare in mind that these method should be explicit
+     * to administrative roles.
+     * 
+     * @param pageable Pageable object.
+     * @param name     Organization name.
      * @return Page
      */
     public Page<Organization> findByNameContainingIgnoreCase(Pageable pageable, String name);
+
+    /**
+     * Returns the organization objects matching the given name and owner as
+     * {@link java.util.Page}.
+     * 
+     * @param pageable Pageable object.
+     * @param name     Organization name.
+     * @param owner    user ID of owner.
+     * @return Page
+     */
+    public Page<Organization> findByNameContainingIgnoreCaseAndOwner(Pageable pageable, String name, String owner);
+
+    /**
+     * Deletes the user object matching the given uuid. Bare in mind that these
+     * method should be explicit to administrative roles.
+     * 
+     * @param uuid  Organization uuid.
+     * @param owner user ID of owner.
+     */
+    public void deleteByUuid(UUID uuid);
+
+    /**
+     * Deletes the user object matching the given uuid and owner.
+     * 
+     * @param uuid  Organization uuid.
+     * @param owner user ID of owner.
+     */
+    public void deleteByUuidAndOwner(UUID uuid, String owner);
 }

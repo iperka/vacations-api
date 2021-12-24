@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.iperka.vacations</groupId>
 	<artifactId>api</artifactId>
-	<version>0.1.6</version>
+	<version>0.1.7</version>
 	<name>Vacations API v1</name>
 	<description>Vacations API v1</description>
 	<properties>

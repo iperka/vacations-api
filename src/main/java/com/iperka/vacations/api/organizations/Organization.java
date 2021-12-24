@@ -12,6 +12,8 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
+import com.iperka.vacations.api.helpers.Ownable;
+
 import org.hibernate.validator.constraints.Length;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -28,7 +30,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @Table(name = "organizations", uniqueConstraints = {
         @UniqueConstraint(columnNames = { "uuid", "name" })
 })
-public class Organization {
+public class Organization implements Ownable {
     /**
      * Unique identifier for
      * {@link com.iperka.vacations.api.organizations.Organization} model. Uses the

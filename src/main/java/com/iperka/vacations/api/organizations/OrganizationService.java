@@ -12,7 +12,7 @@ import org.springframework.data.domain.Pageable;
  * {@link com.iperka.vacations.api.organisations.OrganisationRepository} model.
  * 
  * @author Michael Beutler
- * @version 0.0.6
+ * @version 0.0.7
  * @since 2021-09-29
  */
 public interface OrganizationService {
@@ -21,22 +21,54 @@ public interface OrganizationService {
      * object. Bare in mind that these method should be explicit to administrative
      * roles.
      * 
-     * Required scopes: organizations:read || organizations:write
+     * Required scopes: organizations:all:read || organizations:all:write
      * 
      * @return Page object.
      */
     public Page<Organization> findAll(Pageable pageable);
 
     /**
-     * Retrieves all organizations matching the given name as
-     * {@link org.springframework.data.domain.Page} object. Bare in mind that these
-     * method should be explicit to administrative roles.
+     * Retrieves all organizations as {@link org.springframework.data.domain.Page}
+     * object.
      * 
      * Required scopes: organizations:read || organizations:write
      * 
      * @return Page object.
      */
+    public Page<Organization> findAllByOwner(Pageable pageable, String owner);
+
+    /**
+     * Retrieves all organizations matching the given name as
+     * {@link org.springframework.data.domain.Page} object. Bare in mind that these
+     * method should be explicit to administrative roles.
+     * 
+     * Required scopes: organizations:all:read || organizations:all:write
+     * 
+     * @return Page object.
+     */
     public Page<Organization> findByNameContainingIgnoreCase(Pageable pageable, String name);
+
+    /**
+     * Retrieves all organizations matching the given name as
+     * {@link org.springframework.data.domain.Page} object.
+     * 
+     * Required scopes: organizations:read || organizations:write
+     * 
+     * @return Page object.
+     */
+    public Page<Organization> findByNameContainingIgnoreCaseAndOwner(Pageable pageable, String name, String owner);
+
+    /**
+     * Returns the organization object matching the given uuid as
+     * {@link java.util.Optional}. Bare in mind that these
+     * method should be explicit to administrative roles.
+     * 
+     * Required scopes: organizations:all:read || organizations:all:write
+     * 
+     * @param uuid Objects uuid.
+     * @return Optional
+     */
+    public Optional<Organization> findByUuid(UUID uuid);
 
     /**
      * Returns the organization object matching the given uuid as
@@ -47,18 +79,29 @@ public interface OrganizationService {
      * @param uuid Objects uuid.
      * @return Optional
      */
-    public Optional<Organization> findByUUID(UUID uuid);
+    public Optional<Organization> findByUuidAndOwner(UUID uuid, String owner);
 
     /**
      * Returns the organization object matching the given name as
-     * {@link java.util.Optional}.
+     * {@link java.util.Optional}. Bare in mind that these
+     * method should be explicit to administrative roles.
      * 
-     * Required scopes: organizations:read || organizations:write
+     * Required scopes: organizations:all:read || organizations:all:write
      * 
      * @param name Objects name.
      * @return Optional
      */
     public Optional<Organization> findByNameIgnoreCase(String name);
+
+    /**
+     * Returns the organization object matching the given name as
+     * {@link java.util.Optional}.
+     * Required scopes: organizations:read || organizations:write
+     * 
+     * @param name Objects name.
+     * @return Optional
+     */
+    public Optional<Organization> findByNameIgnoreCaseAndOwner(String name, String owner);
 
     /**
      * Saves a given object to database. This will create a new one if it doesn't
@@ -72,11 +115,21 @@ public interface OrganizationService {
     public Organization create(Organization organization);
 
     /**
+     * Deletes the organization object matching the given uuid. Bare in mind that
+     * these method should be explicit to administrative roles.
+     * 
+     * Required scopes: organizations:all:write
+     * 
+     * @param uuid Objects uuid.
+     */
+    public void deleteByUuid(UUID uuid);
+
+    /**
      * Deletes the organization object matching the given uuid.
      * 
      * Required scopes: organizations:write
      * 
      * @param uuid Objects uuid.
      */
-    public void deleteByUUID(UUID uuid);
+    public void deleteByUuidAndOwner(UUID uuid, String owner);
 }

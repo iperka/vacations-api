@@ -8,6 +8,7 @@ import javax.validation.Valid;
 
 import com.iperka.vacations.api.helpers.Response;
 import com.iperka.vacations.api.organizations.dto.OrganizationDTO;
+import com.iperka.vacations.api.security.Helpers;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,41 +57,70 @@ public class OrganizationController {
 
     @GetMapping
     @Operation(summary = "Finds all organizations", description = "Finds all organizations owned by authenticated user.", security = {
-            @SecurityRequirement(name = "OAuth2", scopes = { "organizations:read", "organizations:write" }) }, tags = {
-                    "Organizations" }, responses = {
-                            @ApiResponse(description = "Success", responseCode = "200", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OrganizationsListResponse.class))),
-                            @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content(mediaType = "application/json")),
-                            @ApiResponse(description = "Forbidden", responseCode = "403", content = @Content(mediaType = "application/json")),
-                            @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content(mediaType = "application/json"))
-                    })
+            @SecurityRequirement(name = "OAuth2", scopes = { "organizations:read", "organizations:write",
+                    "organizations:all:read", "organizations:all:write" }) }, tags = {
+                            "Organizations" }, responses = {
+                                    @ApiResponse(description = "Success", responseCode = "200", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OrganizationsListResponse.class))),
+                                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content(mediaType = "application/json")),
+                                    @ApiResponse(description = "Forbidden", responseCode = "403", content = @Content(mediaType = "application/json")),
+                                    @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content(mediaType = "application/json"))
+                            })
     public ResponseEntity<Response<List<Organization>>> getAllOrganizations(
-    // @formatter:off
-        @ParameterObject @PageableDefault(size = 20, sort = "name") Pageable pageable,
-        @RequestParam(required = false) @Parameter(description = "Filter owned organizations by name.") String name
-    // @formatter:on
-    ) {
+            Authentication authentication,
+            @ParameterObject @PageableDefault(size = 20, sort = "name") Pageable pageable,
+            @RequestParam(required = false) @Parameter(description = "Filter owned organizations by name.") String name) {
+        // Check if authenticated user has been granted organizations:all:read
+        String owner = Helpers.getOwner(authentication);
+        if (Helpers.hasScope("organizations:all:read", authentication)) {
+            if (StringUtils.hasText(name)) {
+                return Response
+                        .fromPage(HttpStatus.OK,
+                                this.organizationService.findByNameContainingIgnoreCase(pageable, name),
+                                String.format("name=*%s*", name))
+                        .build();
+            }
+
+            return Response.fromPage(HttpStatus.OK, this.organizationService.findAll(pageable)).build();
+        }
         if (StringUtils.hasText(name)) {
             return Response
-                    .fromPage(HttpStatus.OK, this.organizationService.findByNameContainingIgnoreCase(pageable, name),
+                    .fromPage(HttpStatus.OK,
+                            this.organizationService.findByNameContainingIgnoreCaseAndOwner(pageable, name, owner),
                             String.format("name=*%s*", name))
                     .build();
         }
 
-        return Response.fromPage(HttpStatus.OK, this.organizationService.findAll(pageable)).build();
+        return Response.fromPage(HttpStatus.OK, this.organizationService.findAllByOwner(pageable, owner)).build();
     }
 
     @GetMapping(value = "/{uuid}")
     @Operation(summary = "Finds organizations with given UUID.", description = "Finds organizations with given UUID owned by authenticated user.", security = {
-            @SecurityRequirement(name = "OAuth2", scopes = { "organizations:read", "organizations:write" }) }, tags = {
-                    "Organizations" }, responses = {
-                            @ApiResponse(description = "Success", responseCode = "200", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OrganizationResponse.class))),
-                            @ApiResponse(description = "Not Found", responseCode = "404", content = @Content(mediaType = "application/json")),
-                            @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content(mediaType = "application/json")),
-                            @ApiResponse(description = "Forbidden", responseCode = "403", content = @Content(mediaType = "application/json")),
-                            @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content(mediaType = "application/json"))
-                    })
-    public ResponseEntity<Response<Organization>> getOrganizationById(@PathVariable("uuid") UUID uuid) {
-        Optional<Organization> optional = organizationService.findByUUID(uuid);
+            @SecurityRequirement(name = "OAuth2", scopes = { "organizations:read", "organizations:write",
+                    "organizations:all:read", "organizations:all:write" }) }, tags = {
+                            "Organizations" }, responses = {
+                                    @ApiResponse(description = "Success", responseCode = "200", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OrganizationResponse.class))),
+                                    @ApiResponse(description = "Not Found", responseCode = "404", content = @Content(mediaType = "application/json")),
+                                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content(mediaType = "application/json")),
+                                    @ApiResponse(description = "Forbidden", responseCode = "403", content = @Content(mediaType = "application/json")),
+                                    @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content(mediaType = "application/json"))
+                            })
+    public ResponseEntity<Response<Organization>> getOrganizationById(Authentication authentication,
+            @PathVariable("uuid") UUID uuid) {
+        // Check if authenticated user has been granted organizations:all:read
+        String owner = Helpers.getOwner(authentication);
+        if (Helpers.hasScope("organizations:all:read", authentication)) {
+            Optional<Organization> optional = organizationService.findByUuid(uuid);
+
+            if (!optional.isPresent()) {
+                return Response.<Organization>notFound("No organization found with given id.").build();
+            }
+
+            Response<Organization> response = new Response<>(HttpStatus.OK);
+            response.setData(optional.get());
+
+            return response.build();
+        }
+        Optional<Organization> optional = organizationService.findByUuidAndOwner(uuid, owner);
 
         if (!optional.isPresent()) {
             return Response.<Organization>notFound("No organization found with given id.").build();
@@ -125,23 +155,43 @@ public class OrganizationController {
 
     @DeleteMapping(value = "/{uuid}")
     @Operation(summary = "Deletes organization with given UUID.", description = "Deletes organizations with given UUID and owned by authenticated user.", security = {
-            @SecurityRequirement(name = "OAuth2", scopes = "organizations:write") }, tags = {
-                    "Organizations" }, responses = {
-                            @ApiResponse(description = "OK", responseCode = "200", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class))),
-                            @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content(mediaType = "application/json")),
-                            @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content(mediaType = "application/json")),
-                            @ApiResponse(description = "Forbidden", responseCode = "403", content = @Content(mediaType = "application/json")),
-                            @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content(mediaType = "application/json"))
-                    })
-    public ResponseEntity<Response<Organization>> deleteOrganizationById(@PathVariable("uuid") UUID uuid) {
-        Optional<Organization> optional = organizationService.findByUUID(uuid);
+            @SecurityRequirement(name = "OAuth2", scopes = { "organizations:write",
+                    "organizations:all:write" }) }, tags = {
+                            "Organizations" }, responses = {
+                                    @ApiResponse(description = "OK", responseCode = "200", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class))),
+                                    @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content(mediaType = "application/json")),
+                                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content(mediaType = "application/json")),
+                                    @ApiResponse(description = "Forbidden", responseCode = "403", content = @Content(mediaType = "application/json")),
+                                    @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content(mediaType = "application/json"))
+                            })
+    public ResponseEntity<Response<Organization>> deleteOrganizationById(Authentication authentication,
+            @PathVariable("uuid") UUID uuid) {
+        // Check if authenticated user has been granted organizations:all:write
+        String owner = Helpers.getOwner(authentication);
+        if (Helpers.hasScope("organizations:all:write", authentication)) {
+            Optional<Organization> optional = organizationService.findByUuid(uuid);
+
+            if (!optional.isPresent()) {
+                return Response.<Organization>notFound("No organization found with given id.").build();
+            }
+
+            // Delete
+            organizationService.deleteByUuid(uuid);
+
+            Response<Organization> response = new Response<>(HttpStatus.OK);
+            response.setData(optional.get());
+
+            return response.build();
+        }
+
+        Optional<Organization> optional = organizationService.findByUuidAndOwner(uuid, owner);
 
         if (!optional.isPresent()) {
             return Response.<Organization>notFound("No organization found with given id.").build();
         }
 
         // Delete
-        organizationService.deleteByUUID(uuid);
+        organizationService.deleteByUuidAndOwner(uuid, owner);
 
         Response<Organization> response = new Response<>(HttpStatus.OK);
         response.setData(optional.get());

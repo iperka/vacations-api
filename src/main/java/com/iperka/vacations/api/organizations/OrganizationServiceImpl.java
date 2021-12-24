@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
  * and is used to manage the organization.
  * 
  * @author Michael Beutler
- * @version 0.0.5
+ * @version 0.0.6
  * @since 2021-09-29
  */
 @Service
@@ -32,24 +32,24 @@ public class OrganizationServiceImpl implements OrganizationService {
     }
 
     @Override
-    @PreAuthorize("hasAuthority('SCOPE_organizations:read')")
+    @PreAuthorize("hasAuthority('SCOPE_organizations:all:read')")
     public Page<Organization> findAll(Pageable pageable) {
         logger.debug("findAll called");
         return this.organizationRepository.findAll(pageable);
     }
 
     @Override
-    @PreAuthorize("hasAuthority('SCOPE_organizations:read')")
+    @PreAuthorize("hasAuthority('SCOPE_organizations:all:read')")
     public Page<Organization> findByNameContainingIgnoreCase(Pageable pageable, String name) {
         logger.debug("findAllByName called");
         return this.organizationRepository.findByNameContainingIgnoreCase(pageable, name);
     }
 
     @Override
-    @PreAuthorize("hasAuthority('SCOPE_organizations:read')")
-    public Optional<Organization> findByUUID(UUID uuid) {
+    @PreAuthorize("hasAuthority('SCOPE_organizations:all:read')")
+    public Optional<Organization> findByUuid(UUID uuid) {
         logger.debug("findByUUID called");
-        return this.organizationRepository.findById(uuid);
+        return this.organizationRepository.findByUuid(uuid);
     }
 
     @Override
@@ -67,15 +67,45 @@ public class OrganizationServiceImpl implements OrganizationService {
     }
 
     @Override
-    @PreAuthorize("hasAuthority('SCOPE_organizations:read')")
+    @PreAuthorize("hasAuthority('SCOPE_organizations:all:read')")
     public Optional<Organization> findByNameIgnoreCase(String name) {
         logger.debug("findByNameIgnoreCase called");
         return this.organizationRepository.findByNameIgnoreCase(name);
     }
 
     @Override
+    @PreAuthorize("hasAuthority('SCOPE_organizations:all:write')")
+    public void deleteByUuid(UUID uuid) {
+        this.organizationRepository.deleteByUuid(uuid);
+    }
+
+    @Override
+    @PreAuthorize("hasAuthority('SCOPE_organizations:read')")
+    public Page<Organization> findAllByOwner(Pageable pageable, String owner) {
+        return this.organizationRepository.findAllByOwner(pageable, owner);
+    }
+
+    @Override
+    @PreAuthorize("hasAuthority('SCOPE_organizations:read')")
+    public Page<Organization> findByNameContainingIgnoreCaseAndOwner(Pageable pageable, String name, String owner) {
+        return this.organizationRepository.findByNameContainingIgnoreCaseAndOwner(pageable, name, owner);
+    }
+
+    @Override
+    @PreAuthorize("hasAuthority('SCOPE_organizations:read')")
+    public Optional<Organization> findByUuidAndOwner(UUID uuid, String owner) {
+        return this.organizationRepository.findByUuidAndOwner(uuid, owner);
+    }
+
+    @Override
+    @PreAuthorize("hasAuthority('SCOPE_organizations:read')")
+    public Optional<Organization> findByNameIgnoreCaseAndOwner(String name, String owner) {
+        return this.organizationRepository.findByNameIgnoreCaseAndOwner(name, owner);
+    }
+
+    @Override
     @PreAuthorize("hasAuthority('SCOPE_organizations:write')")
-    public void deleteByUUID(UUID uuid) {
-        this.organizationRepository.deleteById(uuid);
+    public void deleteByUuidAndOwner(UUID uuid, String owner) {
+        this.organizationRepository.deleteByUuidAndOwner(uuid, owner);
     }
 }
