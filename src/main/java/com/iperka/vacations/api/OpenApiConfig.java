@@ -23,7 +23,7 @@ import io.swagger.v3.oas.models.servers.Server;
  * OpenAPI SpringDoc Configuration Bean.
  * 
  * @author Michael Beutler
- * @version 0.0.5
+ * @version 0.0.6
  * @since 2021-12-15
  */
 @Configuration
@@ -55,7 +55,7 @@ public class OpenApiConfig {
         }
 
         openAPI
-        .addSecurityItem(new SecurityRequirement().addList("OAuth2", Arrays.asList("organizations:read", "organizations:write")))
+        .addSecurityItem(new SecurityRequirement().addList("OAuth2", Arrays.asList("organizations:read", "organizations:write", "organizations:all:read", "organizations:all:write")))
         .components(new Components()
         .addSecuritySchemes("OAuth2",
         new SecurityScheme()
@@ -67,6 +67,8 @@ public class OpenApiConfig {
                        new Scopes()
                        .addString("organizations:read", "Read owned organizations.")
                        .addString("organizations:write", "Create, update and delete owned organizations.") 
+                       .addString("organizations:all:read", "Read all organizations.") 
+                       .addString("organizations:all:write", "Create, update and delete all organizations.") 
                     )
                 )
             )
