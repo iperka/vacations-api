@@ -33,14 +33,14 @@ Pull the official docker image and run the container to test the API.
 $ docker run -p 8080:8080 ghcr.io/iperka/vacations-api:latest
 ```
 
-The API is now running on port `8080` and should be accessible via `http://localhost:8080`. (The database is only in memory, if the container restarts all data is lost.)
+The API is now running on port `8080` and should be accessible via `http://localhost:8080`. (The database is only in memory, if the container restarts all data is lost.) Keep in mind that you should also add the permissions to your Auth0 domain and assign them to users.
 
 - Swagger UI: http://localhost:8080/swagger-ui/index.html#/
 - OpenAPI: http://localhost:8080/openapi/v3/
 
 ## 1.3. Installation 💽
 
-Its highly recommended to use the container image.
+Its highly recommended to use the container image see [Local Deployment](#14-local-deployment-).
 
 Package the Java application with maven.
 
@@ -54,7 +54,7 @@ $ ./mvnw package
 
 ## 1.4. Local Deployment 🐳
 
-Run docker container locally with `production` profile activated, for local testing. For production see [Deployment](#deployment--1).
+Run docker container locally with `production` profile activated, for local testing. For production see [Deployment](#15-deployment-).
 
 To run a docker container with the image in production mode use the following command (should not be used in production).
 
