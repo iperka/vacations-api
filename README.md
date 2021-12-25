@@ -33,7 +33,7 @@ Pull the official docker image and run the container to test the API.
 $ docker run -p 8080:8080 ghcr.io/iperka/vacations-api:latest
 ```
 
-The API is now running on port `8080` and should be accessible via `http://localhost:8080`. (The database is only in memory, if the container restarts all data is lost.) Keep in mind that you should also add the permissions to your Auth0 domain and assign them to users.
+The API is now running on port `8080` and should be accessible via `http://localhost:8080`. (The database is only in memory, if the container restarts all data is lost.) Keep in mind that you should also add the permissions to your Auth0 domain and assign them to users. By default the iperka Auth0 account will be used.
 
 - Swagger UI: http://localhost:8080/swagger-ui/index.html#/
 - OpenAPI: http://localhost:8080/openapi/v3/
