@@ -6,7 +6,7 @@ import org.springframework.security.oauth2.core.OAuth2TokenValidatorResult;
 import org.springframework.security.oauth2.jwt.Jwt;
 
 /**
- * The {@link com.iperka.vacations.api.security.AudienceValidator} class handels
+ * The {@link com.iperka.vacations.api.security.AudienceValidator} class handles
  * validating the JWT and checks if is intended for your API by checking the aud
  * claim of the JWT.
  * 
