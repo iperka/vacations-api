@@ -21,7 +21,7 @@ import lombok.extern.slf4j.Slf4j;
  * and is used to manage the organization.
  * 
  * @author Michael Beutler
- * @version 0.0.6
+ * @version 0.0.7
  * @since 2021-09-29
  */
 @Service
@@ -52,7 +52,7 @@ public class OrganizationServiceImpl implements OrganizationService {
     @PreAuthorize("hasAuthority('SCOPE_organizations:all:read')")
     public Organization findByUuid(UUID uuid) throws OrganizationNotFound {
         log.debug("findByUUID called");
-        return this.organizationRepository.findByUuid(uuid).orElseThrow(() -> new OrganizationNotFound());
+        return this.organizationRepository.findByUuid(uuid).orElseThrow(OrganizationNotFound::new);
     }
 
     @Override
@@ -96,7 +96,7 @@ public class OrganizationServiceImpl implements OrganizationService {
     @PreAuthorize("hasAuthority('SCOPE_organizations:read')")
     public Organization findByUuidAndOwner(UUID uuid, String owner) throws OrganizationNotFound {
         return this.organizationRepository.findByUuidAndOwner(uuid, owner)
-                .orElseThrow(() -> new OrganizationNotFound());
+                .orElseThrow(OrganizationNotFound::new);
     }
 
     @Override
