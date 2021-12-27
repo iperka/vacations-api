@@ -22,4 +22,7 @@ public class Scopes {
 
     public static final String ORGANIZATION_ALL_WRITE = "organizations:all:write";
     public static final String SCOPE_ORGANIZATION_ALL_WRITE = SCOPE_PREFIX + ORGANIZATION_ALL_WRITE;
+
+    private Scopes() {
+    }
 }

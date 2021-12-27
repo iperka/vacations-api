@@ -33,7 +33,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     /**
      * Logger.
      */
-    private final Logger LOGGER = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+    private final Logger _logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
+    private ResponseEntity<Object> toResponseEntity(Response<Object> response) {
+        return ResponseEntity.status(response.getStatus()).body(response);
+    }
 
     /**
      * 
@@ -49,7 +53,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
         final Response<Object> response = new Response<>(HttpStatus.NOT_FOUND);
         response.addError(new APIError(ex));
-        LOGGER.info("Resource not found.", ex);
+        _logger.info("Resource not found.", ex);
 
         return response.build();
     }
@@ -63,10 +67,10 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
      */
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<Response<Object>> handleAccessDeniedException(final AccessDeniedException ex) {
-        String errorMessage = "The request requires higher privileges than provided by the access token.";
-        String cause = "The authenticated user has not been granted the required scope(s).";
+        final String errorMessage = "The request requires higher privileges than provided by the access token.";
+        final String cause = "The authenticated user has not been granted the required scope(s).";
 
-        Response<Object> responseObject = new Response<Object>(HttpStatus.FORBIDDEN);
+        final Response<Object> responseObject = new Response<>(HttpStatus.FORBIDDEN);
         responseObject.addError(new APIError("OAuthException", errorMessage, cause, 403));
 
         return responseObject.build();
@@ -86,7 +90,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
         final Response<Object> response = new Response<>(HttpStatus.BAD_REQUEST);
         response.addError(new APIError(ex));
-        LOGGER.info("Method Argument mismatch.", ex);
+        _logger.info("Method Argument mismatch.", ex);
 
         return response.build();
     }
@@ -96,59 +100,59 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             final MissingServletRequestParameterException ex, final HttpHeaders headers, final HttpStatus status,
             final WebRequest request) {
 
-        final Response response = new Response<>(HttpStatus.BAD_REQUEST);
+        final Response<Object> response = new Response<>(HttpStatus.BAD_REQUEST);
         response.addError(new APIError(ex.getClass().getSimpleName(), "Required parameter missing.",
                 ex.getParameterName() + " parameter is missing", ex.getParameterName(), 400));
 
-        return response.build();
+        return toResponseEntity(response);
     }
 
     @Override
-    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
-            HttpHeaders headers, HttpStatus status, WebRequest request) {
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(final MethodArgumentNotValidException ex,
+            final HttpHeaders headers, final HttpStatus status, final WebRequest request) {
 
-        final Response response = new Response<>(HttpStatus.BAD_REQUEST);
+        final Response<Object> response = new Response<>(HttpStatus.BAD_REQUEST);
         ex.getBindingResult().getFieldErrors().stream()
                 .forEach(e -> response.addError(new APIError(ex.getClass().getSimpleName(), "Invalid value provided.",
                         String.format("Field '%s' %s.", e.getField(), e.getDefaultMessage()), e.getField(), 400)));
 
-        return response.build();
+        return toResponseEntity(response);
     }
 
     @Override
-    protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex,
-            HttpHeaders headers, HttpStatus status, WebRequest request) {
+    protected ResponseEntity<Object> handleHttpMessageNotReadable(final HttpMessageNotReadableException ex,
+            final HttpHeaders headers, final HttpStatus status, final WebRequest request) {
 
-        final Response response = new Response<>(HttpStatus.BAD_REQUEST);
+        final Response<Object> response = new Response<>(HttpStatus.BAD_REQUEST);
         response.addError(new APIError(ex.getClass().getSimpleName(), "Cannot deserialize body value.",
                 ex.getLocalizedMessage(), 400));
 
-        return response.build();
+        return toResponseEntity(response);
     }
 
     @Override
     protected ResponseEntity<Object> handleHttpMediaTypeNotSupported(final HttpMediaTypeNotSupportedException ex,
             final HttpHeaders headers, final HttpStatus status, final WebRequest request) {
 
-        final Response response = new Response<>(HttpStatus.UNSUPPORTED_MEDIA_TYPE);
+        final Response<Object> response = new Response<>(HttpStatus.UNSUPPORTED_MEDIA_TYPE);
         ex.getSupportedMediaTypes().forEach(t -> response.addError(new APIError(ex.getClass().getSimpleName(),
                 MessageFormat.format("The content type '{}' is not supported by this resource.", t),
                 "The request body content type is not supported by this resource.",
                 HttpStatus.UNSUPPORTED_MEDIA_TYPE.value())));
 
-        return response.build();
+        return toResponseEntity(response);
     }
 
     @Override
     protected ResponseEntity<Object> handleNoHandlerFoundException(final NoHandlerFoundException ex,
             final HttpHeaders headers, final HttpStatus status, final WebRequest request) {
 
-        final Response response = new Response<>(HttpStatus.NOT_FOUND);
+        final Response<Object> response = new Response<>(HttpStatus.NOT_FOUND);
         response.addError(
                 new APIError(ex.getClass().getSimpleName(), "No endpoint found for the requested method / location.",
                         "Invalid request method and / or location.", 404));
 
-        return response.build();
+        return toResponseEntity(response);
 
     }
 
@@ -157,12 +161,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             final HttpRequestMethodNotSupportedException ex, final HttpHeaders headers, final HttpStatus status,
             final WebRequest request) {
 
-        final Response response = new Response<>(HttpStatus.NOT_FOUND);
+        final Response<Object> response = new Response<>(HttpStatus.NOT_FOUND);
         response.addError(
                 new APIError(ex.getClass().getSimpleName(), "No endpoint found for the requested method / location.",
                         "Invalid request method and / or location.", 404));
 
-        return response.build();
+        return toResponseEntity(response);
     }
 
     @ExceptionHandler(Exception.class)

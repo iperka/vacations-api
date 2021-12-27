@@ -41,8 +41,14 @@ class DateCalculatorTest {
     @Test
     void shouldThrowIfInvalidDatesProvides() {
         assertThrows(IllegalArgumentException.class,
-                () -> DateCalculator.countBusinessDaysBetween(LocalDate.of(2021, 12, 20),
-                        LocalDate.of(2021, 12, 19),
-                        Optional.empty()));
+                () -> {
+                    try {
+                        DateCalculator.countBusinessDaysBetween(LocalDate.of(2021, 12, 20),
+                                LocalDate.of(2021, 12, 19),
+                                Optional.empty());
+                    } catch (RuntimeException e) {
+                        System.err.println(e);
+                    }
+                });
     }
 }
