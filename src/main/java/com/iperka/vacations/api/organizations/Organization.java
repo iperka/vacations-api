@@ -70,7 +70,7 @@ public class Organization implements Ownable {
      */
     @Column(nullable = false)
     @NotNull
-    @Schema(description = "Owner of the Organzitation.", example = "iperka@example.com|2dawd2", required = true)
+    @Schema(description = "Owner of the Organzitation.", example = "iperka|2dd222awd2", required = true)
     private String owner;
 
     /**

@@ -48,7 +48,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
  * class defines the structure of a basic organization route.
  * 
  * @author Michael Beutler
- * @version 0.0.9
+ * @version 0.1.1
  * @since 2021-09-29
  */
 @RestController
@@ -88,7 +88,7 @@ public class OrganizationController {
         final Authentication authentication,
         @ParameterObject @PageableDefault(size = 20, sort = "name") final Pageable pageable,
         @RequestParam(required = false) @Parameter(description = "Filter owned organizations by name.") final String name,
-        @RequestParam(required = false) @Parameter(description = "Filter organizations by owner.") final String owner
+        @RequestParam(required = false) @Parameter(description = "Filter organizations by owner (advanced scopes required).") final String owner
      // @formatter:on
     ) {
         final String userId = Helpers.getUserId(authentication);
