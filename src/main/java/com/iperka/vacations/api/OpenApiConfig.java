@@ -23,7 +23,7 @@ import io.swagger.v3.oas.models.servers.Server;
  * OpenAPI SpringDoc Configuration Bean.
  * 
  * @author Michael Beutler
- * @version 0.0.6
+ * @version 0.0.7
  * @since 2021-12-15
  */
 @Configuration
@@ -40,12 +40,14 @@ public class OpenApiConfig {
     @Value("${spring.profiles.active}")
     private String activeProfile;
 
+    private static final String OAUTH2 = "OAuth2";
+
     @Bean
     public OpenAPI customOpenAPI() {
         // @formatter:off
-        OpenAPI openAPI = new OpenAPI();
+        final OpenAPI openAPI = new OpenAPI();
 
-        Server server = new Server();
+        final Server server = new Server();
         if (activeProfile.equals("development")) {
             server.url("http://localhost:8080/");
             server.description("Local Development Server");
@@ -55,9 +57,9 @@ public class OpenApiConfig {
         }
 
         openAPI
-        .addSecurityItem(new SecurityRequirement().addList("OAuth2", Arrays.asList("organizations:read", "organizations:write", "organizations:all:read", "organizations:all:write")))
+        .addSecurityItem(new SecurityRequirement().addList(OAUTH2, Arrays.asList("organizations:read", "organizations:write", "organizations:all:read", "organizations:all:write")))
         .components(new Components()
-        .addSecuritySchemes("OAuth2",
+        .addSecuritySchemes(OAUTH2,
         new SecurityScheme()
             .type(Type.OAUTH2)
             .flows(new OAuthFlows()
@@ -72,7 +74,7 @@ public class OpenApiConfig {
                     )
                 )
             )
-        )).security(List.of(new SecurityRequirement().addList("OAuth2")))
+        )).security(List.of(new SecurityRequirement().addList(OAUTH2)))
         .info(new Info()
         .title("Vacations API")
         .description("REST API for iperka vacations solution.")

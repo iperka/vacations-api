@@ -23,4 +23,7 @@ public class Helpers {
     public static String getOwner(final Authentication authentication) {
         return ((Jwt) authentication.getPrincipal()).getSubject();
     }
+
+    private Helpers() {
+    }
 }

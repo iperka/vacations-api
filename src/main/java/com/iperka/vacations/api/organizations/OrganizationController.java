@@ -10,8 +10,6 @@ import com.iperka.vacations.api.helpers.Response;
 import com.iperka.vacations.api.organizations.dto.OrganizationDTO;
 import com.iperka.vacations.api.security.Helpers;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -46,7 +44,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RequestMapping(path = { "/organizations" }, produces = MediaType.APPLICATION_JSON_VALUE)
 @Tag(name = "Organizations", description = "Endpoints for managing organizations.")
 public class OrganizationController {
-    private final Logger logger = LoggerFactory.getLogger(OrganizationController.class);
+
+    private static final String NO_ORGANIZATION_FOUND_WITH_ID_MESSAGE = "No organization found with given id.";
 
     private final OrganizationService organizationService;
 
@@ -112,7 +111,7 @@ public class OrganizationController {
             Optional<Organization> optional = organizationService.findByUuid(uuid);
 
             if (!optional.isPresent()) {
-                return Response.<Organization>notFound("No organization found with given id.").build();
+                return Response.<Organization>notFound(NO_ORGANIZATION_FOUND_WITH_ID_MESSAGE).build();
             }
 
             Response<Organization> response = new Response<>(HttpStatus.OK);
@@ -123,7 +122,7 @@ public class OrganizationController {
         Optional<Organization> optional = organizationService.findByUuidAndOwner(uuid, owner);
 
         if (!optional.isPresent()) {
-            return Response.<Organization>notFound("No organization found with given id.").build();
+            return Response.<Organization>notFound(NO_ORGANIZATION_FOUND_WITH_ID_MESSAGE).build();
         }
 
         Response<Organization> response = new Response<>(HttpStatus.OK);
@@ -147,7 +146,7 @@ public class OrganizationController {
         Organization organization = organizationDTO.toObject();
         organization.setOwner(((Jwt) authentication.getPrincipal()).getSubject());
 
-        Response<Organization> response = new Response<Organization>(HttpStatus.CREATED);
+        Response<Organization> response = new Response<>(HttpStatus.CREATED);
         response.setData(this.organizationService.create(organization));
 
         return response.build();
@@ -172,7 +171,7 @@ public class OrganizationController {
             Optional<Organization> optional = organizationService.findByUuid(uuid);
 
             if (!optional.isPresent()) {
-                return Response.<Organization>notFound("No organization found with given id.").build();
+                return Response.<Organization>notFound(NO_ORGANIZATION_FOUND_WITH_ID_MESSAGE).build();
             }
 
             // Delete
@@ -187,7 +186,7 @@ public class OrganizationController {
         Optional<Organization> optional = organizationService.findByUuidAndOwner(uuid, owner);
 
         if (!optional.isPresent()) {
-            return Response.<Organization>notFound("No organization found with given id.").build();
+            return Response.<Organization>notFound(NO_ORGANIZATION_FOUND_WITH_ID_MESSAGE).build();
         }
 
         // Delete

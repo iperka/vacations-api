@@ -10,7 +10,7 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-public class HttpRequestTest {
+class HttpRequestTest {
     @LocalServerPort
     private int port;
 
@@ -18,7 +18,7 @@ public class HttpRequestTest {
     private TestRestTemplate restTemplate;
 
     @Test
-    public void shouldReturnUnauthorized() {
+    void shouldReturnUnauthorized() {
         assertThat(this.restTemplate.getForObject("http://localhost:" + port + "/",
                 String.class)).contains("OAuthException");
     }

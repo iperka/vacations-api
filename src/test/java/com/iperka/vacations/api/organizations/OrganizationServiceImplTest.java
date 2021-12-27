@@ -11,7 +11,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-public class OrganizationServiceImplTest {
+class OrganizationServiceImplTest {
     @Mock
     private OrganizationRepository organizationRepository;
 
@@ -23,7 +23,7 @@ public class OrganizationServiceImplTest {
     }
 
     @Test
-    public void createOrganization() {
+    void createOrganization() {
         Organization organization = new Organization();
         organization.setName("Test");
 

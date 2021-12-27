@@ -24,7 +24,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * return the object itself.
  * 
  * @author Michael Beutler
- * @version 0.0.7
+ * @version 0.0.8
  * @since 2021-05-14
  */
 public class Response<T> {
@@ -35,7 +35,7 @@ public class Response<T> {
     private final Date timestamp = new Date();
     private T data;
     private Metadata metadata;
-    private List<APIError> errors = new ArrayList<APIError>();
+    private List<APIError> errors = new ArrayList<>();
 
     private static String getHostname() {
         try {
@@ -83,7 +83,7 @@ public class Response<T> {
     }
 
     public static <T> Response<T> notFound(String message) {
-        Response<T> response = new Response<T>(HttpStatus.NOT_FOUND);
+        Response<T> response = new Response<>(HttpStatus.NOT_FOUND);
 
         response.addError(new APIError("NotFound", message, 404));
 

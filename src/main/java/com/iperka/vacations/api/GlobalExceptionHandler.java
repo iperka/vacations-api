@@ -33,7 +33,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     /**
      * Logger.
      */
-    private final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+    private final Logger LOGGER = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     /**
      * 
@@ -49,7 +49,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
         final Response<Object> response = new Response<>(HttpStatus.NOT_FOUND);
         response.addError(new APIError(ex));
-        logger.info("Resource not found.", ex);
+        LOGGER.info("Resource not found.", ex);
 
         return response.build();
     }
@@ -86,7 +86,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
         final Response<Object> response = new Response<>(HttpStatus.BAD_REQUEST);
         response.addError(new APIError(ex));
-        logger.info("Method Argument mismatch.", ex);
+        LOGGER.info("Method Argument mismatch.", ex);
 
         return response.build();
     }

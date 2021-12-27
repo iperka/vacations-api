@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
  * DateCalculator class for helping with different date operations.
  * 
  * @author Michael Beutler
- * @version 0.0.1
+ * @version 0.0.2
  * @since 2021-12-24
  */
 public class DateCalculator {
@@ -43,11 +43,9 @@ public class DateCalculator {
 
         // Iterate over stream of all dates and check each day against any weekday or
         // holiday
-        List<LocalDate> businessDays = startDate.datesUntil(endDate)
+        return startDate.datesUntil(endDate)
                 .filter(isWeekend.or(isHoliday).negate())
                 .collect(Collectors.toList());
-
-        return businessDays;
     }
 
     /**
@@ -65,4 +63,8 @@ public class DateCalculator {
 
         return businessDays.size();
     }
+
+    private DateCalculator() {
+    }
+
 }

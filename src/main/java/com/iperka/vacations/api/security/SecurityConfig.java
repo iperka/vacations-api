@@ -28,13 +28,15 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
  * validating given JWT's.
  * 
  * @author Michael Beutler
- * @version 0.0.6
+ * @version 0.0.7
  * @since 2021-09-29
  */
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+    private static final String ROUTE_ORGANIZATIONS = "/organizations";
 
     @Value("${auth0.audience}")
     private String audience;
@@ -65,11 +67,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .mvcMatchers(HttpMethod.GET, "/openapi/v3").permitAll()  
                 .mvcMatchers(HttpMethod.GET, "/swagger-ui/**").permitAll()
                 .mvcMatchers(HttpMethod.GET, "/actuator/**").permitAll()
-                .mvcMatchers(HttpMethod.GET,"/favicon.ico").permitAll()
-                .mvcMatchers(HttpMethod.GET,"/oauth2-redirect.html").permitAll()
-                .mvcMatchers(HttpMethod.GET,"/organizations").hasAnyAuthority("SCOPE_organizations:read", "SCOPE_organizations:write", "SCOPE_organizations:all:read", "SCOPE_organizations:all:write")
-                .mvcMatchers(HttpMethod.POST,"/organizations").hasAnyAuthority("SCOPE_organizations:write", "SCOPE_organizations:all:write")
-                .mvcMatchers(HttpMethod.DELETE,"/organizations").hasAnyAuthority("SCOPE_organizations:write", "SCOPE_organizations:all:write")
+                .mvcMatchers(HttpMethod.GET, "/favicon.ico").permitAll()
+                .mvcMatchers(HttpMethod.GET, "/oauth2-redirect.html").permitAll()
+                .mvcMatchers(HttpMethod.GET, ROUTE_ORGANIZATIONS).hasAnyAuthority(Scopes.SCOPE_ORGANIZATIONS_READ, Scopes.SCOPE_ORGANIZATION_WRITE, Scopes.SCOPE_ORGANIZATIONS_ALL_READ, Scopes.ORGANIZATION_ALL_WRITE)
+                .mvcMatchers(HttpMethod.POST, ROUTE_ORGANIZATIONS).hasAnyAuthority(Scopes.SCOPE_ORGANIZATION_WRITE, Scopes.ORGANIZATION_ALL_WRITE)
+                .mvcMatchers(HttpMethod.DELETE, ROUTE_ORGANIZATIONS).hasAnyAuthority(Scopes.SCOPE_ORGANIZATION_WRITE, Scopes.ORGANIZATION_ALL_WRITE)
                 .anyRequest().authenticated()
             ) 
             .cors().configurationSource(corsConfigurationSource())

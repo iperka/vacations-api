@@ -18,12 +18,12 @@ import org.springframework.test.web.servlet.MockMvc;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class OrganizationControllerTest {
+class OrganizationControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
     @Test
-    public void shouldReturnUnauthorized() throws Exception {
+    void shouldReturnUnauthorized() throws Exception {
         this.mockMvc.perform(get("/organizations")).andDo(print()).andExpect(status().isUnauthorized())
                 .andExpect(content().string(containsString("OAuthException")));
         this.mockMvc.perform(post("/organizations")).andDo(print()).andExpect(status().isUnauthorized())
