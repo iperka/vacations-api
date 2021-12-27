@@ -13,7 +13,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.http.HttpStatus;
 
 @SpringBootTest
-class ResponseTests {
+class ResponseTest {
     @Test
     void shouldSetFields() {
         Response<?> response = new Response<>(HttpStatus.OK, "Test", "TestVersion", null, null);

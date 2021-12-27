@@ -1,8 +1,10 @@
 package com.iperka.vacations.api.helpers;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 public class APIError {
     private String type = "unknown";
     private String message = "n/a";

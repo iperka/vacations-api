@@ -8,6 +8,6 @@ public class OrganizationAlreadyExists extends Exception implements CustomExcept
     private static final String CAUSE = "There is already an organization with a similar name.";
 
     public APIError toApiError() {
-        return new APIError("OrganizationsAlreadyExists", MESSAGE, CAUSE, "name", 400);
+        return new APIError("OrganizationAlreadyExists", MESSAGE, CAUSE, "name", 400);
     }
 }

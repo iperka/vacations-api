@@ -8,6 +8,6 @@ public class OrganizationNotFound extends Exception implements CustomException {
     private static final String CAUSE = "There is now organization matching given query.";
 
     public APIError toApiError() {
-        return new APIError("OrganizationsNotFound", MESSAGE, CAUSE, null, 404);
+        return new APIError("OrganizationNotFound", MESSAGE, CAUSE, null, 404);
     }
 }

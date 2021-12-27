@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class MetadataTests {
+class MetadataTest {
     @Test
     void shouldReturnCorrectFields() {
         Metadata metadata = new Metadata(1L, 1L, 1L, 1L);
