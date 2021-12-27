@@ -14,10 +14,17 @@ class MetadataTests {
         assertEquals(1L, metadata.getTotalPages());
         assertEquals(1L, metadata.getPage());
         assertEquals(1L, metadata.getPerPage());
+
+        metadata = new Metadata(1L, 1L, 1L, 1L, "test");
+        assertEquals(1L, metadata.getTotalElements());
+        assertEquals(1L, metadata.getTotalPages());
+        assertEquals(1L, metadata.getPage());
+        assertEquals(1L, metadata.getPerPage());
+        assertEquals("test", metadata.getQuery());
     }
 
     @Test
-    void shouldReturnTotalEelements() {
+    void shouldReturnTotalElements() {
         Metadata metadata = new Metadata(1L, 1L, 1L, 1L);
         assertEquals(1L, metadata.getTotalElements());
 
@@ -50,5 +57,14 @@ class MetadataTests {
 
         metadata.setPerPage(2L);
         assertEquals(2L, metadata.getPerPage());
+    }
+
+    @Test
+    void shouldReturnQuery() {
+        Metadata metadata = new Metadata(1L, 1L, 1L, 1L, "test2");
+        assertEquals("test2", metadata.getQuery());
+
+        metadata.setQuery("test3");
+        assertEquals("test3", metadata.getQuery());
     }
 }

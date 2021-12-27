@@ -46,5 +46,12 @@ class DateCalculatorTest {
                             LocalDate.of(2021, 12, 19),
                             Optional.empty());
                 });
+
+        assertThrows(IllegalArgumentException.class,
+                () -> {
+                    DateCalculator.countBusinessDaysBetween(null,
+                            LocalDate.of(2021, 12, 19),
+                            Optional.empty());
+                });
     }
 }

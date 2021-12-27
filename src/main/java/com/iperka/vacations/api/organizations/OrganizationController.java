@@ -5,11 +5,13 @@ import java.util.UUID;
 
 import javax.validation.Valid;
 
+import com.iperka.vacations.api.OpenApiConfig;
 import com.iperka.vacations.api.helpers.Response;
 import com.iperka.vacations.api.organizations.dto.OrganizationDTO;
 import com.iperka.vacations.api.organizations.exceptions.OrganizationAlreadyExists;
 import com.iperka.vacations.api.organizations.exceptions.OrganizationNotFound;
 import com.iperka.vacations.api.security.Helpers;
+import com.iperka.vacations.api.security.Scopes;
 
 import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +46,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
  * class defines the structure of a basic organization route.
  * 
  * @author Michael Beutler
- * @version 0.0.7
+ * @version 0.0.9
  * @since 2021-09-29
  */
 @RestController
@@ -66,16 +68,16 @@ public class OrganizationController {
         description = "Finds all organizations owned by authenticated user.", 
         security = {
             @SecurityRequirement(
-                name = "OAuth2",
-                scopes = {"organizations:read", "organizations:write", "organizations:all:read", "organizations:all:write"}
+                name = OpenApiConfig.OAUTH2,
+                scopes = {Scopes.ORGANIZATIONS_READ, Scopes.ORGANIZATIONS_WRITE, Scopes.ORGANIZATIONS_ALL_READ, Scopes.ORGANIZATIONS_ALL_WRITE}
             )
         }, 
         tags = {"Organizations"}, 
         responses = {
-            @ApiResponse(description = "Success", responseCode = "200", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OrganizationsListResponse.class))),
-            @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content(mediaType = "application/json")),
-            @ApiResponse(description = "Forbidden", responseCode = "403", content = @Content(mediaType = "application/json")),
-            @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content(mediaType = "application/json"))
+            @ApiResponse(description = "Success", responseCode = "200", content = @Content(mediaType = OpenApiConfig.APPLICATION_JSON, schema = @Schema(implementation = OrganizationsListResponse.class))),
+            @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content(mediaType = OpenApiConfig.APPLICATION_JSON)),
+            @ApiResponse(description = "Forbidden", responseCode = "403", content = @Content(mediaType = OpenApiConfig.APPLICATION_JSON)),
+            @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content(mediaType = OpenApiConfig.APPLICATION_JSON))
         }
     )
     // @formatter:on
@@ -96,7 +98,7 @@ public class OrganizationController {
 
         Page<Organization> page;
         // Check if authenticated user has been granted organizations:all:read
-        if (Helpers.hasScope("organizations:all:read", authentication)) {
+        if (Helpers.hasScope(Scopes.ORGANIZATIONS_ALL_READ, authentication)) {
             if (StringUtils.hasText(name)) {
                 page = this.organizationService.findByNameContainingIgnoreCase(pageable, name);
             } else {
@@ -120,17 +122,17 @@ public class OrganizationController {
         description = "Finds organizations with given UUID owned by authenticated user.", 
         security = {
             @SecurityRequirement(
-                name = "OAuth2", 
-                scopes = {"organizations:read", "organizations:write", "organizations:all:read", "organizations:all:write"}
+                name = OpenApiConfig.OAUTH2, 
+                scopes = {Scopes.ORGANIZATIONS_READ, Scopes.ORGANIZATIONS_WRITE, Scopes.ORGANIZATIONS_ALL_READ, Scopes.ORGANIZATIONS_ALL_WRITE}
             )
         }, 
         tags = {"Organizations"}, 
         responses = {
-            @ApiResponse(description = "Success", responseCode = "200", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OrganizationResponse.class))),
-            @ApiResponse(description = "Not Found", responseCode = "404", content = @Content(mediaType = "application/json")),
-            @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content(mediaType = "application/json")),
-            @ApiResponse(description = "Forbidden", responseCode = "403", content = @Content(mediaType = "application/json")),
-            @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content(mediaType = "application/json"))
+            @ApiResponse(description = "Success", responseCode = "200", content = @Content(mediaType = OpenApiConfig.APPLICATION_JSON, schema = @Schema(implementation = OrganizationResponse.class))),
+            @ApiResponse(description = "Not Found", responseCode = "404", content = @Content(mediaType = OpenApiConfig.APPLICATION_JSON)),
+            @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content(mediaType = OpenApiConfig.APPLICATION_JSON)),
+            @ApiResponse(description = "Forbidden", responseCode = "403", content = @Content(mediaType = OpenApiConfig.APPLICATION_JSON)),
+            @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content(mediaType = OpenApiConfig.APPLICATION_JSON))
         }
     )
     // @formatter:on
@@ -147,7 +149,7 @@ public class OrganizationController {
             Organization organization;
 
             // Check if authenticated user has been granted organizations:all:read
-            if (Helpers.hasScope("organizations:all:read", authentication)) {
+            if (Helpers.hasScope(Scopes.ORGANIZATIONS_ALL_READ, authentication)) {
                 organization = organizationService.findByUuid(uuid);
             } else {
                 organization = organizationService.findByUuidAndOwner(uuid, owner);
@@ -169,17 +171,17 @@ public class OrganizationController {
         description = "Creates a new organizations with given name and owned by authenticated user.", 
         security = {
             @SecurityRequirement(
-                name = "OAuth2", 
-                scopes = "organizations:write"
+                name = OpenApiConfig.OAUTH2, 
+                scopes = Scopes.ORGANIZATIONS_WRITE
             ) 
         }, 
         tags = {"Organizations"}, 
         responses = {
-            @ApiResponse(description = "Created", responseCode = "201", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OrganizationResponse.class))),
-            @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content(mediaType = "application/json")),
-            @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content(mediaType = "application/json")),
-            @ApiResponse(description = "Forbidden", responseCode = "403", content = @Content(mediaType = "application/json")),
-            @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content(mediaType = "application/json"))
+            @ApiResponse(description = "Created", responseCode = "201", content = @Content(mediaType = OpenApiConfig.APPLICATION_JSON, schema = @Schema(implementation = OrganizationResponse.class))),
+            @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content(mediaType = OpenApiConfig.APPLICATION_JSON)),
+            @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content(mediaType = OpenApiConfig.APPLICATION_JSON)),
+            @ApiResponse(description = "Forbidden", responseCode = "403", content = @Content(mediaType = OpenApiConfig.APPLICATION_JSON)),
+            @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content(mediaType = OpenApiConfig.APPLICATION_JSON))
         }
     )
     // @formatter:on
@@ -209,17 +211,17 @@ public class OrganizationController {
         description = "Deletes organizations with given UUID and owned by authenticated user.", 
         security = {
             @SecurityRequirement(
-                name = "OAuth2", 
-                scopes = {"organizations:write", "organizations:all:write"}
+                name = OpenApiConfig.OAUTH2, 
+                scopes = {Scopes.ORGANIZATIONS_WRITE, Scopes.ORGANIZATIONS_ALL_WRITE}
             ) 
         }, 
         tags = {"Organizations"},
         responses = {
-            @ApiResponse(description = "OK", responseCode = "200", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class))),
-            @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content(mediaType = "application/json")),
-            @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content(mediaType = "application/json")),
-            @ApiResponse(description = "Forbidden", responseCode = "403", content = @Content(mediaType = "application/json")),
-            @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content(mediaType = "application/json"))
+            @ApiResponse(description = "OK", responseCode = "200", content = @Content(mediaType = OpenApiConfig.APPLICATION_JSON, schema = @Schema(implementation = Response.class))),
+            @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content(mediaType = OpenApiConfig.APPLICATION_JSON)),
+            @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content(mediaType = OpenApiConfig.APPLICATION_JSON)),
+            @ApiResponse(description = "Forbidden", responseCode = "403", content = @Content(mediaType = OpenApiConfig.APPLICATION_JSON)),
+            @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content(mediaType = OpenApiConfig.APPLICATION_JSON))
         }
     )
     // @formatter:on
@@ -236,7 +238,7 @@ public class OrganizationController {
             Organization organization;
 
             // Check if authenticated user has been granted organizations:all:write
-            if (Helpers.hasScope("organizations:all:write", authentication)) {
+            if (Helpers.hasScope(Scopes.ORGANIZATIONS_ALL_WRITE, authentication)) {
                 organization = organizationService.findByUuid(uuid);
             } else {
                 organization = organizationService.findByUuidAndOwner(uuid, owner);

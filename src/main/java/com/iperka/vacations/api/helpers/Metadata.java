@@ -20,7 +20,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * </code>
  * 
  * @author Michael Beutler
- * @version 0.0.3
+ * @version 0.0.4
  * @since 2021-05-14
  */
 public class Metadata {

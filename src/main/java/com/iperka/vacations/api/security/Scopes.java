@@ -5,7 +5,7 @@ package com.iperka.vacations.api.security;
  * the security scope constants for better constancy.
  * 
  * @author Michael Beutler
- * @version 0.0.1
+ * @version 0.0.2
  * @since 2021-12-27
  */
 public class Scopes {
@@ -14,14 +14,14 @@ public class Scopes {
     public static final String ORGANIZATIONS_READ = "organizations:read";
     public static final String SCOPE_ORGANIZATIONS_READ = SCOPE_PREFIX + ORGANIZATIONS_READ;
 
-    public static final String ORGANIZATION_WRITE = "organizations:write";
-    public static final String SCOPE_ORGANIZATION_WRITE = SCOPE_PREFIX + ORGANIZATION_WRITE;
+    public static final String ORGANIZATIONS_WRITE = "organizations:write";
+    public static final String SCOPE_ORGANIZATIONS_WRITE = SCOPE_PREFIX + ORGANIZATIONS_WRITE;
 
     public static final String ORGANIZATIONS_ALL_READ = "organizations:all:read";
     public static final String SCOPE_ORGANIZATIONS_ALL_READ = SCOPE_PREFIX + ORGANIZATIONS_ALL_READ;
 
-    public static final String ORGANIZATION_ALL_WRITE = "organizations:all:write";
-    public static final String SCOPE_ORGANIZATION_ALL_WRITE = SCOPE_PREFIX + ORGANIZATION_ALL_WRITE;
+    public static final String ORGANIZATIONS_ALL_WRITE = "organizations:all:write";
+    public static final String SCOPE_ORGANIZATIONS_ALL_WRITE = SCOPE_PREFIX + ORGANIZATIONS_ALL_WRITE;
 
     private Scopes() {
     }

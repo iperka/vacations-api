@@ -3,6 +3,8 @@ package com.iperka.vacations.api;
 import java.util.Arrays;
 import java.util.List;
 
+import com.iperka.vacations.api.security.Scopes;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,7 +15,6 @@ import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.security.OAuthFlow;
 import io.swagger.v3.oas.models.security.OAuthFlows;
-import io.swagger.v3.oas.models.security.Scopes;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.security.SecurityScheme.Type;
@@ -23,7 +24,7 @@ import io.swagger.v3.oas.models.servers.Server;
  * OpenAPI SpringDoc Configuration Bean.
  * 
  * @author Michael Beutler
- * @version 0.0.7
+ * @version 0.0.8
  * @since 2021-12-15
  */
 @Configuration
@@ -40,7 +41,8 @@ public class OpenApiConfig {
     @Value("${spring.profiles.active}")
     private String activeProfile;
 
-    private static final String OAUTH2 = "OAuth2";
+    public static final String OAUTH2 = "OAuth2";
+    public static final String APPLICATION_JSON = "application/json";
 
     @Bean
     public OpenAPI customOpenAPI() {
@@ -57,7 +59,7 @@ public class OpenApiConfig {
         }
 
         openAPI
-        .addSecurityItem(new SecurityRequirement().addList(OAUTH2, Arrays.asList("organizations:read", "organizations:write", "organizations:all:read", "organizations:all:write")))
+        .addSecurityItem(new SecurityRequirement().addList(OAUTH2, Arrays.asList(Scopes.ORGANIZATIONS_READ, Scopes.ORGANIZATIONS_WRITE, Scopes.ORGANIZATIONS_ALL_READ, Scopes.ORGANIZATIONS_ALL_WRITE)))
         .components(new Components()
         .addSecuritySchemes(OAUTH2,
         new SecurityScheme()
@@ -66,11 +68,11 @@ public class OpenApiConfig {
                 .implicit(new OAuthFlow()
                     .authorizationUrl(domain + "authorize?audience=" + audience)
                     .scopes(
-                       new Scopes()
-                       .addString("organizations:read", "Read owned organizations.")
-                       .addString("organizations:write", "Create, update and delete owned organizations.") 
-                       .addString("organizations:all:read", "Read all organizations.") 
-                       .addString("organizations:all:write", "Create, update and delete all organizations.") 
+                       new io.swagger.v3.oas.models.security.Scopes()
+                       .addString(Scopes.ORGANIZATIONS_READ, "Read owned organizations.")
+                       .addString(Scopes.ORGANIZATIONS_WRITE, "Create, update and delete owned organizations.") 
+                       .addString(Scopes.ORGANIZATIONS_ALL_READ, "Read all organizations.") 
+                       .addString(Scopes.ORGANIZATIONS_ALL_WRITE, "Create, update and delete all organizations.") 
                     )
                 )
             )

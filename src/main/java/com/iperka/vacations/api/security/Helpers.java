@@ -20,6 +20,11 @@ public class Helpers {
                 && authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("SCOPE_" + scope)));
     }
 
+    public static boolean hasScope(final Scopes scope, final Authentication authentication) {
+        return (authentication != null
+                && authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals(scope)));
+    }
+
     public static String getOwner(final Authentication authentication) {
         return ((Jwt) authentication.getPrincipal()).getSubject();
     }
