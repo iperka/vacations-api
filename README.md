@@ -4,7 +4,7 @@
 
 [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=iperka_vacations-api&metric=code_smells)](https://sonarcloud.io/dashboard?id=iperka_vacations-api) [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=iperka_vacations-api&metric=bugs)](https://sonarcloud.io/dashboard?id=iperka_vacations-api) [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=iperka_vacations-api&metric=vulnerabilities)](https://sonarcloud.io/dashboard?id=iperka_vacations-api)
 
-[![Continuous Integration](https://github.com/iperka/vacations-api/actions/workflows/main.yml/badge.svg)](https://github.com/iperka/vacations-api/actions/workflows/main.yml)
+[![Continuous Integration](https://github.com/iperka/vacations-api/actions/workflows/main.yml/badge.svg)](https://github.com/iperka/vacations-api/actions/workflows/main.yml)[![Better Uptime Badge](https://betteruptime.com/status-badges/v1/monitor/beap.svg)](https://betteruptime.com/?utm_source=status_badge)
 
 # 1. Vacations API 📅
 
