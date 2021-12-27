@@ -17,19 +17,21 @@ import com.iperka.vacations.api.helpers.Ownable;
 import org.hibernate.validator.constraints.Length;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
 
 /**
  * The {@link com.iperka.vacations.api.organizations.Organization} class defines
- * the structure of a basic organisation.
+ * the structure of a basic organization.
  * 
  * @author Michael Beutler
- * @version 0.0.1
+ * @version 0.0.7
  * @since 2021-09-29
  */
 @Entity
 @Table(name = "organizations", uniqueConstraints = {
         @UniqueConstraint(columnNames = { "uuid", "name" })
 })
+@Data
 public class Organization implements Ownable {
     /**
      * Unique identifier for
@@ -93,49 +95,4 @@ public class Organization implements Ownable {
     public void setLastUpdate() {
         this.updated = new Date();
     }
-
-    public UUID getUuid() {
-        return uuid;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(final String name) {
-        this.name = name;
-    }
-
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(final boolean enabled) {
-        this.enabled = enabled;
-    }
-
-    public String getOwner() {
-        return owner;
-    }
-
-    public void setOwner(String owner) {
-        this.owner = owner;
-    }
-
-    public Date getCreated() {
-        return created;
-    }
-
-    public void setCreated(final Date created) {
-        this.created = created;
-    }
-
-    public Date getUpdated() {
-        return updated;
-    }
-
-    public void setUpdated(final Date updated) {
-        this.updated = updated;
-    }
-
 }

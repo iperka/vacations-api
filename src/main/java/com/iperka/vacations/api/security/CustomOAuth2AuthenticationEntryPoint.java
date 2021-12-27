@@ -7,16 +7,15 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.iperka.vacations.api.helpers.APIError;
-
 import com.iperka.vacations.api.helpers.Response;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.server.resource.InvalidBearerTokenException;
 import org.springframework.security.web.AuthenticationEntryPoint;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * The {@link com.iperka.vacations.api.security.CustomOAuth2AccessDeniedHandler}
@@ -28,13 +27,13 @@ import org.springframework.security.web.AuthenticationEntryPoint;
  * @version 0.0.2
  * @since 2021-09-29
  */
+@Slf4j
 public class CustomOAuth2AuthenticationEntryPoint implements AuthenticationEntryPoint {
-    private static final Logger logger = LoggerFactory.getLogger(CustomOAuth2AuthenticationEntryPoint.class);
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException e)
             throws IOException {
-        logger.warn("Request from user {} has been blocked due to insufficient authentication.",
+        log.warn("Request from user {} has been blocked due to insufficient authentication.",
                 request.getRemoteAddr());
 
         String errorMessage = "Insufficient authentication details.";

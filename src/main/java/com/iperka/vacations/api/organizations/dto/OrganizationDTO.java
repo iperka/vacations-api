@@ -7,6 +7,13 @@ import com.iperka.vacations.api.organizations.Organization;
 
 import org.hibernate.validator.constraints.Length;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class OrganizationDTO implements DTO<Organization> {
 
     @Length(min = 4, max = 100)
@@ -24,22 +31,6 @@ public class OrganizationDTO implements DTO<Organization> {
         organization.setEnabled(this.enabled);
 
         return organization;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(final String name) {
-        this.name = name;
-    }
-
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(final boolean enabled) {
-        this.enabled = enabled;
     }
 
 }

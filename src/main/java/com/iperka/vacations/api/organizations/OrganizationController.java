@@ -1,17 +1,19 @@
 package com.iperka.vacations.api.organizations;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import javax.validation.Valid;
 
 import com.iperka.vacations.api.helpers.Response;
 import com.iperka.vacations.api.organizations.dto.OrganizationDTO;
+import com.iperka.vacations.api.organizations.exceptions.OrganizationAlreadyExists;
+import com.iperka.vacations.api.organizations.exceptions.OrganizationNotFound;
 import com.iperka.vacations.api.security.Helpers;
 
 import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
@@ -38,174 +40,228 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 /**
- * REST Controller for Organizations domain.
+ * The {@link com.iperka.vacations.api.organizations.OrganizationController}
+ * class defines the structure of a basic organization route.
+ * 
+ * @author Michael Beutler
+ * @version 0.0.7
+ * @since 2021-09-29
  */
 @RestController
 @RequestMapping(path = { "/organizations" }, produces = MediaType.APPLICATION_JSON_VALUE)
 @Tag(name = "Organizations", description = "Endpoints for managing organizations.")
 public class OrganizationController {
 
-    private static final String NO_ORGANIZATION_FOUND_WITH_ID_MESSAGE = "No organization found with given id.";
-
     private final OrganizationService organizationService;
 
     @Autowired
-    public OrganizationController(OrganizationService organizationService) {
+    public OrganizationController(final OrganizationService organizationService) {
         this.organizationService = organizationService;
     }
 
     @GetMapping
-    @Operation(summary = "Finds all organizations", description = "Finds all organizations owned by authenticated user.", security = {
-            @SecurityRequirement(name = "OAuth2", scopes = { "organizations:read", "organizations:write",
-                    "organizations:all:read", "organizations:all:write" }) }, tags = {
-                            "Organizations" }, responses = {
-                                    @ApiResponse(description = "Success", responseCode = "200", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OrganizationsListResponse.class))),
-                                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content(mediaType = "application/json")),
-                                    @ApiResponse(description = "Forbidden", responseCode = "403", content = @Content(mediaType = "application/json")),
-                                    @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content(mediaType = "application/json"))
-                            })
+    // @formatter:off
+    @Operation(
+        summary = "Finds all organizations", 
+        description = "Finds all organizations owned by authenticated user.", 
+        security = {
+            @SecurityRequirement(
+                name = "OAuth2",
+                scopes = {"organizations:read", "organizations:write", "organizations:all:read", "organizations:all:write"}
+            )
+        }, 
+        tags = {"Organizations"}, 
+        responses = {
+            @ApiResponse(description = "Success", responseCode = "200", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OrganizationsListResponse.class))),
+            @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content(mediaType = "application/json")),
+            @ApiResponse(description = "Forbidden", responseCode = "403", content = @Content(mediaType = "application/json")),
+            @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content(mediaType = "application/json"))
+        }
+    )
+    // @formatter:on
     public ResponseEntity<Response<List<Organization>>> getAllOrganizations(
-            Authentication authentication,
-            @ParameterObject @PageableDefault(size = 20, sort = "name") Pageable pageable,
-            @RequestParam(required = false) @Parameter(description = "Filter owned organizations by name.") String name) {
+    // @formatter:off
+        final Authentication authentication,
+        @ParameterObject @PageableDefault(size = 20, sort = "name") final Pageable pageable,
+        @RequestParam(required = false) @Parameter(description = "Filter owned organizations by name.") final String name
+     // @formatter:on
+    ) {
+        final String owner = Helpers.getOwner(authentication);
+        String query = null;
+
+        // Check if name is set
+        if (StringUtils.hasText(name)) {
+            query = String.format("name=*%s*", name);
+        }
+
+        Page<Organization> page;
         // Check if authenticated user has been granted organizations:all:read
-        String owner = Helpers.getOwner(authentication);
         if (Helpers.hasScope("organizations:all:read", authentication)) {
             if (StringUtils.hasText(name)) {
-                return Response
-                        .fromPage(HttpStatus.OK,
-                                this.organizationService.findByNameContainingIgnoreCase(pageable, name),
-                                String.format("name=*%s*", name))
-                        .build();
+                page = this.organizationService.findByNameContainingIgnoreCase(pageable, name);
+            } else {
+                page = this.organizationService.findAll(pageable);
             }
-
-            return Response.fromPage(HttpStatus.OK, this.organizationService.findAll(pageable)).build();
-        }
-        if (StringUtils.hasText(name)) {
-            return Response
-                    .fromPage(HttpStatus.OK,
-                            this.organizationService.findByNameContainingIgnoreCaseAndOwner(pageable, name, owner),
-                            String.format("name=*%s*", name))
-                    .build();
+        } else {
+            if (StringUtils.hasText(name)) {
+                page = this.organizationService.findByNameContainingIgnoreCaseAndOwner(pageable, name, owner);
+            } else {
+                page = this.organizationService.findAllByOwner(pageable, owner);
+            }
         }
 
-        return Response.fromPage(HttpStatus.OK, this.organizationService.findAllByOwner(pageable, owner)).build();
+        return Response.fromPage(HttpStatus.OK, page, query).build();
     }
 
     @GetMapping(value = "/{uuid}")
-    @Operation(summary = "Finds organizations with given UUID.", description = "Finds organizations with given UUID owned by authenticated user.", security = {
-            @SecurityRequirement(name = "OAuth2", scopes = { "organizations:read", "organizations:write",
-                    "organizations:all:read", "organizations:all:write" }) }, tags = {
-                            "Organizations" }, responses = {
-                                    @ApiResponse(description = "Success", responseCode = "200", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OrganizationResponse.class))),
-                                    @ApiResponse(description = "Not Found", responseCode = "404", content = @Content(mediaType = "application/json")),
-                                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content(mediaType = "application/json")),
-                                    @ApiResponse(description = "Forbidden", responseCode = "403", content = @Content(mediaType = "application/json")),
-                                    @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content(mediaType = "application/json"))
-                            })
-    public ResponseEntity<Response<Organization>> getOrganizationById(Authentication authentication,
-            @PathVariable("uuid") UUID uuid) {
-        // Check if authenticated user has been granted organizations:all:read
-        String owner = Helpers.getOwner(authentication);
-        if (Helpers.hasScope("organizations:all:read", authentication)) {
-            Optional<Organization> optional = organizationService.findByUuid(uuid);
+    // @formatter:off
+    @Operation(
+        summary = "Finds organizations with given UUID.", 
+        description = "Finds organizations with given UUID owned by authenticated user.", 
+        security = {
+            @SecurityRequirement(
+                name = "OAuth2", 
+                scopes = {"organizations:read", "organizations:write", "organizations:all:read", "organizations:all:write"}
+            )
+        }, 
+        tags = {"Organizations"}, 
+        responses = {
+            @ApiResponse(description = "Success", responseCode = "200", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OrganizationResponse.class))),
+            @ApiResponse(description = "Not Found", responseCode = "404", content = @Content(mediaType = "application/json")),
+            @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content(mediaType = "application/json")),
+            @ApiResponse(description = "Forbidden", responseCode = "403", content = @Content(mediaType = "application/json")),
+            @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content(mediaType = "application/json"))
+        }
+    )
+    // @formatter:on
+    public ResponseEntity<Response<Organization>> getOrganizationById(
+    // @formatter:off
+        final Authentication authentication,
+        @PathVariable("uuid") final UUID uuid
+    // @formatter:on
+    ) {
+        final String owner = Helpers.getOwner(authentication);
+        final Response<Organization> response = new Response<>(HttpStatus.OK);
 
-            if (!optional.isPresent()) {
-                return Response.<Organization>notFound(NO_ORGANIZATION_FOUND_WITH_ID_MESSAGE).build();
+        try {
+            Organization organization;
+
+            // Check if authenticated user has been granted organizations:all:read
+            if (Helpers.hasScope("organizations:all:read", authentication)) {
+                organization = organizationService.findByUuid(uuid);
+            } else {
+                organization = organizationService.findByUuidAndOwner(uuid, owner);
             }
 
-            Response<Organization> response = new Response<>(HttpStatus.OK);
-            response.setData(optional.get());
+            // Set data object
+            response.setData(organization);
 
             return response.build();
+        } catch (final OrganizationNotFound e) {
+            return response.fromError(HttpStatus.NOT_FOUND, e.toApiError()).build();
         }
-        Optional<Organization> optional = organizationService.findByUuidAndOwner(uuid, owner);
-
-        if (!optional.isPresent()) {
-            return Response.<Organization>notFound(NO_ORGANIZATION_FOUND_WITH_ID_MESSAGE).build();
-        }
-
-        Response<Organization> response = new Response<>(HttpStatus.OK);
-        response.setData(optional.get());
-
-        return response.build();
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Creates a new organizations with given name.", description = "Creates a new organizations with given name and owned by authenticated user.", security = {
-            @SecurityRequirement(name = "OAuth2", scopes = "organizations:write") }, tags = {
-                    "Organizations" }, responses = {
-                            @ApiResponse(description = "Created", responseCode = "201", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OrganizationResponse.class))),
-                            @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content(mediaType = "application/json")),
-                            @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content(mediaType = "application/json")),
-                            @ApiResponse(description = "Forbidden", responseCode = "403", content = @Content(mediaType = "application/json")),
-                            @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content(mediaType = "application/json"))
-                    })
-    public ResponseEntity<Response<Organization>> createOrganisation(Authentication authentication,
-            @Valid @RequestBody(required = true) @Schema(implementation = OrganizationDTO.class) OrganizationDTO organizationDTO) {
-        Organization organization = organizationDTO.toObject();
+    // @formatter:off
+    @Operation(
+        summary = "Creates a new organizations with given name.", 
+        description = "Creates a new organizations with given name and owned by authenticated user.", 
+        security = {
+            @SecurityRequirement(
+                name = "OAuth2", 
+                scopes = "organizations:write"
+            ) 
+        }, 
+        tags = {"Organizations"}, 
+        responses = {
+            @ApiResponse(description = "Created", responseCode = "201", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OrganizationResponse.class))),
+            @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content(mediaType = "application/json")),
+            @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content(mediaType = "application/json")),
+            @ApiResponse(description = "Forbidden", responseCode = "403", content = @Content(mediaType = "application/json")),
+            @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content(mediaType = "application/json"))
+        }
+    )
+    // @formatter:on
+    public ResponseEntity<Response<Organization>> createOrganisation(
+    // @formatter:off    
+        final Authentication authentication,
+        @Valid @RequestBody(required = true) @Schema(implementation = OrganizationDTO.class) final OrganizationDTO organizationDTO
+    // @formatter:on
+    ) {
+        final Organization organization = organizationDTO.toObject();
         organization.setOwner(((Jwt) authentication.getPrincipal()).getSubject());
 
-        Response<Organization> response = new Response<>(HttpStatus.CREATED);
-        response.setData(this.organizationService.create(organization));
+        final Response<Organization> response = new Response<>(HttpStatus.CREATED);
+        try {
+            response.setData(this.organizationService.create(organization));
+        } catch (final OrganizationAlreadyExists e) {
+            return response.fromError(HttpStatus.BAD_REQUEST, e.toApiError()).build();
+        }
 
         return response.build();
     }
 
     @DeleteMapping(value = "/{uuid}")
-    @Operation(summary = "Deletes organization with given UUID.", description = "Deletes organizations with given UUID and owned by authenticated user.", security = {
-            @SecurityRequirement(name = "OAuth2", scopes = { "organizations:write",
-                    "organizations:all:write" }) }, tags = {
-                            "Organizations" }, responses = {
-                                    @ApiResponse(description = "OK", responseCode = "200", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class))),
-                                    @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content(mediaType = "application/json")),
-                                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content(mediaType = "application/json")),
-                                    @ApiResponse(description = "Forbidden", responseCode = "403", content = @Content(mediaType = "application/json")),
-                                    @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content(mediaType = "application/json"))
-                            })
-    public ResponseEntity<Response<Organization>> deleteOrganizationById(Authentication authentication,
-            @PathVariable("uuid") UUID uuid) {
-        // Check if authenticated user has been granted organizations:all:write
-        String owner = Helpers.getOwner(authentication);
-        if (Helpers.hasScope("organizations:all:write", authentication)) {
-            Optional<Organization> optional = organizationService.findByUuid(uuid);
+    // @formatter:off
+    @Operation(
+        summary = "Deletes organization with given UUID.", 
+        description = "Deletes organizations with given UUID and owned by authenticated user.", 
+        security = {
+            @SecurityRequirement(
+                name = "OAuth2", 
+                scopes = {"organizations:write", "organizations:all:write"}
+            ) 
+        }, 
+        tags = {"Organizations"},
+        responses = {
+            @ApiResponse(description = "OK", responseCode = "200", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class))),
+            @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content(mediaType = "application/json")),
+            @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content(mediaType = "application/json")),
+            @ApiResponse(description = "Forbidden", responseCode = "403", content = @Content(mediaType = "application/json")),
+            @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content(mediaType = "application/json"))
+        }
+    )
+    // @formatter:on
+    public ResponseEntity<Response<Organization>> deleteOrganizationById(
+    // @formatter:off
+        final Authentication authentication,
+        @PathVariable("uuid") final UUID uuid
+    // @formatter:on        
+    ) {
+        final String owner = Helpers.getOwner(authentication);
+        final Response<Organization> response = new Response<>(HttpStatus.OK);
 
-            if (!optional.isPresent()) {
-                return Response.<Organization>notFound(NO_ORGANIZATION_FOUND_WITH_ID_MESSAGE).build();
+        try {
+            Organization organization;
+
+            // Check if authenticated user has been granted organizations:all:write
+            if (Helpers.hasScope("organizations:all:write", authentication)) {
+                organization = organizationService.findByUuid(uuid);
+            } else {
+                organization = organizationService.findByUuidAndOwner(uuid, owner);
             }
 
             // Delete
-            organizationService.deleteByUuid(uuid);
+            organizationService.deleteByUuidAndOwner(uuid, owner);
 
-            Response<Organization> response = new Response<>(HttpStatus.OK);
-            response.setData(optional.get());
+            // Set data object
+            response.setData(organization);
 
             return response.build();
+        } catch (final OrganizationNotFound e) {
+            return response.fromError(HttpStatus.NOT_FOUND, e.toApiError()).build();
         }
-
-        Optional<Organization> optional = organizationService.findByUuidAndOwner(uuid, owner);
-
-        if (!optional.isPresent()) {
-            return Response.<Organization>notFound(NO_ORGANIZATION_FOUND_WITH_ID_MESSAGE).build();
-        }
-
-        // Delete
-        organizationService.deleteByUuidAndOwner(uuid, owner);
-
-        Response<Organization> response = new Response<>(HttpStatus.OK);
-        response.setData(optional.get());
-
-        return response.build();
     }
 
     private final class OrganizationsListResponse extends Response<List<Organization>> {
-        public OrganizationsListResponse(HttpStatus status) {
+        public OrganizationsListResponse(final HttpStatus status) {
             super(status);
         }
     };
 
     private final class OrganizationResponse extends Response<Organization> {
-        public OrganizationResponse(HttpStatus status) {
+        public OrganizationResponse(final HttpStatus status) {
             super(status);
         }
     };

@@ -24,7 +24,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * return the object itself.
  * 
  * @author Michael Beutler
- * @version 0.0.8
+ * @version 0.0.9
  * @since 2021-05-14
  */
 public class Response<T> {
@@ -87,6 +87,12 @@ public class Response<T> {
 
         response.addError(new APIError("NotFound", message, 404));
 
+        return response;
+    }
+
+    public Response<T> fromError(HttpStatus status, APIError error) {
+        Response<T> response = new Response<>(status);
+        response.addError(error);
         return response;
     }
 

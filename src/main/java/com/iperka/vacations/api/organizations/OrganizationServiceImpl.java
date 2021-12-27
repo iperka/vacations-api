@@ -3,12 +3,15 @@ package com.iperka.vacations.api.organizations;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.iperka.vacations.api.organizations.exceptions.OrganizationAlreadyExists;
+import com.iperka.vacations.api.organizations.exceptions.OrganizationNotFound;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * The
@@ -22,8 +25,8 @@ import org.springframework.stereotype.Service;
  * @since 2021-09-29
  */
 @Service
+@Slf4j
 public class OrganizationServiceImpl implements OrganizationService {
-    private final Logger logger = LoggerFactory.getLogger(OrganizationServiceImpl.class);
 
     private OrganizationRepository organizationRepository;
 
@@ -34,33 +37,31 @@ public class OrganizationServiceImpl implements OrganizationService {
     @Override
     @PreAuthorize("hasAuthority('SCOPE_organizations:all:read')")
     public Page<Organization> findAll(Pageable pageable) {
-        logger.debug("findAll called");
+        log.debug("findAll called");
         return this.organizationRepository.findAll(pageable);
     }
 
     @Override
     @PreAuthorize("hasAuthority('SCOPE_organizations:all:read')")
     public Page<Organization> findByNameContainingIgnoreCase(Pageable pageable, String name) {
-        logger.debug("findAllByName called");
+        log.debug("findAllByName called");
         return this.organizationRepository.findByNameContainingIgnoreCase(pageable, name);
     }
 
     @Override
     @PreAuthorize("hasAuthority('SCOPE_organizations:all:read')")
-    public Optional<Organization> findByUuid(UUID uuid) {
-        logger.debug("findByUUID called");
-        return this.organizationRepository.findByUuid(uuid);
+    public Organization findByUuid(UUID uuid) throws OrganizationNotFound {
+        log.debug("findByUUID called");
+        return this.organizationRepository.findByUuid(uuid).orElseThrow(() -> new OrganizationNotFound());
     }
 
     @Override
     @PreAuthorize("hasAuthority('SCOPE_organizations:write')")
-    public Organization create(Organization organization) {
-        logger.debug("create called");
+    public Organization create(Organization organization) throws OrganizationAlreadyExists {
+        log.debug("create called");
 
         if (this.findByNameIgnoreCase(organization.getName()).isPresent()) {
-            // TODO: Throw custom error for duplicate name
-            logger.warn("There is already an organization with the same name.");
-            return null;
+            throw new OrganizationAlreadyExists();
         }
 
         return this.organizationRepository.save(organization);
@@ -69,7 +70,7 @@ public class OrganizationServiceImpl implements OrganizationService {
     @Override
     @PreAuthorize("hasAuthority('SCOPE_organizations:all:read')")
     public Optional<Organization> findByNameIgnoreCase(String name) {
-        logger.debug("findByNameIgnoreCase called");
+        log.debug("findByNameIgnoreCase called");
         return this.organizationRepository.findByNameIgnoreCase(name);
     }
 
@@ -93,8 +94,9 @@ public class OrganizationServiceImpl implements OrganizationService {
 
     @Override
     @PreAuthorize("hasAuthority('SCOPE_organizations:read')")
-    public Optional<Organization> findByUuidAndOwner(UUID uuid, String owner) {
-        return this.organizationRepository.findByUuidAndOwner(uuid, owner);
+    public Organization findByUuidAndOwner(UUID uuid, String owner) throws OrganizationNotFound {
+        return this.organizationRepository.findByUuidAndOwner(uuid, owner)
+                .orElseThrow(() -> new OrganizationNotFound());
     }
 
     @Override

@@ -5,8 +5,6 @@ import java.text.MessageFormat;
 import com.iperka.vacations.api.helpers.APIError;
 import com.iperka.vacations.api.helpers.Response;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
@@ -26,14 +24,12 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @ControllerAdvice
+@Slf4j
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
-
-    /**
-     * Logger.
-     */
-    private final Logger _logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     private ResponseEntity<Object> toResponseEntity(Response<Object> response) {
         return ResponseEntity.status(response.getStatus()).body(response);
@@ -53,7 +49,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
         final Response<Object> response = new Response<>(HttpStatus.NOT_FOUND);
         response.addError(new APIError(ex));
-        _logger.info("Resource not found.", ex);
+        log.info("Resource not found.", ex);
 
         return response.build();
     }
@@ -90,7 +86,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
         final Response<Object> response = new Response<>(HttpStatus.BAD_REQUEST);
         response.addError(new APIError(ex));
-        _logger.info("Method Argument mismatch.", ex);
+        log.info("Method Argument mismatch.", ex);
 
         return response.build();
     }

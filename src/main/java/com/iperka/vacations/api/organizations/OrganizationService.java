@@ -3,6 +3,9 @@ package com.iperka.vacations.api.organizations;
 import java.util.Optional;
 import java.util.UUID;
 
+import com.iperka.vacations.api.organizations.exceptions.OrganizationAlreadyExists;
+import com.iperka.vacations.api.organizations.exceptions.OrganizationNotFound;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -68,7 +71,7 @@ public interface OrganizationService {
      * @param uuid Objects uuid.
      * @return Optional
      */
-    public Optional<Organization> findByUuid(UUID uuid);
+    public Organization findByUuid(UUID uuid) throws OrganizationNotFound;
 
     /**
      * Returns the organization object matching the given uuid as
@@ -79,7 +82,7 @@ public interface OrganizationService {
      * @param uuid Objects uuid.
      * @return Optional
      */
-    public Optional<Organization> findByUuidAndOwner(UUID uuid, String owner);
+    public Organization findByUuidAndOwner(UUID uuid, String owner) throws OrganizationNotFound;
 
     /**
      * Returns the organization object matching the given name as
@@ -112,7 +115,7 @@ public interface OrganizationService {
      * @param organization Organization object.
      * @return created organization
      */
-    public Organization create(Organization organization);
+    public Organization create(Organization organization) throws OrganizationAlreadyExists;
 
     /**
      * Deletes the organization object matching the given uuid. Bare in mind that
@@ -122,7 +125,7 @@ public interface OrganizationService {
      * 
      * @param uuid Objects uuid.
      */
-    public void deleteByUuid(UUID uuid);
+    public void deleteByUuid(UUID uuid) throws OrganizationNotFound;
 
     /**
      * Deletes the organization object matching the given uuid.
@@ -131,5 +134,5 @@ public interface OrganizationService {
      * 
      * @param uuid Objects uuid.
      */
-    public void deleteByUuidAndOwner(UUID uuid, String owner);
+    public void deleteByUuidAndOwner(UUID uuid, String owner) throws OrganizationNotFound;
 }
