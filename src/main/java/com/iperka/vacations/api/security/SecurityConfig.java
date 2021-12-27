@@ -28,7 +28,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
  * validating given JWT's.
  * 
  * @author Michael Beutler
- * @version 0.0.7
+ * @version 0.0.8
  * @since 2021-09-29
  */
 @Configuration
@@ -69,9 +69,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .mvcMatchers(HttpMethod.GET, "/actuator/**").permitAll()
                 .mvcMatchers(HttpMethod.GET, "/favicon.ico").permitAll()
                 .mvcMatchers(HttpMethod.GET, "/oauth2-redirect.html").permitAll()
+                // Organizations
+                .mvcMatchers(HttpMethod.OPTIONS, ROUTE_ORGANIZATIONS).hasAnyAuthority(Scopes.SCOPE_ORGANIZATIONS_READ, Scopes.SCOPE_ORGANIZATIONS_WRITE, Scopes.SCOPE_ORGANIZATIONS_ALL_READ, Scopes.ORGANIZATIONS_ALL_WRITE)
                 .mvcMatchers(HttpMethod.GET, ROUTE_ORGANIZATIONS).hasAnyAuthority(Scopes.SCOPE_ORGANIZATIONS_READ, Scopes.SCOPE_ORGANIZATIONS_WRITE, Scopes.SCOPE_ORGANIZATIONS_ALL_READ, Scopes.ORGANIZATIONS_ALL_WRITE)
                 .mvcMatchers(HttpMethod.POST, ROUTE_ORGANIZATIONS).hasAnyAuthority(Scopes.SCOPE_ORGANIZATIONS_WRITE, Scopes.ORGANIZATIONS_ALL_WRITE)
                 .mvcMatchers(HttpMethod.DELETE, ROUTE_ORGANIZATIONS).hasAnyAuthority(Scopes.SCOPE_ORGANIZATIONS_WRITE, Scopes.ORGANIZATIONS_ALL_WRITE)
+                .mvcMatchers(HttpMethod.PUT, ROUTE_ORGANIZATIONS).hasAnyAuthority(Scopes.SCOPE_ORGANIZATIONS_WRITE, Scopes.ORGANIZATIONS_ALL_WRITE)
+                .mvcMatchers(HttpMethod.PATCH, ROUTE_ORGANIZATIONS).hasAnyAuthority(Scopes.SCOPE_ORGANIZATIONS_WRITE, Scopes.ORGANIZATIONS_ALL_WRITE)
+                // End Organizations
                 .anyRequest().authenticated()
             ) 
             .cors().configurationSource(corsConfigurationSource())
@@ -90,6 +95,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         configuration.setAllowedMethods(List.of(
             HttpMethod.GET.name(), 
             HttpMethod.PUT.name(), 
+            HttpMethod.PATCH.name(), 
             HttpMethod.POST.name(),
             HttpMethod.DELETE.name(), 
             HttpMethod.OPTIONS.name()

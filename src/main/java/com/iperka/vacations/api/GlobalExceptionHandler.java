@@ -19,6 +19,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.NoHandlerFoundException;
@@ -28,6 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @ControllerAdvice
+@RestControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
@@ -87,6 +89,24 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         final Response<Object> response = new Response<>(HttpStatus.BAD_REQUEST);
         response.addError(new APIError(ex));
         log.info("Method Argument mismatch.", ex);
+
+        return response.build();
+    }
+
+    /**
+     * Handle IllegalArgumentException: This exception is thrown when a
+     * method parameter has the wrong type!
+     * 
+     * @param ex      {@link IllegalArgumentException}
+     * @param request {@link WebRequest}
+     * @return {@link ResponseEntity}
+     */
+    @ExceptionHandler(IllegalArgumentException.class)
+    protected ResponseEntity<Response<Object>> handleIllegalArgumentException(final IllegalArgumentException ex) {
+
+        final Response<Object> response = new Response<>(HttpStatus.BAD_REQUEST);
+        response.addError(new APIError(ex));
+        log.info("Illegal argument provided.", ex);
 
         return response.build();
     }

@@ -3,6 +3,7 @@ package com.iperka.vacations.api.organizations;
 import java.util.Optional;
 import java.util.UUID;
 
+import com.iperka.vacations.api.organizations.dto.OrganizationDTO;
 import com.iperka.vacations.api.organizations.exceptions.OrganizationAlreadyExists;
 import com.iperka.vacations.api.organizations.exceptions.OrganizationNotFound;
 
@@ -15,7 +16,7 @@ import org.springframework.data.domain.Pageable;
  * {@link com.iperka.vacations.api.organisations.OrganisationRepository} model.
  * 
  * @author Michael Beutler
- * @version 0.0.7
+ * @version 0.0.8
  * @since 2021-09-29
  */
 public interface OrganizationService {
@@ -135,4 +136,23 @@ public interface OrganizationService {
      * @param uuid Objects uuid.
      */
     public void deleteByUuidAndOwner(UUID uuid, String owner) throws OrganizationNotFound;
+
+    /**
+     * Deletes the organization object matching the given uuid. Bare in mind that
+     * these method should be explicit to administrative roles.
+     * 
+     * Required scopes: organizations:all:write
+     * 
+     * @param uuid Objects uuid.
+     */
+    public Organization updateByUuid(UUID uuid, OrganizationDTO organizationDTO) throws OrganizationNotFound, OrganizationAlreadyExists;
+
+    /**
+     * Deletes the organization object matching the given uuid.
+     * 
+     * Required scopes: organizations:write
+     * 
+     * @param uuid Objects uuid.
+     */
+    public Organization updateByUuidAndOwner(UUID uuid, String owner, OrganizationDTO organizationDTO) throws OrganizationNotFound, OrganizationAlreadyExists;
 }

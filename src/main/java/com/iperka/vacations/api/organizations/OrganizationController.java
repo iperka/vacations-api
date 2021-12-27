@@ -26,8 +26,10 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -85,20 +87,25 @@ public class OrganizationController {
     // @formatter:off
         final Authentication authentication,
         @ParameterObject @PageableDefault(size = 20, sort = "name") final Pageable pageable,
-        @RequestParam(required = false) @Parameter(description = "Filter owned organizations by name.") final String name
+        @RequestParam(required = false) @Parameter(description = "Filter owned organizations by name.") final String name,
+        @RequestParam(required = false) @Parameter(description = "Filter organizations by owner.") final String owner
      // @formatter:on
     ) {
-        final String owner = Helpers.getOwner(authentication);
+        final String userId = Helpers.getUserId(authentication);
         String query = null;
 
-        // Check if name is set
-        if (StringUtils.hasText(name)) {
+        // Check if name and / or owner is set
+        if (StringUtils.hasText(owner)) {
+            query = String.format("owner=*%s*", owner);
+        } else if (StringUtils.hasText(name)) {
             query = String.format("name=*%s*", name);
+        } else if (StringUtils.hasText(name) && StringUtils.hasText(owner)) {
+            query = String.format("name=*%s*,owner=%s", name, owner);
         }
 
         Page<Organization> page;
         // Check if authenticated user has been granted organizations:all:read
-        if (Helpers.hasScope(Scopes.ORGANIZATIONS_ALL_READ, authentication)) {
+        if (Helpers.hasScope(Scopes.ORGANIZATIONS_ALL_READ, authentication) && !StringUtils.hasText(owner)) {
             if (StringUtils.hasText(name)) {
                 page = this.organizationService.findByNameContainingIgnoreCase(pageable, name);
             } else {
@@ -106,9 +113,9 @@ public class OrganizationController {
             }
         } else {
             if (StringUtils.hasText(name)) {
-                page = this.organizationService.findByNameContainingIgnoreCaseAndOwner(pageable, name, owner);
+                page = this.organizationService.findByNameContainingIgnoreCaseAndOwner(pageable, name, userId);
             } else {
-                page = this.organizationService.findAllByOwner(pageable, owner);
+                page = this.organizationService.findAllByOwner(pageable, userId);
             }
         }
 
@@ -142,7 +149,7 @@ public class OrganizationController {
         @PathVariable("uuid") final UUID uuid
     // @formatter:on
     ) {
-        final String owner = Helpers.getOwner(authentication);
+        final String userId = Helpers.getUserId(authentication);
         final Response<Organization> response = new Response<>(HttpStatus.OK);
 
         try {
@@ -152,7 +159,7 @@ public class OrganizationController {
             if (Helpers.hasScope(Scopes.ORGANIZATIONS_ALL_READ, authentication)) {
                 organization = organizationService.findByUuid(uuid);
             } else {
-                organization = organizationService.findByUuidAndOwner(uuid, owner);
+                organization = organizationService.findByUuidAndOwner(uuid, userId);
             }
 
             // Set data object
@@ -231,7 +238,7 @@ public class OrganizationController {
         @PathVariable("uuid") final UUID uuid
     // @formatter:on        
     ) {
-        final String owner = Helpers.getOwner(authentication);
+        final String userId = Helpers.getUserId(authentication);
         final Response<Organization> response = new Response<>(HttpStatus.OK);
 
         try {
@@ -241,11 +248,11 @@ public class OrganizationController {
             if (Helpers.hasScope(Scopes.ORGANIZATIONS_ALL_WRITE, authentication)) {
                 organization = organizationService.findByUuid(uuid);
             } else {
-                organization = organizationService.findByUuidAndOwner(uuid, owner);
+                organization = organizationService.findByUuidAndOwner(uuid, userId);
             }
 
             // Delete
-            organizationService.deleteByUuidAndOwner(uuid, owner);
+            organizationService.deleteByUuidAndOwner(uuid, userId);
 
             // Set data object
             response.setData(organization);
@@ -253,6 +260,59 @@ public class OrganizationController {
             return response.build();
         } catch (final OrganizationNotFound e) {
             return response.fromError(HttpStatus.NOT_FOUND, e.toApiError()).build();
+        }
+    }
+
+    @PutMapping(value = "/{uuid}")
+    @PatchMapping(value = "/{uuid}")
+    // @formatter:off
+    @Operation(
+        summary = "Updates organization with given UUID.", 
+        description = "Updates organizations with given UUID and organization object and owned by authenticated user.", 
+        security = {
+            @SecurityRequirement(
+                name = OpenApiConfig.OAUTH2, 
+                scopes = {Scopes.ORGANIZATIONS_WRITE, Scopes.ORGANIZATIONS_ALL_WRITE}
+            ) 
+        }, 
+        tags = {"Organizations"},
+        responses = {
+            @ApiResponse(description = "OK", responseCode = "200", content = @Content(mediaType = OpenApiConfig.APPLICATION_JSON, schema = @Schema(implementation = OrganizationResponse.class))),
+            @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content(mediaType = OpenApiConfig.APPLICATION_JSON)),
+            @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content(mediaType = OpenApiConfig.APPLICATION_JSON)),
+            @ApiResponse(description = "Forbidden", responseCode = "403", content = @Content(mediaType = OpenApiConfig.APPLICATION_JSON)),
+            @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content(mediaType = OpenApiConfig.APPLICATION_JSON))
+        }
+    )
+    // @formatter:on
+    public ResponseEntity<Response<Organization>> updateOrganizationById(
+    // @formatter:off
+        final Authentication authentication,
+        @PathVariable("uuid") final UUID uuid,
+        @Valid @RequestBody(required = true) @Schema(implementation = OrganizationDTO.class) final OrganizationDTO organizationDTO
+    // @formatter:on        
+    ) {
+        final String userId = Helpers.getUserId(authentication);
+        final Response<Organization> response = new Response<>(HttpStatus.OK);
+
+        try {
+            Organization organization;
+
+            // Check if authenticated user has been granted organizations:all:write
+            if (Helpers.hasScope(Scopes.ORGANIZATIONS_ALL_WRITE, authentication)) {
+                organization = organizationService.updateByUuid(uuid, organizationDTO);
+            } else {
+                organization = organizationService.updateByUuidAndOwner(uuid, userId, organizationDTO);
+            }
+
+            // Set data object
+            response.setData(organization);
+
+            return response.build();
+        } catch (final OrganizationNotFound e) {
+            return response.fromError(HttpStatus.NOT_FOUND, e.toApiError()).build();
+        } catch (final OrganizationAlreadyExists e) {
+            return response.fromError(HttpStatus.BAD_REQUEST, e.toApiError()).build();
         }
     }
 

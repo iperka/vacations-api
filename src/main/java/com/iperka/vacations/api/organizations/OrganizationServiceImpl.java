@@ -3,6 +3,9 @@ package com.iperka.vacations.api.organizations;
 import java.util.Optional;
 import java.util.UUID;
 
+import javax.transaction.Transactional;
+
+import com.iperka.vacations.api.organizations.dto.OrganizationDTO;
 import com.iperka.vacations.api.organizations.exceptions.OrganizationAlreadyExists;
 import com.iperka.vacations.api.organizations.exceptions.OrganizationNotFound;
 
@@ -21,7 +24,7 @@ import lombok.extern.slf4j.Slf4j;
  * and is used to manage the organization.
  * 
  * @author Michael Beutler
- * @version 0.0.7
+ * @version 0.0.8
  * @since 2021-09-29
  */
 @Service
@@ -76,6 +79,7 @@ public class OrganizationServiceImpl implements OrganizationService {
 
     @Override
     @PreAuthorize("hasAuthority('SCOPE_organizations:all:write')")
+    @Transactional
     public void deleteByUuid(UUID uuid) {
         this.organizationRepository.deleteByUuid(uuid);
     }
@@ -107,7 +111,53 @@ public class OrganizationServiceImpl implements OrganizationService {
 
     @Override
     @PreAuthorize("hasAuthority('SCOPE_organizations:write')")
+    @Transactional
     public void deleteByUuidAndOwner(UUID uuid, String owner) {
         this.organizationRepository.deleteByUuidAndOwner(uuid, owner);
+    }
+
+    @Override
+    @PreAuthorize("hasAuthority('SCOPE_organizations:all:write')")
+    public Organization updateByUuid(UUID uuid, OrganizationDTO organizationDTO)
+            throws OrganizationNotFound, OrganizationAlreadyExists {
+        Organization organization = this.organizationRepository.findByUuid(uuid).orElseThrow(OrganizationNotFound::new);
+
+        if (!organizationDTO.getName().equals(organization.getName())) {
+            // name has been modified -> check if name is unique
+            if (this.findByNameIgnoreCase(organizationDTO.getName()).isPresent()) {
+                throw new OrganizationAlreadyExists();
+            }
+            organization.setName(organizationDTO.getName());
+        }
+
+        // Should only be enabled by higher priviliged principal
+        if (organizationDTO.isEnabled() != organization.isEnabled()) {
+            organization.setEnabled(organizationDTO.isEnabled());
+        }
+
+        return this.organizationRepository.save(organization);
+    }
+
+    @Override
+    @PreAuthorize("hasAuthority('SCOPE_organizations:write')")
+    public Organization updateByUuidAndOwner(UUID uuid, String owner, OrganizationDTO organizationDTO)
+            throws OrganizationNotFound, OrganizationAlreadyExists {
+        Organization organization = this.organizationRepository.findByUuidAndOwner(uuid, owner)
+                .orElseThrow(OrganizationNotFound::new);
+
+        if (!organizationDTO.getName().equals(organization.getName())) {
+            // name has been modified -> check if name is unique
+            if (this.findByNameIgnoreCase(organizationDTO.getName()).isPresent()) {
+                throw new OrganizationAlreadyExists();
+            }
+            organization.setName(organizationDTO.getName());
+        }
+
+        // Should only be enabled by higher priviliged principal
+        if (organizationDTO.isEnabled() != organization.isEnabled()) {
+            log.warn("Unprivileged principal tried to setEnabled!");
+        }
+
+        return this.organizationRepository.save(organization);
     }
 }
