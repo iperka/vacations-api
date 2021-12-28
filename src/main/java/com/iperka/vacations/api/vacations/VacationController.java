@@ -50,7 +50,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
  * class defines the structure of a basic vacation route.
  * 
  * @author Michael Beutler
- * @version 0.0.3
+ * @version 0.0.4
  * @since 2021-12-28
  */
 @RestController
@@ -147,7 +147,7 @@ public class VacationController {
     public ResponseEntity<Response<double[]>> getVacationCountDaysByMonth(
     // @formatter:off
         final Authentication authentication,
-        @PathVariable("year") final Year year,
+        @PathVariable("year") @Parameter(description = "Will only display vacations within the given year.", example = "2022", schema = @Schema(implementation = int.class)) final Year year,
         @RequestParam(required = false) @Parameter(description = "Filter vacations by owner (advanced scopes required).") final String owner
      // @formatter:on
     ) {
