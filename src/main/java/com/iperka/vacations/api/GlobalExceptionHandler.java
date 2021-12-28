@@ -141,7 +141,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
         final Response<Object> response = new Response<>(HttpStatus.BAD_REQUEST);
         response.addError(new APIError(ex.getClass().getSimpleName(), "Cannot deserialize body value.",
-                ex.getLocalizedMessage(), 400));
+                "JSON parse error while parsing body.", 400));
+        log.error("HttpMessageNotReadableException", ex);
 
         return toResponseEntity(response);
     }
