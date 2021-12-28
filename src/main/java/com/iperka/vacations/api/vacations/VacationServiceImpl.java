@@ -24,7 +24,7 @@ import lombok.extern.slf4j.Slf4j;
  * and is used to manage the vacation.
  * 
  * @author Michael Beutler
- * @version 0.0.2
+ * @version 0.0.3
  * @since 2021-12-28
  */
 @Service
@@ -64,6 +64,12 @@ public class VacationServiceImpl implements VacationService {
         log.debug("create called");
         if (vacation.getStartDate().getTime() > vacation.getEndDate().getTime()) {
             throw new VacationInvalidDateRange();
+        }
+
+        // Check if days are less than 0.25
+        if (vacation.getDays() < 0.25) {
+            log.info("Vacation.days < 0.25 => set to 0.25!");
+            vacation.setDays(0.25);
         }
 
         return this.vacationRepository.save(vacation);
@@ -137,7 +143,9 @@ public class VacationServiceImpl implements VacationService {
             vacation.setEndDate(vacationDTO.getEndDate());
         }
 
+        // Check if days are less than 0.25
         if (vacationDTO.getDays() < 0.25) {
+            log.info("Vacation.days < 0.25 => set to 0.25!");
             vacationDTO.setDays(0.25);
         }
 
@@ -176,7 +184,9 @@ public class VacationServiceImpl implements VacationService {
             vacation.setEndDate(vacationDTO.getEndDate());
         }
 
+        // Check if days are less than 0.25
         if (vacationDTO.getDays() < 0.25) {
+            log.info("Vacation.days < 0.25 => set to 0.25!");
             vacationDTO.setDays(0.25);
         }
 
