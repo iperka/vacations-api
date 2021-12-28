@@ -29,6 +29,9 @@ public class VacationDTO implements DTO<Vacation> {
     private Date endDate;
 
     @NotNull
+    private double days;
+
+    @NotNull
     private boolean enabled;
 
     @Override
@@ -38,6 +41,7 @@ public class VacationDTO implements DTO<Vacation> {
         vacation.setName(this.name);
         vacation.setStartDate(this.startDate);
         vacation.setEndDate(this.endDate);
+        vacation.setDays(this.days);
         vacation.setEnabled(this.enabled);
 
         return vacation;

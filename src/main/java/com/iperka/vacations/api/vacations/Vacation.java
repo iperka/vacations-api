@@ -24,7 +24,7 @@ import lombok.Data;
  * the structure of a basic vacation.
  * 
  * @author Michael Beutler
- * @version 0.0.2
+ * @version 0.0.3
  * @since 2021-12-28
  */
 @Entity
@@ -70,6 +70,14 @@ public class Vacation implements Ownable {
     @NotNull
     @Schema(description = "End date of Vacation.", required = true)
     private Date endDate;
+
+    /**
+     * Number of days required for the Vacation.
+     */
+    @Column(nullable = false)
+    @NotNull
+    @Schema(description = "Number of vacation days required.", required = true)
+    private double days;
 
     /**
      * Will be false if the vacation is marked as disabled. As default every
