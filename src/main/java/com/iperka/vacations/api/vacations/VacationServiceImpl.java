@@ -6,6 +6,7 @@ import java.util.UUID;
 import javax.transaction.Transactional;
 
 import com.iperka.vacations.api.vacations.dto.VacationDTO;
+import com.iperka.vacations.api.vacations.exceptions.VacationInvalidDateRange;
 import com.iperka.vacations.api.vacations.exceptions.VacationNotFound;
 
 import org.springframework.data.domain.Page;
@@ -59,8 +60,12 @@ public class VacationServiceImpl implements VacationService {
 
     @Override
     @PreAuthorize("hasAuthority('SCOPE_vacations:write')")
-    public Vacation create(Vacation vacation) {
+    public Vacation create(Vacation vacation) throws VacationInvalidDateRange {
         log.debug("create called");
+        if (vacation.getStartDate().getTime() > vacation.getEndDate().getTime()) {
+            throw new VacationInvalidDateRange();
+        }
+
         return this.vacationRepository.save(vacation);
     }
 
@@ -113,11 +118,23 @@ public class VacationServiceImpl implements VacationService {
     @Override
     @PreAuthorize("hasAuthority('SCOPE_vacations:all:write')")
     public Vacation updateByUuid(UUID uuid, VacationDTO vacationDTO)
-            throws VacationNotFound {
+            throws VacationNotFound, VacationInvalidDateRange {
         Vacation vacation = this.vacationRepository.findByUuid(uuid).orElseThrow(VacationNotFound::new);
 
         if (!vacationDTO.getName().equals(vacation.getName())) {
             vacation.setName(vacationDTO.getName());
+        }
+
+        if (vacationDTO.getStartDate().getTime() > vacationDTO.getEndDate().getTime()) {
+            throw new VacationInvalidDateRange();
+        }
+
+        if (vacationDTO.getStartDate().getTime() != (vacation.getStartDate().getTime())) {
+            vacation.setStartDate(vacationDTO.getStartDate());
+        }
+
+        if (vacationDTO.getEndDate().getTime() != (vacation.getEndDate().getTime())) {
+            vacation.setEndDate(vacationDTO.getEndDate());
         }
 
         // Should only be enabled by higher priviliged principal
@@ -131,12 +148,24 @@ public class VacationServiceImpl implements VacationService {
     @Override
     @PreAuthorize("hasAuthority('SCOPE_vacations:write')")
     public Vacation updateByUuidAndOwner(UUID uuid, String owner, VacationDTO vacationDTO)
-            throws VacationNotFound {
+            throws VacationNotFound, VacationInvalidDateRange {
         Vacation vacation = this.vacationRepository.findByUuidAndOwner(uuid, owner)
                 .orElseThrow(VacationNotFound::new);
 
         if (!vacationDTO.getName().equals(vacation.getName())) {
             vacation.setName(vacationDTO.getName());
+        }
+
+        if (vacationDTO.getStartDate().getTime() > vacationDTO.getEndDate().getTime()) {
+            throw new VacationInvalidDateRange();
+        }
+
+        if (vacationDTO.getStartDate().getTime() != (vacation.getStartDate().getTime())) {
+            vacation.setStartDate(vacationDTO.getStartDate());
+        }
+
+        if (vacationDTO.getEndDate().getTime() != (vacation.getEndDate().getTime())) {
+            vacation.setEndDate(vacationDTO.getEndDate());
         }
 
         // Should only be enabled by higher priviliged principal

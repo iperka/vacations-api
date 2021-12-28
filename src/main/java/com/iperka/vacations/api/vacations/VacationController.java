@@ -10,6 +10,7 @@ import com.iperka.vacations.api.helpers.Response;
 import com.iperka.vacations.api.security.Helpers;
 import com.iperka.vacations.api.security.Scopes;
 import com.iperka.vacations.api.vacations.dto.VacationDTO;
+import com.iperka.vacations.api.vacations.exceptions.VacationInvalidDateRange;
 import com.iperka.vacations.api.vacations.exceptions.VacationNotFound;
 
 import org.springdoc.api.annotations.ParameterObject;
@@ -201,7 +202,11 @@ public class VacationController {
         vacation.setOwner(((Jwt) authentication.getPrincipal()).getSubject());
 
         final Response<Vacation> response = new Response<>(HttpStatus.CREATED);
-        response.setData(this.vacationService.create(vacation));
+        try {
+            response.setData(this.vacationService.create(vacation));
+        } catch (final VacationInvalidDateRange e) {
+            return response.fromError(HttpStatus.BAD_REQUEST, e.toApiError()).build();
+        }
 
         return response.build();
     }
@@ -306,6 +311,8 @@ public class VacationController {
             return response.build();
         } catch (final VacationNotFound e) {
             return response.fromError(HttpStatus.NOT_FOUND, e.toApiError()).build();
+        } catch (final VacationInvalidDateRange e) {
+            return response.fromError(HttpStatus.BAD_REQUEST, e.toApiError()).build();
         }
     }
 

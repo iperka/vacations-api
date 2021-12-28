@@ -4,6 +4,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import com.iperka.vacations.api.vacations.dto.VacationDTO;
+import com.iperka.vacations.api.vacations.exceptions.VacationInvalidDateRange;
 import com.iperka.vacations.api.vacations.exceptions.VacationNotFound;
 
 import org.springframework.data.domain.Page;
@@ -115,7 +116,7 @@ public interface VacationService {
      * @param vacation Vacation object.
      * @return created vacation
      */
-    public Vacation create(Vacation vacation);
+    public Vacation create(Vacation vacation) throws VacationInvalidDateRange;
 
     /**
      * Deletes the vacation object matching the given uuid. Bare in mind that
@@ -144,7 +145,7 @@ public interface VacationService {
      * 
      * @param uuid Objects uuid.
      */
-    public Vacation updateByUuid(UUID uuid, VacationDTO vacationDTO) throws VacationNotFound;
+    public Vacation updateByUuid(UUID uuid, VacationDTO vacationDTO) throws VacationNotFound, VacationInvalidDateRange;
 
     /**
      * Deletes the vacation object matching the given uuid.
@@ -153,5 +154,5 @@ public interface VacationService {
      * 
      * @param uuid Objects uuid.
      */
-    public Vacation updateByUuidAndOwner(UUID uuid, String owner, VacationDTO vacationDTO) throws VacationNotFound;
+    public Vacation updateByUuidAndOwner(UUID uuid, String owner, VacationDTO vacationDTO) throws VacationNotFound, VacationInvalidDateRange;
 }
