@@ -44,7 +44,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * The {@link com.iperka.vacations.api.vacations.VacationController}
@@ -57,7 +56,6 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @RequestMapping(path = { "/vacations" }, produces = MediaType.APPLICATION_JSON_VALUE)
 @Tag(name = "Vacations", description = "Endpoints for managing vacations.")
-@Slf4j
 public class VacationController {
 
     private final VacationService vacationService;
