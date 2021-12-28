@@ -24,7 +24,7 @@ import lombok.extern.slf4j.Slf4j;
  * and is used to manage the vacation.
  * 
  * @author Michael Beutler
- * @version 0.0.3
+ * @version 0.0.4
  * @since 2021-12-28
  */
 @Service
@@ -130,8 +130,8 @@ public class VacationServiceImpl implements VacationService {
         this.updateFromDTO(vacation, vacationDTO);
 
         // Should only be enabled by higher priviliged principal
-        if (vacationDTO.isEnabled() != vacation.isEnabled()) {
-            vacation.setEnabled(vacationDTO.isEnabled());
+        if (!vacationDTO.getStatus().toString().equals(vacation.getStatus().toString())) {
+            vacation.setStatus(vacationDTO.getStatus());
         }
 
         return this.vacationRepository.save(vacation);
@@ -147,8 +147,8 @@ public class VacationServiceImpl implements VacationService {
         this.updateFromDTO(vacation, vacationDTO);
 
         // Should only be enabled by higher priviliged principal
-        if (vacationDTO.isEnabled() != vacation.isEnabled()) {
-            log.warn("Unprivileged principal tried to setEnabled!");
+        if (!vacationDTO.getStatus().toString().equals(vacation.getStatus().toString())) {
+            log.warn("Unprivileged principal tried to setStatus!");
         }
 
         return this.vacationRepository.save(vacation);

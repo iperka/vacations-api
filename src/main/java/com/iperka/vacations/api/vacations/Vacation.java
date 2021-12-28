@@ -5,6 +5,8 @@ import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.PreUpdate;
@@ -49,7 +51,7 @@ public class Vacation implements Ownable {
     /**
      * Unique string used for naming the vacation.
      */
-    @Column(unique = true, nullable = false, length = 100)
+    @Column(nullable = false, length = 100)
     @Length(min = 4, max = 100)
     @NotNull
     @Schema(description = "Unique human readable identifier of the Vacation.", example = "Ski Trip", required = true)
@@ -80,14 +82,13 @@ public class Vacation implements Ownable {
     private double days;
 
     /**
-     * Will be false if the vacation is marked as disabled. As default every
-     * vacation is disabled and needs to be enabled in order to function as
-     * authorization object.
+     * Vacation status.
      */
     @Column(nullable = false)
     @NotNull
-    @Schema(description = "Defines if the Vacation is enabled or not.", example = "true", required = true)
-    private boolean enabled = false;
+    @Schema(description = "Defines the Vacation state.", example = "requested", required = true)
+    @Enumerated(EnumType.STRING)
+    private VacationStatus status = VacationStatus.REQUESTED;
 
     /**
      * Defines the resource owner for this object.
@@ -118,5 +119,9 @@ public class Vacation implements Ownable {
     @PreUpdate
     public void setLastUpdate() {
         this.updated = new Date();
+    }
+
+    public String getStatus() {
+        return this.status.toString().toLowerCase();
     }
 }

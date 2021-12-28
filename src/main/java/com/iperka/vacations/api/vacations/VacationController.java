@@ -201,6 +201,10 @@ public class VacationController {
         final Vacation vacation = vacationDTO.toObject();
         vacation.setOwner(((Jwt) authentication.getPrincipal()).getSubject());
 
+        if (!Helpers.hasScope(Scopes.VACATIONS_ALL_WRITE, authentication)) {
+            vacationDTO.setStatus(VacationStatus.REQUESTED.toString());
+        }
+
         final Response<Vacation> response = new Response<>(HttpStatus.CREATED);
         try {
             response.setData(this.vacationService.create(vacation));
