@@ -1,5 +1,7 @@
 package com.iperka.vacations.api.vacations;
 
+import java.time.Year;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -154,5 +156,17 @@ public interface VacationService {
      * 
      * @param uuid Objects uuid.
      */
-    public Vacation updateByUuidAndOwner(UUID uuid, String owner, VacationDTO vacationDTO) throws VacationNotFound, VacationInvalidDateRange;
+    public Vacation updateByUuidAndOwner(UUID uuid, String owner, VacationDTO vacationDTO)
+            throws VacationNotFound, VacationInvalidDateRange;
+
+    /**
+     * Calculates dates between start and end date and returns a List with the
+     * number of days ordered by month.
+     * 
+     * Required scopes: vacations:all:read || vacations:all:write
+     * 
+     * @param vacations
+     * @return
+     */
+    public double[] getDaysCountByMonth(List<Vacation> vacations, Year year);
 }

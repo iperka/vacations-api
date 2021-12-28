@@ -1,5 +1,6 @@
 package com.iperka.vacations.api.vacations;
 
+import java.time.Year;
 import java.util.List;
 import java.util.UUID;
 
@@ -16,6 +17,7 @@ import com.iperka.vacations.api.vacations.exceptions.VacationNotFound;
 import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
@@ -42,18 +44,20 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * The {@link com.iperka.vacations.api.vacations.VacationController}
  * class defines the structure of a basic vacation route.
  * 
  * @author Michael Beutler
- * @version 0.0.1
+ * @version 0.0.3
  * @since 2021-12-28
  */
 @RestController
 @RequestMapping(path = { "/vacations" }, produces = MediaType.APPLICATION_JSON_VALUE)
 @Tag(name = "Vacations", description = "Endpoints for managing vacations.")
+@Slf4j
 public class VacationController {
 
     private final VacationService vacationService;
@@ -120,6 +124,49 @@ public class VacationController {
         }
 
         return Response.fromPage(HttpStatus.OK, page, query).build();
+    }
+
+    @GetMapping(value = "/overview/{year}")
+    // @formatter:off
+    @Operation(
+        summary = "Counts all vacations days by month for the given year.", 
+        description = "Counts all vacations days by month for the given year owned by authenticated user (or specified).", 
+        security = {
+            @SecurityRequirement(
+                name = OpenApiConfig.OAUTH2,
+                scopes = {Scopes.VACATIONS_READ, Scopes.VACATIONS_WRITE, Scopes.VACATIONS_ALL_READ, Scopes.VACATIONS_ALL_WRITE}
+            )
+        }, 
+        tags = {"Vacations"}, 
+        responses = {
+            @ApiResponse(description = "Success", responseCode = "200", content = @Content(mediaType = OpenApiConfig.APPLICATION_JSON, schema = @Schema(implementation = VacationDaysCountByMonthResponse.class))),
+            @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content(mediaType = OpenApiConfig.APPLICATION_JSON)),
+            @ApiResponse(description = "Forbidden", responseCode = "403", content = @Content(mediaType = OpenApiConfig.APPLICATION_JSON)),
+            @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content(mediaType = OpenApiConfig.APPLICATION_JSON))
+        }
+    )
+    // @formatter:on
+    public ResponseEntity<Response<double[]>> getVacationCountDaysByMonth(
+    // @formatter:off
+        final Authentication authentication,
+        @PathVariable("year") final Year year,
+        @RequestParam(required = false) @Parameter(description = "Filter vacations by owner (advanced scopes required).") final String owner
+     // @formatter:on
+    ) {
+        final String userId = Helpers.getUserId(authentication);
+        final Response<double[]> response = new Response<>(HttpStatus.OK);
+
+        List<Vacation> vacations;
+        // Check if authenticated user has been granted vacations:all:read
+        if (Helpers.hasScope(Scopes.VACATIONS_ALL_READ, authentication) && !StringUtils.hasText(owner)) {
+            vacations = this.vacationService.findAll(PageRequest.of(0, 100)).toList();
+        } else {
+            vacations = this.vacationService.findAllByOwner(PageRequest.of(0, 100), userId).toList();
+        }
+
+        response.setData(this.vacationService.getDaysCountByMonth(vacations, year));
+
+        return response.build();
     }
 
     @GetMapping(value = "/{uuid}")
@@ -329,6 +376,17 @@ public class VacationController {
     private final class VacationResponse extends Response<Vacation> {
         public VacationResponse(final HttpStatus status) {
             super(status);
+        }
+    };
+
+    private final class VacationDaysCountByMonthResponse extends Response<double[]> {
+        public VacationDaysCountByMonthResponse(final HttpStatus status) {
+            super(status);
+        }
+
+        @Schema(description = "Each index represents a month.", required = true, example = "[0.0,10.0,0.0,0.0,4.0,0.0,0.0,0.1,0.0,0.0,0.0,0.0]")
+        public double[] getData() {
+            return new double[12];
         }
     };
 }

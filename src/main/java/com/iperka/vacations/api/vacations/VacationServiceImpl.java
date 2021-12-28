@@ -1,10 +1,15 @@
 package com.iperka.vacations.api.vacations;
 
+import java.time.LocalDate;
+import java.time.Year;
+import java.time.ZoneId;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import javax.transaction.Transactional;
 
+import com.iperka.vacations.api.helpers.DateCalculator;
 import com.iperka.vacations.api.vacations.dto.VacationDTO;
 import com.iperka.vacations.api.vacations.exceptions.VacationInvalidDateRange;
 import com.iperka.vacations.api.vacations.exceptions.VacationNotFound;
@@ -152,6 +157,37 @@ public class VacationServiceImpl implements VacationService {
         }
 
         return this.vacationRepository.save(vacation);
+    }
+
+    @PreAuthorize("hasAuthority('SCOPE_vacations:read')")
+    public double[] getDaysCountByMonth(List<Vacation> vacations, Year year) {
+        double[] vacationMonthViewDTO = new double[12];
+
+        for (Vacation vacation : vacations) {
+            double total = vacation.getDays();
+            double daysAdded = 0;
+
+            LocalDate startDateAsLocal = LocalDate.ofInstant(vacation.getStartDate().toInstant(),
+                    ZoneId.systemDefault());
+            LocalDate endDateAsLocal = LocalDate.ofInstant(vacation.getEndDate().toInstant(), ZoneId.systemDefault());
+
+            List<LocalDate> dates = DateCalculator.getBusinessDaysBetween(startDateAsLocal, endDateAsLocal,
+                    Optional.empty());
+
+            for (LocalDate localDate : dates) {
+                if (localDate.getYear() != year.getValue()) {
+                    continue;
+                }
+                if (total > daysAdded + 1) {
+                    vacationMonthViewDTO[localDate.getMonthValue() - 1] += 1;
+                    daysAdded++;
+                    continue;
+                }
+                vacationMonthViewDTO[localDate.getMonthValue() - 1] += total - daysAdded;
+            }
+        }
+
+        return vacationMonthViewDTO;
     }
 
     private Vacation updateFromDTO(Vacation vacation, VacationDTO vacationDTO) throws VacationInvalidDateRange {
