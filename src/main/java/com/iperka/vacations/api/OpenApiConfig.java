@@ -80,7 +80,7 @@ public class OpenApiConfig {
         .info(new Info()
         .title("Vacations API")
         .description("REST API for iperka vacations solution.")
-        .version("v1")
+        .version("v" + VacationsApiApplication.class.getPackage().getImplementationVersion())
         .contact(new Contact().name("Support").email("support@iperka.com").url("https://iperka.com")))
         .addServersItem(server);
 
