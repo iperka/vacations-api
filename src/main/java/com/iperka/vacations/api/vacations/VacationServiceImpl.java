@@ -127,31 +127,7 @@ public class VacationServiceImpl implements VacationService {
             throws VacationNotFound, VacationInvalidDateRange {
         Vacation vacation = this.vacationRepository.findByUuid(uuid).orElseThrow(VacationNotFound::new);
 
-        if (!vacationDTO.getName().equals(vacation.getName())) {
-            vacation.setName(vacationDTO.getName());
-        }
-
-        if (vacationDTO.getStartDate().getTime() > vacationDTO.getEndDate().getTime()) {
-            throw new VacationInvalidDateRange();
-        }
-
-        if (vacationDTO.getStartDate().getTime() != (vacation.getStartDate().getTime())) {
-            vacation.setStartDate(vacationDTO.getStartDate());
-        }
-
-        if (vacationDTO.getEndDate().getTime() != (vacation.getEndDate().getTime())) {
-            vacation.setEndDate(vacationDTO.getEndDate());
-        }
-
-        // Check if days are less than 0.25
-        if (vacationDTO.getDays() < 0.25) {
-            log.info("Vacation.days < 0.25 => set to 0.25!");
-            vacationDTO.setDays(0.25);
-        }
-
-        if (vacationDTO.getDays() != vacation.getDays()) {
-            vacation.setDays(vacationDTO.getDays());
-        }
+        this.updateFromDTO(vacation, vacationDTO);
 
         // Should only be enabled by higher priviliged principal
         if (vacationDTO.isEnabled() != vacation.isEnabled()) {
@@ -168,6 +144,17 @@ public class VacationServiceImpl implements VacationService {
         Vacation vacation = this.vacationRepository.findByUuidAndOwner(uuid, owner)
                 .orElseThrow(VacationNotFound::new);
 
+        this.updateFromDTO(vacation, vacationDTO);
+
+        // Should only be enabled by higher priviliged principal
+        if (vacationDTO.isEnabled() != vacation.isEnabled()) {
+            log.warn("Unprivileged principal tried to setEnabled!");
+        }
+
+        return this.vacationRepository.save(vacation);
+    }
+
+    private Vacation updateFromDTO(Vacation vacation, VacationDTO vacationDTO) throws VacationInvalidDateRange {
         if (!vacationDTO.getName().equals(vacation.getName())) {
             vacation.setName(vacationDTO.getName());
         }
@@ -194,11 +181,6 @@ public class VacationServiceImpl implements VacationService {
             vacation.setDays(vacationDTO.getDays());
         }
 
-        // Should only be enabled by higher priviliged principal
-        if (vacationDTO.isEnabled() != vacation.isEnabled()) {
-            log.warn("Unprivileged principal tried to setEnabled!");
-        }
-
-        return this.vacationRepository.save(vacation);
+        return vacation;
     }
 }
