@@ -24,12 +24,12 @@ import lombok.Data;
  * the structure of a basic vacation.
  * 
  * @author Michael Beutler
- * @version 0.0.1
+ * @version 0.0.2
  * @since 2021-12-28
  */
 @Entity
 @Table(name = "vacations", uniqueConstraints = {
-        @UniqueConstraint(columnNames = { "uuid", "name" })
+        @UniqueConstraint(columnNames = { "uuid" })
 })
 @Data
 public class Vacation implements Ownable {
@@ -54,6 +54,22 @@ public class Vacation implements Ownable {
     @NotNull
     @Schema(description = "Unique human readable identifier of the Vacation.", example = "Ski Trip", required = true)
     private String name;
+
+    /**
+     * Start date of the vacations.
+     */
+    @Column(nullable = false)
+    @NotNull
+    @Schema(description = "Start date of Vacation.", required = true)
+    private Date startDate;
+
+    /**
+     * End date of the vacations.
+     */
+    @Column(nullable = false)
+    @NotNull
+    @Schema(description = "End date of Vacation.", required = true)
+    private Date endDate;
 
     /**
      * Will be false if the vacation is marked as disabled. As default every

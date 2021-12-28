@@ -14,8 +14,8 @@ import org.springframework.stereotype.Repository;
  * {@link com.iperka.vacations.api.vacations.Vacation} model.
  * 
  * @author Michael Beutler
- * @version 0.0.4
- * @since 2021-09-29
+ * @version 0.0.1
+ * @since 2021-12-28
  */
 @Repository
 public interface VacationRepository extends PagingAndSortingRepository<Vacation, UUID> {

@@ -4,7 +4,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 import com.iperka.vacations.api.vacations.dto.VacationDTO;
-import com.iperka.vacations.api.vacations.exceptions.VacationAlreadyExists;
 import com.iperka.vacations.api.vacations.exceptions.VacationNotFound;
 
 import org.springframework.data.domain.Page;
@@ -16,8 +15,8 @@ import org.springframework.data.domain.Pageable;
  * {@link com.iperka.vacations.api.organisations.OrganisationRepository} model.
  * 
  * @author Michael Beutler
- * @version 0.0.8
- * @since 2021-09-29
+ * @version 0.0.1
+ * @since 2021-12-28
  */
 public interface VacationService {
     /**
@@ -116,7 +115,7 @@ public interface VacationService {
      * @param vacation Vacation object.
      * @return created vacation
      */
-    public Vacation create(Vacation vacation) throws VacationAlreadyExists;
+    public Vacation create(Vacation vacation);
 
     /**
      * Deletes the vacation object matching the given uuid. Bare in mind that
@@ -145,7 +144,7 @@ public interface VacationService {
      * 
      * @param uuid Objects uuid.
      */
-    public Vacation updateByUuid(UUID uuid, VacationDTO vacationDTO) throws VacationNotFound, VacationAlreadyExists;
+    public Vacation updateByUuid(UUID uuid, VacationDTO vacationDTO) throws VacationNotFound;
 
     /**
      * Deletes the vacation object matching the given uuid.
@@ -154,5 +153,5 @@ public interface VacationService {
      * 
      * @param uuid Objects uuid.
      */
-    public Vacation updateByUuidAndOwner(UUID uuid, String owner, VacationDTO vacationDTO) throws VacationNotFound, VacationAlreadyExists;
+    public Vacation updateByUuidAndOwner(UUID uuid, String owner, VacationDTO vacationDTO) throws VacationNotFound;
 }

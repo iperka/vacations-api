@@ -28,7 +28,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
  * validating given JWT's.
  * 
  * @author Michael Beutler
- * @version 0.0.8
+ * @version 0.0.9
  * @since 2021-09-29
  */
 @Configuration
@@ -37,6 +37,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private static final String ROUTE_ORGANIZATIONS = "/organizations";
+    private static final String ROUTE_VACATIONS = "/vacations";
 
     @Value("${auth0.audience}")
     private String audience;
@@ -77,6 +78,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .mvcMatchers(HttpMethod.PUT, ROUTE_ORGANIZATIONS).hasAnyAuthority(Scopes.SCOPE_ORGANIZATIONS_WRITE, Scopes.ORGANIZATIONS_ALL_WRITE)
                 .mvcMatchers(HttpMethod.PATCH, ROUTE_ORGANIZATIONS).hasAnyAuthority(Scopes.SCOPE_ORGANIZATIONS_WRITE, Scopes.ORGANIZATIONS_ALL_WRITE)
                 // End Organizations
+
+                // Vacations
+                .mvcMatchers(HttpMethod.OPTIONS, ROUTE_VACATIONS).hasAnyAuthority(Scopes.SCOPE_VACATIONS_READ, Scopes.SCOPE_VACATIONS_WRITE, Scopes.SCOPE_VACATIONS_ALL_READ, Scopes.VACATIONS_ALL_WRITE)
+                .mvcMatchers(HttpMethod.GET, ROUTE_VACATIONS).hasAnyAuthority(Scopes.SCOPE_VACATIONS_READ, Scopes.SCOPE_VACATIONS_WRITE, Scopes.SCOPE_VACATIONS_ALL_READ, Scopes.VACATIONS_ALL_WRITE)
+                .mvcMatchers(HttpMethod.POST, ROUTE_VACATIONS).hasAnyAuthority(Scopes.SCOPE_VACATIONS_WRITE, Scopes.VACATIONS_ALL_WRITE)
+                .mvcMatchers(HttpMethod.DELETE, ROUTE_VACATIONS).hasAnyAuthority(Scopes.SCOPE_VACATIONS_WRITE, Scopes.VACATIONS_ALL_WRITE)
+                .mvcMatchers(HttpMethod.PUT, ROUTE_VACATIONS).hasAnyAuthority(Scopes.SCOPE_VACATIONS_WRITE, Scopes.VACATIONS_ALL_WRITE)
+                .mvcMatchers(HttpMethod.PATCH, ROUTE_VACATIONS).hasAnyAuthority(Scopes.SCOPE_VACATIONS_WRITE, Scopes.VACATIONS_ALL_WRITE)
+                // End Vacations
                 .anyRequest().authenticated()
             ) 
             .cors().configurationSource(corsConfigurationSource())

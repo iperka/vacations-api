@@ -24,7 +24,7 @@ import io.swagger.v3.oas.models.servers.Server;
  * OpenAPI SpringDoc Configuration Bean.
  * 
  * @author Michael Beutler
- * @version 0.0.8
+ * @version 0.0.9
  * @since 2021-12-15
  */
 @Configuration
@@ -59,7 +59,16 @@ public class OpenApiConfig {
         }
 
         openAPI
-        .addSecurityItem(new SecurityRequirement().addList(OAUTH2, Arrays.asList(Scopes.ORGANIZATIONS_READ, Scopes.ORGANIZATIONS_WRITE, Scopes.ORGANIZATIONS_ALL_READ, Scopes.ORGANIZATIONS_ALL_WRITE)))
+        .addSecurityItem(new SecurityRequirement().addList(OAUTH2, Arrays.asList(
+            Scopes.ORGANIZATIONS_READ, 
+            Scopes.ORGANIZATIONS_WRITE, 
+            Scopes.ORGANIZATIONS_ALL_READ, 
+            Scopes.ORGANIZATIONS_ALL_WRITE,
+            Scopes.VACATIONS_READ, 
+            Scopes.VACATIONS_WRITE, 
+            Scopes.VACATIONS_ALL_READ, 
+            Scopes.VACATIONS_ALL_WRITE
+        )))
         .components(new Components()
         .addSecuritySchemes(OAUTH2,
         new SecurityScheme()
@@ -72,7 +81,11 @@ public class OpenApiConfig {
                        .addString(Scopes.ORGANIZATIONS_READ, "Read owned organizations.")
                        .addString(Scopes.ORGANIZATIONS_WRITE, "Create, update and delete owned organizations.") 
                        .addString(Scopes.ORGANIZATIONS_ALL_READ, "Read all organizations.") 
-                       .addString(Scopes.ORGANIZATIONS_ALL_WRITE, "Create, update and delete all organizations.") 
+                       .addString(Scopes.ORGANIZATIONS_ALL_WRITE, "Create, update and delete all organizations.")
+                       .addString(Scopes.VACATIONS_READ, "Read owned vacations.")
+                       .addString(Scopes.VACATIONS_WRITE, "Create, update and delete owned vacations.") 
+                       .addString(Scopes.VACATIONS_ALL_READ, "Read all vacations.") 
+                       .addString(Scopes.VACATIONS_ALL_WRITE, "Create, update and delete all vacations.") 
                     )
                 )
             )

@@ -1,5 +1,7 @@
 package com.iperka.vacations.api.vacations.dto;
 
+import java.util.Date;
+
 import javax.validation.constraints.NotNull;
 
 import com.iperka.vacations.api.helpers.DTO;
@@ -21,6 +23,12 @@ public class VacationDTO implements DTO<Vacation> {
     private String name;
 
     @NotNull
+    private Date startDate;
+
+    @NotNull
+    private Date endDate;
+
+    @NotNull
     private boolean enabled;
 
     @Override
@@ -28,6 +36,8 @@ public class VacationDTO implements DTO<Vacation> {
         final Vacation vacation = new Vacation();
 
         vacation.setName(this.name);
+        vacation.setStartDate(this.startDate);
+        vacation.setEndDate(this.endDate);
         vacation.setEnabled(this.enabled);
 
         return vacation;

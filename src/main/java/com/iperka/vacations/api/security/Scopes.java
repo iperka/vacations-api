@@ -23,6 +23,18 @@ public class Scopes {
     public static final String ORGANIZATIONS_ALL_WRITE = "organizations:all:write";
     public static final String SCOPE_ORGANIZATIONS_ALL_WRITE = SCOPE_PREFIX + ORGANIZATIONS_ALL_WRITE;
 
+    public static final String VACATIONS_READ = "vacations:read";
+    public static final String SCOPE_VACATIONS_READ = SCOPE_PREFIX + VACATIONS_READ;
+
+    public static final String VACATIONS_WRITE = "vacations:write";
+    public static final String SCOPE_VACATIONS_WRITE = SCOPE_PREFIX + VACATIONS_WRITE;
+
+    public static final String VACATIONS_ALL_READ = "vacations:all:read";
+    public static final String SCOPE_VACATIONS_ALL_READ = SCOPE_PREFIX + VACATIONS_ALL_READ;
+
+    public static final String VACATIONS_ALL_WRITE = "vacations:all:write";
+    public static final String SCOPE_VACATIONS_ALL_WRITE = SCOPE_PREFIX + VACATIONS_ALL_WRITE;
+
     private Scopes() {
     }
 }

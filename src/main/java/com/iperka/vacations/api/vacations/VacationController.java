@@ -7,11 +7,10 @@ import javax.validation.Valid;
 
 import com.iperka.vacations.api.OpenApiConfig;
 import com.iperka.vacations.api.helpers.Response;
-import com.iperka.vacations.api.vacations.dto.VacationDTO;
-import com.iperka.vacations.api.vacations.exceptions.VacationAlreadyExists;
-import com.iperka.vacations.api.vacations.exceptions.VacationNotFound;
 import com.iperka.vacations.api.security.Helpers;
 import com.iperka.vacations.api.security.Scopes;
+import com.iperka.vacations.api.vacations.dto.VacationDTO;
+import com.iperka.vacations.api.vacations.exceptions.VacationNotFound;
 
 import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,8 +47,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
  * class defines the structure of a basic vacation route.
  * 
  * @author Michael Beutler
- * @version 0.1.1
- * @since 2021-09-29
+ * @version 0.0.1
+ * @since 2021-12-28
  */
 @RestController
 @RequestMapping(path = { "/vacations" }, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -71,7 +70,7 @@ public class VacationController {
         security = {
             @SecurityRequirement(
                 name = OpenApiConfig.OAUTH2,
-                scopes = {Scopes.ORGANIZATIONS_READ, Scopes.ORGANIZATIONS_WRITE, Scopes.ORGANIZATIONS_ALL_READ, Scopes.ORGANIZATIONS_ALL_WRITE}
+                scopes = {Scopes.VACATIONS_READ, Scopes.VACATIONS_WRITE, Scopes.VACATIONS_ALL_READ, Scopes.VACATIONS_ALL_WRITE}
             )
         }, 
         tags = {"Vacations"}, 
@@ -105,7 +104,7 @@ public class VacationController {
 
         Page<Vacation> page;
         // Check if authenticated user has been granted vacations:all:read
-        if (Helpers.hasScope(Scopes.ORGANIZATIONS_ALL_READ, authentication) && !StringUtils.hasText(owner)) {
+        if (Helpers.hasScope(Scopes.VACATIONS_ALL_READ, authentication) && !StringUtils.hasText(owner)) {
             if (StringUtils.hasText(name)) {
                 page = this.vacationService.findByNameContainingIgnoreCase(pageable, name);
             } else {
@@ -130,7 +129,7 @@ public class VacationController {
         security = {
             @SecurityRequirement(
                 name = OpenApiConfig.OAUTH2, 
-                scopes = {Scopes.ORGANIZATIONS_READ, Scopes.ORGANIZATIONS_WRITE, Scopes.ORGANIZATIONS_ALL_READ, Scopes.ORGANIZATIONS_ALL_WRITE}
+                scopes = {Scopes.VACATIONS_READ, Scopes.VACATIONS_WRITE, Scopes.VACATIONS_ALL_READ, Scopes.VACATIONS_ALL_WRITE}
             )
         }, 
         tags = {"Vacations"}, 
@@ -156,7 +155,7 @@ public class VacationController {
             Vacation vacation;
 
             // Check if authenticated user has been granted vacations:all:read
-            if (Helpers.hasScope(Scopes.ORGANIZATIONS_ALL_READ, authentication)) {
+            if (Helpers.hasScope(Scopes.VACATIONS_ALL_READ, authentication)) {
                 vacation = vacationService.findByUuid(uuid);
             } else {
                 vacation = vacationService.findByUuidAndOwner(uuid, userId);
@@ -179,7 +178,7 @@ public class VacationController {
         security = {
             @SecurityRequirement(
                 name = OpenApiConfig.OAUTH2, 
-                scopes = Scopes.ORGANIZATIONS_WRITE
+                scopes = Scopes.VACATIONS_WRITE
             ) 
         }, 
         tags = {"Vacations"}, 
@@ -202,11 +201,7 @@ public class VacationController {
         vacation.setOwner(((Jwt) authentication.getPrincipal()).getSubject());
 
         final Response<Vacation> response = new Response<>(HttpStatus.CREATED);
-        try {
-            response.setData(this.vacationService.create(vacation));
-        } catch (final VacationAlreadyExists e) {
-            return response.fromError(HttpStatus.BAD_REQUEST, e.toApiError()).build();
-        }
+        response.setData(this.vacationService.create(vacation));
 
         return response.build();
     }
@@ -219,7 +214,7 @@ public class VacationController {
         security = {
             @SecurityRequirement(
                 name = OpenApiConfig.OAUTH2, 
-                scopes = {Scopes.ORGANIZATIONS_WRITE, Scopes.ORGANIZATIONS_ALL_WRITE}
+                scopes = {Scopes.VACATIONS_WRITE, Scopes.VACATIONS_ALL_WRITE}
             ) 
         }, 
         tags = {"Vacations"},
@@ -245,7 +240,7 @@ public class VacationController {
             Vacation vacation;
 
             // Check if authenticated user has been granted vacations:all:write
-            if (Helpers.hasScope(Scopes.ORGANIZATIONS_ALL_WRITE, authentication)) {
+            if (Helpers.hasScope(Scopes.VACATIONS_ALL_WRITE, authentication)) {
                 vacation = vacationService.findByUuid(uuid);
             } else {
                 vacation = vacationService.findByUuidAndOwner(uuid, userId);
@@ -272,7 +267,7 @@ public class VacationController {
         security = {
             @SecurityRequirement(
                 name = OpenApiConfig.OAUTH2, 
-                scopes = {Scopes.ORGANIZATIONS_WRITE, Scopes.ORGANIZATIONS_ALL_WRITE}
+                scopes = {Scopes.VACATIONS_WRITE, Scopes.VACATIONS_ALL_WRITE}
             ) 
         }, 
         tags = {"Vacations"},
@@ -299,7 +294,7 @@ public class VacationController {
             Vacation vacation;
 
             // Check if authenticated user has been granted vacations:all:write
-            if (Helpers.hasScope(Scopes.ORGANIZATIONS_ALL_WRITE, authentication)) {
+            if (Helpers.hasScope(Scopes.VACATIONS_ALL_WRITE, authentication)) {
                 vacation = vacationService.updateByUuid(uuid, vacationDTO);
             } else {
                 vacation = vacationService.updateByUuidAndOwner(uuid, userId, vacationDTO);
@@ -311,8 +306,6 @@ public class VacationController {
             return response.build();
         } catch (final VacationNotFound e) {
             return response.fromError(HttpStatus.NOT_FOUND, e.toApiError()).build();
-        } catch (final VacationAlreadyExists e) {
-            return response.fromError(HttpStatus.BAD_REQUEST, e.toApiError()).build();
         }
     }
 

@@ -6,7 +6,6 @@ import java.util.UUID;
 import javax.transaction.Transactional;
 
 import com.iperka.vacations.api.vacations.dto.VacationDTO;
-import com.iperka.vacations.api.vacations.exceptions.VacationAlreadyExists;
 import com.iperka.vacations.api.vacations.exceptions.VacationNotFound;
 
 import org.springframework.data.domain.Page;
@@ -24,8 +23,8 @@ import lombok.extern.slf4j.Slf4j;
  * and is used to manage the vacation.
  * 
  * @author Michael Beutler
- * @version 0.0.8
- * @since 2021-09-29
+ * @version 0.0.1
+ * @since 2021-12-28
  */
 @Service
 @Slf4j
@@ -60,13 +59,8 @@ public class VacationServiceImpl implements VacationService {
 
     @Override
     @PreAuthorize("hasAuthority('SCOPE_vacations:write')")
-    public Vacation create(Vacation vacation) throws VacationAlreadyExists {
+    public Vacation create(Vacation vacation) {
         log.debug("create called");
-
-        if (this.findByNameIgnoreCase(vacation.getName()).isPresent()) {
-            throw new VacationAlreadyExists();
-        }
-
         return this.vacationRepository.save(vacation);
     }
 
@@ -119,14 +113,10 @@ public class VacationServiceImpl implements VacationService {
     @Override
     @PreAuthorize("hasAuthority('SCOPE_vacations:all:write')")
     public Vacation updateByUuid(UUID uuid, VacationDTO vacationDTO)
-            throws VacationNotFound, VacationAlreadyExists {
+            throws VacationNotFound {
         Vacation vacation = this.vacationRepository.findByUuid(uuid).orElseThrow(VacationNotFound::new);
 
         if (!vacationDTO.getName().equals(vacation.getName())) {
-            // name has been modified -> check if name is unique
-            if (this.findByNameIgnoreCase(vacationDTO.getName()).isPresent()) {
-                throw new VacationAlreadyExists();
-            }
             vacation.setName(vacationDTO.getName());
         }
 
@@ -141,15 +131,11 @@ public class VacationServiceImpl implements VacationService {
     @Override
     @PreAuthorize("hasAuthority('SCOPE_vacations:write')")
     public Vacation updateByUuidAndOwner(UUID uuid, String owner, VacationDTO vacationDTO)
-            throws VacationNotFound, VacationAlreadyExists {
+            throws VacationNotFound {
         Vacation vacation = this.vacationRepository.findByUuidAndOwner(uuid, owner)
                 .orElseThrow(VacationNotFound::new);
 
         if (!vacationDTO.getName().equals(vacation.getName())) {
-            // name has been modified -> check if name is unique
-            if (this.findByNameIgnoreCase(vacationDTO.getName()).isPresent()) {
-                throw new VacationAlreadyExists();
-            }
             vacation.setName(vacationDTO.getName());
         }
 
