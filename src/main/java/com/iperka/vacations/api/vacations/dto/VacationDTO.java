@@ -14,6 +14,7 @@ import com.iperka.vacations.api.vacations.VacationStatus;
 
 import org.hibernate.validator.constraints.Length;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -66,7 +67,29 @@ public class VacationDTO implements DTO<Vacation> {
         return vacation;
     }
 
+    @Schema(description = "Defines the name of the vacation.", nullable = false, example = "Summer Vacation")
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Schema(description = "Defines the start of the vacation.", nullable = false, example = "2022-01-01")
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+
+    @Schema(description = "Defines the end of the vacation.", nullable = false, example = "2022-01-03T13:00:00")
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
+    }
+
+    @Schema(description = "Defines the number of vacation days for the vacation. (If null the API tries to calculate.)", nullable = true, example = "1.5")
+    public void setDays(double days) {
+        this.days = days;
+    }
+
+    @Schema(description = "Defines the current status of the vacation.", nullable = false, example = "requested")
     public void setStatus(String status) {
         this.status = VacationStatus.valueOf(status.toUpperCase());
     }
+
 }

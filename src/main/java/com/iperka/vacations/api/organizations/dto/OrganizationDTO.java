@@ -7,6 +7,7 @@ import com.iperka.vacations.api.organizations.Organization;
 
 import org.hibernate.validator.constraints.Length;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -33,4 +34,13 @@ public class OrganizationDTO implements DTO<Organization> {
         return organization;
     }
 
+    @Schema(description = "Defines the name of the organization.", nullable = false, example = "MyOrganization")
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Schema(description = "Defines the if the organization is enabled.", nullable = false, example = "false")
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
 }
