@@ -24,7 +24,7 @@ import io.swagger.v3.oas.models.servers.Server;
  * OpenAPI SpringDoc Configuration Bean.
  * 
  * @author Michael Beutler
- * @version 0.0.9
+ * @version 0.1.1
  * @since 2021-12-15
  */
 @Configuration
@@ -67,7 +67,9 @@ public class OpenApiConfig {
             Scopes.VACATIONS_READ, 
             Scopes.VACATIONS_WRITE, 
             Scopes.VACATIONS_ALL_READ, 
-            Scopes.VACATIONS_ALL_WRITE
+            Scopes.VACATIONS_ALL_WRITE,
+            Scopes.USERS_ALL_READ, 
+            Scopes.USERS_ALL_WRITE
         )))
         .components(new Components()
         .addSecuritySchemes(OAUTH2,
@@ -86,6 +88,8 @@ public class OpenApiConfig {
                        .addString(Scopes.VACATIONS_WRITE, "Create, update and delete owned vacations.") 
                        .addString(Scopes.VACATIONS_ALL_READ, "Read all vacations.") 
                        .addString(Scopes.VACATIONS_ALL_WRITE, "Create, update and delete all vacations.") 
+                       .addString(Scopes.USERS_ALL_READ, "Read all users.") 
+                       .addString(Scopes.USERS_ALL_WRITE, "Create, update and delete all users.") 
                     )
                 )
             )

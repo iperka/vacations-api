@@ -28,7 +28,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
  * validating given JWT's.
  * 
  * @author Michael Beutler
- * @version 0.0.9
+ * @version 0.1.1
  * @since 2021-09-29
  */
 @Configuration
@@ -36,8 +36,9 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private static final String ROUTE_ORGANIZATIONS = "/organizations";
-    private static final String ROUTE_VACATIONS = "/vacations";
+    private static final String ROUTE_ORGANIZATIONS = "/organizations/**";
+    private static final String ROUTE_VACATIONS = "/vacations/**";
+    private static final String ROUTE_USERS = "/users/**";
 
     @Value("${auth0.audience}")
     private String audience;
@@ -87,6 +88,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .mvcMatchers(HttpMethod.PUT, ROUTE_VACATIONS).hasAnyAuthority(Scopes.SCOPE_VACATIONS_WRITE, Scopes.VACATIONS_ALL_WRITE)
                 .mvcMatchers(HttpMethod.PATCH, ROUTE_VACATIONS).hasAnyAuthority(Scopes.SCOPE_VACATIONS_WRITE, Scopes.VACATIONS_ALL_WRITE)
                 // End Vacations
+
+                // Users (Admin only)
+                .mvcMatchers(HttpMethod.OPTIONS, ROUTE_USERS).hasAnyAuthority(Scopes.SCOPE_USERS_ALL_READ, Scopes.SCOPE_USERS_ALL_WRITE)
+                .mvcMatchers(HttpMethod.GET, ROUTE_USERS).hasAnyAuthority(Scopes.SCOPE_USERS_ALL_READ, Scopes.SCOPE_USERS_ALL_WRITE)
+                // End Users
                 .anyRequest().authenticated()
             ) 
             .cors().configurationSource(corsConfigurationSource())

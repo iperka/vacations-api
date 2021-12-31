@@ -5,7 +5,7 @@ package com.iperka.vacations.api.security;
  * the security scope constants for better constancy.
  * 
  * @author Michael Beutler
- * @version 0.0.2
+ * @version 0.0.3
  * @since 2021-12-27
  */
 public class Scopes {
@@ -34,6 +34,12 @@ public class Scopes {
 
     public static final String VACATIONS_ALL_WRITE = "vacations:all:write";
     public static final String SCOPE_VACATIONS_ALL_WRITE = SCOPE_PREFIX + VACATIONS_ALL_WRITE;
+
+    public static final String USERS_ALL_READ = "users:all:read";
+    public static final String SCOPE_USERS_ALL_READ = SCOPE_PREFIX + USERS_ALL_READ;
+
+    public static final String USERS_ALL_WRITE = "users:all:write";
+    public static final String SCOPE_USERS_ALL_WRITE = SCOPE_PREFIX + USERS_ALL_WRITE;
 
     private Scopes() {
     }

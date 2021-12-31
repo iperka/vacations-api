@@ -18,9 +18,22 @@ spring:
         jwt:
           issuer-uri: ${auth0.domain}
   jpa.open-in-view: false
+  mail:
+    host: ${MAIL_HOST:localhost}
+    port: ${MAIL_PORT:25}
+    username: ${MAIL_USERNAME:myUser}
+    password: ${MAIL_PASSWORD:myPassword}
+    properties:
+      mail:
+        smtp:
+          auth: ${MAIL_SMTP_AUTH:true}
+          starttls:
+            enable: ${MAIL_SMTP_STARTTLS_ENABLED:true}
 auth0:
   audience: ${AUTH0_AUDIENCE:https://api.iperka.com/vacations/}
   domain: ${AUTH0_DOMAIN:https://iperka.eu.auth0.com/}
+  clientId: ${AUTH0_CLIENT_ID:MY_CLIENT_ID}
+  clientSecret: ${AUTH0_CLIENT_SECRET:MY_CLIENT_SECRET}
 springdoc:
   api-docs.path: ${API_DOCS_PATH:/openapi/v3}
   show-actuator: ${API_DOCS_SHOW_ACTUATOR:false}
@@ -39,6 +52,10 @@ server:
   servlet.context-path: ${SERVER_SERVLET_CONTEXT_PATH:/}
   error.whitelabel.enabled: false
 api.serverUrl: ${API_SERVER_URL:https://api.vacations.iperka.com/v1/}
+mail:
+  from:
+    address: ${MAIL_FROM_ADDRESS:no-reply@iperka.com}
+    name: ${MAIL_FROM_NAME:iperka}
 ---
 spring:
   config.activate.on-profile: development
