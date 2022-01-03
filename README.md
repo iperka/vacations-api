@@ -4,7 +4,7 @@
 
 [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=iperka_vacations-api&metric=code_smells)](https://sonarcloud.io/dashboard?id=iperka_vacations-api) [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=iperka_vacations-api&metric=bugs)](https://sonarcloud.io/dashboard?id=iperka_vacations-api) [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=iperka_vacations-api&metric=vulnerabilities)](https://sonarcloud.io/dashboard?id=iperka_vacations-api)
 
-[![Continuous Integration](https://github.com/iperka/vacations-api/actions/workflows/main.yml/badge.svg)](https://github.com/iperka/vacations-api/actions/workflows/main.yml)[![Better Uptime Badge](https://betteruptime.com/status-badges/v1/monitor/beap.svg)](https://betteruptime.com/?utm_source=status_badge)
+[![Uptime](https://badgen.net/uptime-robot/status/m790176317-818ced6f0430585b9e70c6ab)](https://status.iperka.com)[![Uptime](https://badgen.net/uptime-robot/day/m790176317-818ced6f0430585b9e70c6ab)](https://status.iperka.com)[![Uptime](https://badgen.net/uptime-robot/week/m790176317-818ced6f0430585b9e70c6ab)](https://status.iperka.com)[![Uptime](https://badgen.net/uptime-robot/month/m790176317-818ced6f0430585b9e70c6ab)](https://status.iperka.com)
 
 # 1. Vacations API 📅
 
