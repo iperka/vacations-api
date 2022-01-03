@@ -2,9 +2,11 @@ package com.iperka.vacations.api.helpers;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Data
 @NoArgsConstructor
+@Slf4j
 public class APIError {
     private String type = "unknown";
     private String message = "n/a";
@@ -30,6 +32,7 @@ public class APIError {
 
             default:
                 this.type = exception.getClass().getSimpleName();
+                log.error("Internal Server Error:", exception);
                 break;
         }
 

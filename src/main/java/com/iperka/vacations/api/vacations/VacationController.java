@@ -50,7 +50,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
  * class defines the structure of a basic vacation route.
  * 
  * @author Michael Beutler
- * @version 0.0.4
+ * @version 0.0.5
  * @since 2021-12-28
  */
 @RestController
@@ -240,11 +240,11 @@ public class VacationController {
     public ResponseEntity<Response<Vacation>> createOrganisation(
     // @formatter:off    
         final Authentication authentication,
-        @Valid @RequestBody(required = true, content = @Content(schema =  @Schema(implementation = VacationDTO.class))) final VacationDTO vacationDTO
+        @Valid @RequestBody(required = true, content = @Content(schema =  @Schema(implementation = VacationDTO.class))) @org.springframework.web.bind.annotation.RequestBody final VacationDTO vacationDTO
     // @formatter:on
     ) {
         final Vacation vacation = vacationDTO.toObject();
-        vacation.setOwner(((Jwt) authentication.getPrincipal()).getSubject());
+        vacation.setOwner(Helpers.getUserId(authentication));
 
         if (!Helpers.hasScope(Scopes.VACATIONS_ALL_WRITE, authentication)) {
             vacationDTO.setStatus(VacationStatus.REQUESTED.toString());
@@ -338,7 +338,7 @@ public class VacationController {
     // @formatter:off
         final Authentication authentication,
         @PathVariable("uuid") final UUID uuid,
-        @Valid @RequestBody(required = true, content = @Content(schema =  @Schema(implementation = VacationDTO.class))) final VacationDTO vacationDTO
+        @Valid @RequestBody(required = true, content = @Content(schema =  @Schema(implementation = VacationDTO.class))) @org.springframework.web.bind.annotation.RequestBody final VacationDTO vacationDTO
     // @formatter:on        
     ) {
         final String userId = Helpers.getUserId(authentication);

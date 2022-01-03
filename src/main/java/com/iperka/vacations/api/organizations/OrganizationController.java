@@ -48,7 +48,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
  * class defines the structure of a basic organization route.
  * 
  * @author Michael Beutler
- * @version 0.1.1
+ * @version 0.1.2
  * @since 2021-09-29
  */
 @RestController
@@ -195,11 +195,11 @@ public class OrganizationController {
     public ResponseEntity<Response<Organization>> createOrganisation(
     // @formatter:off    
         final Authentication authentication,
-        @Valid @RequestBody(required = true, content = @Content(schema =  @Schema(implementation = OrganizationDTO.class))) final OrganizationDTO organizationDTO
+        @Valid @RequestBody(required = true, content = @Content(schema =  @Schema(implementation = OrganizationDTO.class))) @org.springframework.web.bind.annotation.RequestBody final OrganizationDTO organizationDTO
     // @formatter:on
     ) {
         final Organization organization = organizationDTO.toObject();
-        organization.setOwner(((Jwt) authentication.getPrincipal()).getSubject());
+        organization.setOwner((Helpers.getUserId(authentication)));
 
         final Response<Organization> response = new Response<>(HttpStatus.CREATED);
         try {
@@ -289,7 +289,7 @@ public class OrganizationController {
     // @formatter:off
         final Authentication authentication,
         @PathVariable("uuid") final UUID uuid,
-        @Valid @RequestBody(required = true, content = @Content(schema =  @Schema(implementation = OrganizationDTO.class))) final OrganizationDTO organizationDTO
+        @Valid @RequestBody(required = true, content = @Content(schema =  @Schema(implementation = OrganizationDTO.class))) @org.springframework.web.bind.annotation.RequestBody final OrganizationDTO organizationDTO
     // @formatter:on        
     ) {
         final String userId = Helpers.getUserId(authentication);

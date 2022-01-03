@@ -29,7 +29,7 @@ import lombok.extern.slf4j.Slf4j;
  * and is used to manage the vacation.
  * 
  * @author Michael Beutler
- * @version 0.0.4
+ * @version 0.0.5
  * @since 2021-12-28
  */
 @Service
@@ -43,28 +43,28 @@ public class VacationServiceImpl implements VacationService {
     }
 
     @Override
-    @PreAuthorize("hasAuthority('SCOPE_vacations:all:read')")
+    @PreAuthorize("hasAnyAuthority('SCOPE_vacations:all:read', 'SCOPE_vacations:all:write')")
     public Page<Vacation> findAll(Pageable pageable) {
         log.debug("findAll called");
         return this.vacationRepository.findAll(pageable);
     }
 
     @Override
-    @PreAuthorize("hasAuthority('SCOPE_vacations:all:read')")
+    @PreAuthorize("hasAnyAuthority('SCOPE_vacations:all:read', 'SCOPE_vacations:all:write')")
     public Page<Vacation> findByNameContainingIgnoreCase(Pageable pageable, String name) {
         log.debug("findAllByName called");
         return this.vacationRepository.findByNameContainingIgnoreCase(pageable, name);
     }
 
     @Override
-    @PreAuthorize("hasAuthority('SCOPE_vacations:all:read')")
+    @PreAuthorize("hasAnyAuthority('SCOPE_vacations:all:read', 'SCOPE_vacations:all:write')")
     public Vacation findByUuid(UUID uuid) throws VacationNotFound {
         log.debug("findByUUID called");
         return this.vacationRepository.findByUuid(uuid).orElseThrow(VacationNotFound::new);
     }
 
     @Override
-    @PreAuthorize("hasAuthority('SCOPE_vacations:write')")
+    @PreAuthorize("hasAnyAuthority('SCOPE_vacations:write', 'SCOPE_vacations:all:write')")
     public Vacation create(Vacation vacation) throws VacationInvalidDateRange {
         log.debug("create called");
         if (vacation.getStartDate().getTime() > vacation.getEndDate().getTime()) {
@@ -81,7 +81,7 @@ public class VacationServiceImpl implements VacationService {
     }
 
     @Override
-    @PreAuthorize("hasAuthority('SCOPE_vacations:all:read')")
+    @PreAuthorize("hasAnyAuthority('SCOPE_vacations:all:read', 'SCOPE_vacations:all:write')")
     public Optional<Vacation> findByNameIgnoreCase(String name) {
         log.debug("findByNameIgnoreCase called");
         return this.vacationRepository.findByNameIgnoreCase(name);
@@ -95,39 +95,39 @@ public class VacationServiceImpl implements VacationService {
     }
 
     @Override
-    @PreAuthorize("hasAuthority('SCOPE_vacations:read')")
+    @PreAuthorize("hasAnyAuthority('SCOPE_vacations:read', 'SCOPE_vacations:write', 'SCOPE_vacations:all:read', 'SCOPE_vacations:all:write')")
     public Page<Vacation> findAllByOwner(Pageable pageable, String owner) {
         return this.vacationRepository.findAllByOwner(pageable, owner);
     }
 
     @Override
-    @PreAuthorize("hasAuthority('SCOPE_vacations:read')")
+    @PreAuthorize("hasAnyAuthority('SCOPE_vacations:read', 'SCOPE_vacations:write', 'SCOPE_vacations:all:read', 'SCOPE_vacations:all:write')")
     public Page<Vacation> findByNameContainingIgnoreCaseAndOwner(Pageable pageable, String name, String owner) {
         return this.vacationRepository.findByNameContainingIgnoreCaseAndOwner(pageable, name, owner);
     }
 
     @Override
-    @PreAuthorize("hasAuthority('SCOPE_vacations:read')")
+    @PreAuthorize("hasAnyAuthority('SCOPE_vacations:read', 'SCOPE_vacations:write', 'SCOPE_vacations:all:read', 'SCOPE_vacations:all:write')")
     public Vacation findByUuidAndOwner(UUID uuid, String owner) throws VacationNotFound {
         return this.vacationRepository.findByUuidAndOwner(uuid, owner)
                 .orElseThrow(VacationNotFound::new);
     }
 
     @Override
-    @PreAuthorize("hasAuthority('SCOPE_vacations:read')")
+    @PreAuthorize("hasAnyAuthority('SCOPE_vacations:read', 'SCOPE_vacations:write', 'SCOPE_vacations:all:read', 'SCOPE_vacations:all:write')")
     public Optional<Vacation> findByNameIgnoreCaseAndOwner(String name, String owner) {
         return this.vacationRepository.findByNameIgnoreCaseAndOwner(name, owner);
     }
 
     @Override
-    @PreAuthorize("hasAuthority('SCOPE_vacations:write')")
+    @PreAuthorize("hasAnyAuthority('SCOPE_vacations:write', 'SCOPE_vacations:all:write')")
     @Transactional
     public void deleteByUuidAndOwner(UUID uuid, String owner) {
         this.vacationRepository.deleteByUuidAndOwner(uuid, owner);
     }
 
     @Override
-    @PreAuthorize("hasAuthority('SCOPE_vacations:all:write')")
+    @PreAuthorize("hasAnyAuthority('SCOPE_vacations:all:write', 'SCOPE_vacations:all:write')")
     public Vacation updateByUuid(UUID uuid, VacationDTO vacationDTO)
             throws VacationNotFound, VacationInvalidDateRange {
         Vacation vacation = this.vacationRepository.findByUuid(uuid).orElseThrow(VacationNotFound::new);
@@ -143,7 +143,7 @@ public class VacationServiceImpl implements VacationService {
     }
 
     @Override
-    @PreAuthorize("hasAuthority('SCOPE_vacations:write')")
+    @PreAuthorize("hasAnyAuthority('SCOPE_vacations:write', 'SCOPE_vacations:all:write')")
     public Vacation updateByUuidAndOwner(UUID uuid, String owner, VacationDTO vacationDTO)
             throws VacationNotFound, VacationInvalidDateRange {
         Vacation vacation = this.vacationRepository.findByUuidAndOwner(uuid, owner)
@@ -159,7 +159,7 @@ public class VacationServiceImpl implements VacationService {
         return this.vacationRepository.save(vacation);
     }
 
-    @PreAuthorize("hasAuthority('SCOPE_vacations:read')")
+    @PreAuthorize("hasAnyAuthority('SCOPE_vacations:read', 'SCOPE_vacations:write', 'SCOPE_vacations:all:read', 'SCOPE_vacations:all:write')")
     public double[] getDaysCountByMonth(List<Vacation> vacations, Year year) {
         double[] vacationMonthViewDTO = new double[12];
 

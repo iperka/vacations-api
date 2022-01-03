@@ -24,7 +24,7 @@ import lombok.extern.slf4j.Slf4j;
  * and is used to manage the organization.
  * 
  * @author Michael Beutler
- * @version 0.0.8
+ * @version 0.0.9
  * @since 2021-09-29
  */
 @Service
@@ -38,28 +38,28 @@ public class OrganizationServiceImpl implements OrganizationService {
     }
 
     @Override
-    @PreAuthorize("hasAuthority('SCOPE_organizations:all:read')")
+    @PreAuthorize("hasAnyAuthority('SCOPE_organizations:all:read', 'SCOPE_organizations:all:write')")
     public Page<Organization> findAll(Pageable pageable) {
         log.debug("findAll called");
         return this.organizationRepository.findAll(pageable);
     }
 
     @Override
-    @PreAuthorize("hasAuthority('SCOPE_organizations:all:read')")
+    @PreAuthorize("hasAnyAuthority('SCOPE_organizations:all:read', 'SCOPE_organizations:all:write')")
     public Page<Organization> findByNameContainingIgnoreCase(Pageable pageable, String name) {
         log.debug("findAllByName called");
         return this.organizationRepository.findByNameContainingIgnoreCase(pageable, name);
     }
 
     @Override
-    @PreAuthorize("hasAuthority('SCOPE_organizations:all:read')")
+    @PreAuthorize("hasAnyAuthority('SCOPE_organizations:all:read', 'SCOPE_organizations:all:write')")
     public Organization findByUuid(UUID uuid) throws OrganizationNotFound {
         log.debug("findByUUID called");
         return this.organizationRepository.findByUuid(uuid).orElseThrow(OrganizationNotFound::new);
     }
 
     @Override
-    @PreAuthorize("hasAuthority('SCOPE_organizations:write')")
+    @PreAuthorize("hasAnyAuthority('SCOPE_organizations:write', 'SCOPE_organizations:all:write')")
     public Organization create(Organization organization) throws OrganizationAlreadyExists {
         log.debug("create called");
 
@@ -71,7 +71,7 @@ public class OrganizationServiceImpl implements OrganizationService {
     }
 
     @Override
-    @PreAuthorize("hasAuthority('SCOPE_organizations:all:read')")
+    @PreAuthorize("hasAnyAuthority('SCOPE_organizations:all:read', 'SCOPE_organizations:all:write')")
     public Optional<Organization> findByNameIgnoreCase(String name) {
         log.debug("findByNameIgnoreCase called");
         return this.organizationRepository.findByNameIgnoreCase(name);
@@ -85,32 +85,32 @@ public class OrganizationServiceImpl implements OrganizationService {
     }
 
     @Override
-    @PreAuthorize("hasAuthority('SCOPE_organizations:read')")
+    @PreAuthorize("hasAnyAuthority('SCOPE_organizations:read', 'SCOPE_organizations:write', 'SCOPE_organizations:all:read', 'SCOPE_organizations:all:write')")
     public Page<Organization> findAllByOwner(Pageable pageable, String owner) {
         return this.organizationRepository.findAllByOwner(pageable, owner);
     }
 
     @Override
-    @PreAuthorize("hasAuthority('SCOPE_organizations:read')")
+    @PreAuthorize("hasAnyAuthority('SCOPE_organizations:read', 'SCOPE_organizations:write', 'SCOPE_organizations:all:read', 'SCOPE_organizations:all:write')")
     public Page<Organization> findByNameContainingIgnoreCaseAndOwner(Pageable pageable, String name, String owner) {
         return this.organizationRepository.findByNameContainingIgnoreCaseAndOwner(pageable, name, owner);
     }
 
     @Override
-    @PreAuthorize("hasAuthority('SCOPE_organizations:read')")
+    @PreAuthorize("hasAnyAuthority('SCOPE_organizations:read', 'SCOPE_organizations:write', 'SCOPE_organizations:all:read', 'SCOPE_organizations:all:write')")
     public Organization findByUuidAndOwner(UUID uuid, String owner) throws OrganizationNotFound {
         return this.organizationRepository.findByUuidAndOwner(uuid, owner)
                 .orElseThrow(OrganizationNotFound::new);
     }
 
     @Override
-    @PreAuthorize("hasAuthority('SCOPE_organizations:read')")
+    @PreAuthorize("hasAnyAuthority('SCOPE_organizations:read', 'SCOPE_organizations:write', 'SCOPE_organizations:all:read', 'SCOPE_organizations:all:write')")
     public Optional<Organization> findByNameIgnoreCaseAndOwner(String name, String owner) {
         return this.organizationRepository.findByNameIgnoreCaseAndOwner(name, owner);
     }
 
     @Override
-    @PreAuthorize("hasAuthority('SCOPE_organizations:write')")
+    @PreAuthorize("hasAnyAuthority('SCOPE_organizations:write', 'SCOPE_organizations:all:write')")
     @Transactional
     public void deleteByUuidAndOwner(UUID uuid, String owner) {
         this.organizationRepository.deleteByUuidAndOwner(uuid, owner);
@@ -139,7 +139,7 @@ public class OrganizationServiceImpl implements OrganizationService {
     }
 
     @Override
-    @PreAuthorize("hasAuthority('SCOPE_organizations:write')")
+    @PreAuthorize("hasAnyAuthority('SCOPE_organizations:write', 'SCOPE_organizations:all:write')")
     public Organization updateByUuidAndOwner(UUID uuid, String owner, OrganizationDTO organizationDTO)
             throws OrganizationNotFound, OrganizationAlreadyExists {
         Organization organization = this.organizationRepository.findByUuidAndOwner(uuid, owner)
