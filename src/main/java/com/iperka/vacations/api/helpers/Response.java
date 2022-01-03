@@ -1,6 +1,7 @@
 package com.iperka.vacations.api.helpers;
 
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -12,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * The {@link com.iperka.vacations.api.helpers.Response} class defines the
@@ -24,9 +26,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * return the object itself.
  * 
  * @author Michael Beutler
- * @version 0.0.9
+ * @version 0.1.1
  * @since 2021-05-14
  */
+@Slf4j
 public class Response<T> {
     private String version = "v" + VacationsApiApplication.class.getPackage().getImplementationVersion();
     private String host = getHostname();
@@ -40,7 +43,8 @@ public class Response<T> {
     private static String getHostname() {
         try {
             return InetAddress.getLocalHost().getHostName();
-        } catch (Exception e) {
+        } catch (UnknownHostException e) {
+            log.error("Unable to determine hostname.", e);
             return "unknown";
         }
     }
@@ -102,6 +106,7 @@ public class Response<T> {
             this.message = status.getReasonPhrase();
         }
 
+        log.debug("Status: {}; Message: {}; Errors: {}", this.getStatus(), this.getMessage(), this.getErrors().size());
         return ResponseEntity.status(status).body(this);
     }
 

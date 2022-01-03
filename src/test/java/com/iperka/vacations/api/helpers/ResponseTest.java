@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,6 +38,14 @@ class ResponseTest {
         testList.add("Test2");
         assertEquals(testList, Response.fromPage(HttpStatus.ACCEPTED, new PageImpl<>(testList)).getData());
         assertEquals(1, Response.fromPage(HttpStatus.ACCEPTED, new PageImpl<>(testList)).getMetadata().getPage());
+    }
+
+    @Test
+    void shouldReturnHost() throws UnknownHostException {
+        Response<?> response = new Response<>(HttpStatus.OK);
+        assertEquals(InetAddress.getLocalHost().getHostName(), response.getHost());
+        response.setHost("test-2daw");
+        assertEquals("test-2daw", response.getHost());
     }
 
     @Test
