@@ -28,7 +28,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
  * validating given JWT's.
  * 
  * @author Michael Beutler
- * @version 0.1.1
+ * @version 0.1.2
  * @since 2021-09-29
  */
 @Configuration
@@ -71,6 +71,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .mvcMatchers(HttpMethod.GET, "/actuator/**").permitAll()
                 .mvcMatchers(HttpMethod.GET, "/favicon.ico").permitAll()
                 .mvcMatchers(HttpMethod.GET, "/oauth2-redirect.html").permitAll()
+                .mvcMatchers(HttpMethod.GET, "/tea").permitAll()
+
                 // Organizations
                 .mvcMatchers(HttpMethod.OPTIONS, ROUTE_ORGANIZATIONS).hasAnyAuthority(Scopes.SCOPE_ORGANIZATIONS_READ, Scopes.SCOPE_ORGANIZATIONS_WRITE, Scopes.SCOPE_ORGANIZATIONS_ALL_READ, Scopes.ORGANIZATIONS_ALL_WRITE)
                 .mvcMatchers(HttpMethod.GET, ROUTE_ORGANIZATIONS).hasAnyAuthority(Scopes.SCOPE_ORGANIZATIONS_READ, Scopes.SCOPE_ORGANIZATIONS_WRITE, Scopes.SCOPE_ORGANIZATIONS_ALL_READ, Scopes.ORGANIZATIONS_ALL_WRITE)

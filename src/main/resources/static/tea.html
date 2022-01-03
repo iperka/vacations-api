@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TEA!!</title>
+    <style>
+      body {
+        background-color: #f8f7ff;
+      }
+
+      h1 {
+        margin-top: 50px;
+        text-align: center;
+        font-family: "Fresca", sans-serif;
+        font-size: 50px;
+        color: #c03221;
+      }
+
+      .link {
+        margin-top: 20px;
+        text-align: center;
+      }
+      .link a {
+        text-decoration: none;
+        color: #d7000f;
+        font-size: 20px;
+        font-family: "Fresca", sans-serif;
+        border-bottom: 2px dashed transparent;
+        padding-bottom: 2px;
+        transition: all 0.2s linear 0s;
+        margin-right: 40px;
+      }
+      .link a:last-child {
+        margin-right: 0px;
+      }
+      .link a:hover {
+        border-color: currentColor;
+      }
+
+      .teapot-icon {
+        margin: 70px auto 0px;
+        width: 190px;
+        height: 160px;
+        position: relative;
+      }
+
+      .teapot-body-wrap {
+        width: 164px;
+        height: 123px;
+        position: absolute;
+        left: 0;
+        bottom: 0;
+      }
+
+      .teapot-body {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        background-color: #bf0010;
+        border-top-left-radius: 50% 105px;
+        border-top-right-radius: 50% 105px;
+        overflow: hidden;
+      }
+      .teapot-body:before {
+        content: "";
+        display: block;
+        background-color: #a6000e;
+        width: 82px;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        right: 0;
+        border-top-right-radius: 50% 105px;
+      }
+      .teapot-body .teapot-body-inner-1 {
+        background-color: #d7000f;
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: 130px;
+        height: 100%;
+        margin: auto;
+        border-top-left-radius: 50% 105px;
+        border-top-right-radius: 50% 105px;
+        z-index: 5;
+      }
+      .teapot-body .teapot-body-inner-1:before {
+        content: "";
+        display: block;
+        background-color: #c8000e;
+        width: 65px;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        right: 0;
+        border-top-right-radius: 50% 105px;
+      }
+      .teapot-body .teapot-body-inner-1 .bleak {
+        background-color: #f54b4f;
+        border-radius: 50%;
+      }
+      .teapot-body .teapot-body-inner-1 .bleak-1 {
+        width: 7px;
+        height: 12px;
+        position: absolute;
+        top: calc(50% - 20px);
+        left: 13px;
+        transform: rotate(16deg);
+      }
+      .teapot-body .teapot-body-inner-1 .bleak-2 {
+        width: 4px;
+        height: 4px;
+        position: absolute;
+        top: calc(50% - 30px);
+        left: 20px;
+      }
+      .teapot-body .teapot-body-inner-2 {
+        background-color: #bf0010;
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: 92px;
+        height: 100%;
+        margin: auto;
+        border-top-left-radius: 50% 105px;
+        border-top-right-radius: 50% 105px;
+        z-index: 8;
+      }
+      .teapot-body .teapot-body-inner-2:before {
+        content: "";
+        display: block;
+        background-color: #a6000e;
+        width: 43px;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        right: 0;
+        border-top-right-radius: 50% 105px;
+      }
+
+      .teapot-top {
+        width: 74px;
+        height: 12px;
+        background-color: #634b5b;
+        position: absolute;
+        top: -2px;
+        left: 0;
+        right: 0;
+        margin: auto;
+        z-index: 15;
+        border-radius: 20px 20px 3px 3px;
+      }
+      .teapot-top:before {
+        content: "";
+        display: block;
+        width: 35px;
+        height: 100%;
+        position: absolute;
+        top: 0px;
+        right: -1px;
+        background-color: #54404e;
+        border-radius: 0px 20px 3px 3px;
+      }
+      .teapot-top:after {
+        content: "";
+        display: block;
+        width: 16px;
+        height: 12px;
+        background-color: #54404e;
+        position: absolute;
+        top: -11px;
+        left: 0;
+        right: 0;
+        margin: auto;
+        border-radius: 50% 50% 0 0;
+      }
+
+      .teapot-nose {
+        position: absolute;
+        top: 52px;
+        right: 8px;
+        background-color: #858084;
+        width: 60px;
+        height: 27px;
+        transform: rotate(-40deg);
+        z-index: -1;
+        border-top-right-radius: 50% 50px;
+        border-bottom-right-radius: 50% 50px;
+        overflow: hidden;
+      }
+      .teapot-nose:before {
+        content: "";
+        width: 100%;
+        height: 45%;
+        display: block;
+        background-color: #6b676a;
+        position: absolute;
+        left: 0;
+        bottom: 0;
+      }
+      .teapot-nose:after {
+        content: "";
+        display: block;
+        width: 12px;
+        height: 100%;
+        background-color: #634b5b;
+        position: absolute;
+        top: 0;
+        right: 0;
+      }
+
+      .teapot-handle {
+        width: 106px;
+        height: 80px;
+        position: absolute;
+        top: 0;
+        right: 29px;
+      }
+      .teapot-handle:before {
+        content: "";
+        display: block;
+        background-color: #411917;
+        height: 100%;
+        width: 15px;
+        position: absolute;
+        top: 0;
+        right: 0px;
+        transform-origin: center top;
+        transform: rotate(26deg);
+        border-radius: 7px;
+      }
+      .teapot-handle:after {
+        content: "";
+        display: block;
+        background-color: #411917;
+        height: 15px;
+        width: 100%;
+        position: absolute;
+        top: -3px;
+        left: -3px;
+        border-radius: 7px;
+      }
+
+      @-webkit-keyframes bubble {
+        0% {
+          transform: scale(0.3);
+          position: absolute;
+          top: 16px;
+          right: -28px;
+        }
+        25% {
+          transform: scale(0.5);
+          position: absolute;
+          top: 6px;
+          right: -45px;
+        }
+        50% {
+          transform: scale(0.8);
+          position: absolute;
+          top: 0px;
+          right: -65px;
+        }
+        100% {
+          transform: scale(0.8);
+          position: absolute;
+          top: 0px;
+          right: -65px;
+        }
+      }
+
+      @keyframes bubble {
+        0% {
+          transform: scale(0.3);
+          position: absolute;
+          top: 16px;
+          right: -28px;
+        }
+        25% {
+          transform: scale(0.5);
+          position: absolute;
+          top: 6px;
+          right: -45px;
+        }
+        50% {
+          transform: scale(0.8);
+          position: absolute;
+          top: 0px;
+          right: -65px;
+        }
+        100% {
+          transform: scale(0.8);
+          position: absolute;
+          top: 0px;
+          right: -65px;
+        }
+      }
+      .teapot-bubble {
+        background-color: #d3cfff;
+        width: 40px;
+        height: 40px;
+        border: 2px solid #1f1f1f;
+        border-radius: 50%;
+        position: absolute;
+        top: 16px;
+        right: -28px;
+        transform: scale(0.3);
+        -webkit-animation: bubble 2s linear 0s infinite;
+        animation: bubble 2s linear 0s infinite;
+      }
+      .teapot-bubble:before {
+        content: "";
+        display: block;
+        width: 100%;
+        height: 100%;
+        background-color: inherit;
+        position: absolute;
+        top: 13px;
+        left: -11px;
+        border-radius: 50%;
+        border: 2px solid #1f1f1f;
+        border-right: none;
+        border-top: none;
+      }
+      .teapot-bubble:after {
+        content: "";
+        display: block;
+        width: 100%;
+        height: 100%;
+        background-color: inherit;
+        position: absolute;
+        top: -9px;
+        left: -20px;
+        border-radius: 50%;
+        border: 2px solid #1f1f1f;
+        border-bottom: none;
+        border-right: none;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>418 I'm a teapot</h1>
+
+    <div class="teapot-icon">
+      <div class="teapot-body-wrap">
+        <!--teapot body-->
+        <div class="teapot-body">
+          <div class="teapot-body-inner-1">
+            <!--light bleaks -->
+            <div class="bleak bleak-1"></div>
+            <div class="bleak bleak-2"></div>
+          </div>
+          <div class="teapot-body-inner-2"></div>
+          <div class="teapot-body-inner-3"></div>
+        </div>
+
+        <!--teapot top -->
+        <div class="teapot-top"></div>
+      </div>
+
+      <!-- teapot nose -->
+      <div class="teapot-nose"></div>
+
+      <!--teapot-handle-->
+      <div class="teapot-handle"></div>
+
+      <!--teapot bubble -->
+      <div class="teapot-bubble"></div>
+    </div>
+  </body>
+</html>
