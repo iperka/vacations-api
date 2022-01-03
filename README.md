@@ -122,6 +122,9 @@ Please make sure to update tests as appropriate and meet the quality gate requir
 
 ## 1.10. Acknowledgments 🐛
 
+There is already a Google Script to integrate the Vacations API into your Google Calendar.
+See https://github.com/iperka/vacations-google-script
+
 - Ingrate vacations into your calendar.
 - Add new workflows to your company.
 - Simplify vacations.
