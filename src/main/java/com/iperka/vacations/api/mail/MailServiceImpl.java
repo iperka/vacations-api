@@ -18,7 +18,7 @@ import lombok.extern.slf4j.Slf4j;
  * {@link com.iperka.vacations.api.mail.MailService}.
  * 
  * @author Michael Beutler
- * @version 0.0.1
+ * @version 0.0.2
  * @since 2021-12-31
  */
 @Service
@@ -39,15 +39,15 @@ public class MailServiceImpl implements MailService {
      * this statement create a thread pool of twenty threads
      * here we are assigning send mail task using ScheduledExecutorService.submit();
      */
-    private ScheduledExecutorService quickService = Executors.newScheduledThreadPool(noOfQuickServiceThreads);
+    private final ScheduledExecutorService quickService = Executors.newScheduledThreadPool(noOfQuickServiceThreads);
 
     /**
      * Sends a test message to given address. In a separate thread.
      */
     @Override
-    public void sendTestMail(@Email String to) {
+    public void sendTestMail(@Email final String to) {
         log.info("Sending test email to <" + to + ">...");
-        SimpleMailMessage message = new SimpleMailMessage();
+        final SimpleMailMessage message = new SimpleMailMessage();
 
         message.setFrom(String.format("%s <%s>", fromName, fromAddress));
         message.setTo(to);
@@ -60,7 +60,7 @@ public class MailServiceImpl implements MailService {
                 try {
                     javaMailSender.send(message);
                     log.info("Mail sent.");
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     log.error("Exception occur while send a mail: ", e);
                 }
             }

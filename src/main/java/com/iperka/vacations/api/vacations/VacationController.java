@@ -24,7 +24,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -380,11 +379,6 @@ public class VacationController {
     private final class VacationDaysCountByMonthResponse extends Response<double[]> {
         public VacationDaysCountByMonthResponse(final HttpStatus status) {
             super(status);
-        }
-
-        @Schema(description = "Each index represents a month.", required = true, example = "[0.0,10.0,0.0,0.0,4.0,0.0,0.0,0.1,0.0,0.0,0.0,0.0]")
-        public double[] getData() {
-            return new double[12];
         }
     };
 }
