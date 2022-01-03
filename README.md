@@ -38,6 +38,8 @@ The API is now running on port `8080` and should be accessible via `http://local
 - Swagger UI: http://localhost:8080/swagger-ui/index.html#/
 - OpenAPI: http://localhost:8080/openapi/v3/
 
+If you want to test the API contact us to get client credentials.
+
 ## 1.3. Installation 💽
 
 Its highly recommended to use the container image see [Local Deployment](#14-local-deployment-).
