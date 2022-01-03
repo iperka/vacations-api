@@ -6,7 +6,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.options;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -28,15 +27,15 @@ class VacationControllerTest {
 
     @Test
     void shouldReturnUnauthorized() throws Exception {
-        this.mockMvc.perform(get("/vacations")).andDo(print()).andExpect(status().isUnauthorized())
+        this.mockMvc.perform(get("/vacations")).andExpect(status().isUnauthorized())
                 .andExpect(content().string(containsString("OAuthException")));
-        this.mockMvc.perform(post("/vacations")).andDo(print()).andExpect(status().isUnauthorized())
+        this.mockMvc.perform(post("/vacations")).andExpect(status().isUnauthorized())
                 .andExpect(content().string(containsString("OAuthException")));
-        this.mockMvc.perform(put("/vacations")).andDo(print()).andExpect(status().isUnauthorized())
+        this.mockMvc.perform(put("/vacations")).andExpect(status().isUnauthorized())
                 .andExpect(content().string(containsString("OAuthException")));
-        this.mockMvc.perform(delete("/vacations")).andDo(print()).andExpect(status().isUnauthorized())
+        this.mockMvc.perform(delete("/vacations")).andExpect(status().isUnauthorized())
                 .andExpect(content().string(containsString("OAuthException")));
-        this.mockMvc.perform(options("/vacations")).andDo(print()).andExpect(status().isUnauthorized())
+        this.mockMvc.perform(options("/vacations")).andExpect(status().isUnauthorized())
                 .andExpect(content().string(containsString("OAuthException")));
     }
 
