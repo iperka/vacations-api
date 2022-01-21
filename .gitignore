@@ -34,3 +34,4 @@ build/
 
 README.html
 sonar.cmd
+.DS_Store
