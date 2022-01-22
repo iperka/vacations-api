@@ -47,10 +47,6 @@ Its highly recommended to use the container image see [Local Deployment](#14-loc
 Package the Java application with maven.
 
 ```bash
-# Windows
-.\mvnw.cmd package
-
-# Linux / MacOS
 $ ./mvnw package
 ```
 
