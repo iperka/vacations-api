@@ -21,21 +21,22 @@ class VacationServiceImplTest {
 
     @BeforeEach
     void initUseCase() {
-        vacationService = new VacationServiceImpl(vacationRepository);
+        vacationService = new VacationServiceImpl();
     }
 
     @Test
     void createVacation() {
         Vacation vacation = new Vacation();
-        vacation.setName("Test");
+        vacation.setOwner("test");
+        vacation.setName("test");
         vacation.setStartDate(new Date());
-		vacation.setEndDate(new Date());
+        vacation.setStartDate(new Date());
 
         // providing knowledge
         when(vacationRepository.save(any(Vacation.class))).thenReturn(vacation);
 
-        Vacation savedCustomer = vacationRepository.save(vacation);
-        assertNotNull(savedCustomer.getName());
+        Vacation savedVacation = vacationRepository.save(vacation);
+        assertNotNull(savedVacation.getName());
     }
 
 }

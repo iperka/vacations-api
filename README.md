@@ -161,3 +161,4 @@ Please note that some default values are also provided by configuration profiles
 | `MAIL_SMTP_STARTTLS_ENABLED`     | Mail Server allows `STARTTLS` connections.                             | `boolean`                   | `true`                                 |
 | `MAIL_FROM_ADDRESS`              | Will send Mails from this address.                                     | `email`                     | `no-reply@iperka.com`                  |
 | `MAIL_FROM_NAME`                 | Will send Mails from this name.                                        | `string`                    | `iperka`                               |
+| `GOOGLE_RECAPTCHA_SECRET`        | Google Recaptcha secret for validating requests.                       | `string`                    | `reCAPTCHA_site_secret`                |

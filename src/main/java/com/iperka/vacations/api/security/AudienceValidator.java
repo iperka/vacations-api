@@ -11,7 +11,7 @@ import org.springframework.security.oauth2.jwt.Jwt;
  * claim of the JWT.
  * 
  * @author Michael Beutler
- * @version 0.0.1
+ * @version 1.0.0
  * @since 2021-09-29
  */
 public class AudienceValidator implements OAuth2TokenValidator<Jwt> {

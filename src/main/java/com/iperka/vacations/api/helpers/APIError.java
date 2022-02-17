@@ -4,6 +4,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * Generic APIError class for better error handling. The class can be built from
+ * exceptions directly.
+ * 
+ * @author Michael Beutler
+ * @version 1.0.0
+ * @since 1.0.0
+ */
 @Data
 @NoArgsConstructor
 @Slf4j
@@ -16,6 +24,7 @@ public class APIError {
 
     public APIError(Exception exception) {
 
+        // TODO: Optimize unresolved exception handling
         switch (exception.getClass().getName()) {
             case "org.springframework.web.method.annotation.MethodArgumentTypeMismatchException":
                 this.type = "IllegalMethodArgument";

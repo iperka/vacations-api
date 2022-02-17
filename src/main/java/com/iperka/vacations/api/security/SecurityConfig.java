@@ -28,7 +28,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
  * validating given JWT's.
  * 
  * @author Michael Beutler
- * @version 0.1.2
+ * @version 1.0.0
  * @since 2021-09-29
  */
 @Configuration

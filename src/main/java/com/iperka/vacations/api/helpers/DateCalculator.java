@@ -11,8 +11,8 @@ import java.util.stream.Collectors;
  * DateCalculator class for helping with different date operations.
  * 
  * @author Michael Beutler
- * @version 0.0.3
- * @since 2021-12-24
+ * @version 1.0.0
+ * @since 1.0.0
  */
 public class DateCalculator {
 
@@ -29,8 +29,9 @@ public class DateCalculator {
             final Optional<List<LocalDate>> holidays) throws IllegalArgumentException {
         // Validate method arguments
         if (startDate == null || endDate == null || startDate.isAfter(endDate)) {
-            throw new IllegalArgumentException("Invalid method argument(s) to countBusinessDaysBetween (" + startDate
-                    + "," + endDate + "," + holidays + ")");
+            throw new IllegalArgumentException(
+                    "Invalid method argument(s) to countBusinessDaysBetween (" + startDate
+                            + "," + endDate + "," + holidays + ")");
         }
         endDate = endDate.plusDays(1);
 

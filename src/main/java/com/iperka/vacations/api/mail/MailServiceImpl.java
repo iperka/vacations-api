@@ -18,7 +18,7 @@ import lombok.extern.slf4j.Slf4j;
  * {@link com.iperka.vacations.api.mail.MailService}.
  * 
  * @author Michael Beutler
- * @version 0.0.2
+ * @version 1.0.0
  * @since 2021-12-31
  */
 @Service

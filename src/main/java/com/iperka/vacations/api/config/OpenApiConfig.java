@@ -1,8 +1,9 @@
-package com.iperka.vacations.api;
+package com.iperka.vacations.api.config;
 
 import java.util.Arrays;
 import java.util.List;
 
+import com.iperka.vacations.api.VacationsApiApplication;
 import com.iperka.vacations.api.security.Scopes;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -21,11 +22,11 @@ import io.swagger.v3.oas.models.security.SecurityScheme.Type;
 import io.swagger.v3.oas.models.servers.Server;
 
 /**
- * OpenAPI SpringDoc Configuration Bean.
+ * OpenAPI SpringDoc Configuration bean.
  * 
  * @author Michael Beutler
- * @version 0.1.1
- * @since 2021-12-15
+ * @version 1.0.0
+ * @since 1.0.0
  */
 @Configuration
 public class OpenApiConfig {
@@ -35,41 +36,30 @@ public class OpenApiConfig {
     @Value("${auth0.audience}")
     private String audience;
 
-    @Value("${api.serverUrl}")
-    private String apiServerUrl;
-
     @Value("${spring.profiles.active}")
     private String activeProfile;
 
     public static final String OAUTH2 = "OAuth2";
     public static final String APPLICATION_JSON = "application/json";
+    public static final String SERVER_DESCRIPTION_PRODUCTION = "Production";
+    public static final String SERVER_DESCRIPTION_STAGING = "Staging";
+    public static final String SERVER_DESCRIPTION_DEVELOPMENT = "Development";
 
     @Bean
     public OpenAPI customOpenAPI() {
         // @formatter:off
         final OpenAPI openAPI = new OpenAPI();
 
-        final Server server = new Server();
         if (activeProfile.equals("development")) {
-            server.url("http://localhost:8080/");
-            server.description("Local Development Server");
-        } else {
-            server.url(apiServerUrl);
-            server.description("Main Production Server");
+            openAPI.addServersItem(new Server().url("http://localhost:8080/").description("Local Development"));
         }
 
         openAPI
         .addSecurityItem(new SecurityRequirement().addList(OAUTH2, Arrays.asList(
-            Scopes.ORGANIZATIONS_READ, 
-            Scopes.ORGANIZATIONS_WRITE, 
-            Scopes.ORGANIZATIONS_ALL_READ, 
-            Scopes.ORGANIZATIONS_ALL_WRITE,
             Scopes.VACATIONS_READ, 
             Scopes.VACATIONS_WRITE, 
             Scopes.VACATIONS_ALL_READ, 
-            Scopes.VACATIONS_ALL_WRITE,
-            Scopes.USERS_ALL_READ, 
-            Scopes.USERS_ALL_WRITE
+            Scopes.VACATIONS_ALL_WRITE
         )))
         .components(new Components()
         .addSecuritySchemes(OAUTH2,
@@ -80,10 +70,6 @@ public class OpenApiConfig {
                     .authorizationUrl(domain + "authorize?audience=" + audience)
                     .scopes(
                        new io.swagger.v3.oas.models.security.Scopes()
-                       .addString(Scopes.ORGANIZATIONS_READ, "Read owned organizations.")
-                       .addString(Scopes.ORGANIZATIONS_WRITE, "Create, update and delete owned organizations.") 
-                       .addString(Scopes.ORGANIZATIONS_ALL_READ, "Read all organizations.") 
-                       .addString(Scopes.ORGANIZATIONS_ALL_WRITE, "Create, update and delete all organizations.")
                        .addString(Scopes.VACATIONS_READ, "Read owned vacations.")
                        .addString(Scopes.VACATIONS_WRITE, "Create, update and delete owned vacations.") 
                        .addString(Scopes.VACATIONS_ALL_READ, "Read all vacations.") 
@@ -95,11 +81,12 @@ public class OpenApiConfig {
             )
         )).security(List.of(new SecurityRequirement().addList(OAUTH2)))
         .info(new Info()
-        .title("Vacations API")
-        .description("REST API for iperka vacations solution.")
+        .title("vacations API")
+        .description("REST API for vacations solution by iperka.")
         .version("v" + VacationsApiApplication.class.getPackage().getImplementationVersion())
         .contact(new Contact().name("Support").email("support@iperka.com").url("https://iperka.com")))
-        .addServersItem(server);
+        .addServersItem(new Server().url("https://api.vacations.iperka.com/v1/").description(SERVER_DESCRIPTION_PRODUCTION))
+        .addServersItem(new Server().url("https://api.vacations.iperka.ch/v1/").description(SERVER_DESCRIPTION_PRODUCTION));
 
         return openAPI;
         // @formatter:on

@@ -3,47 +3,27 @@ package com.iperka.vacations.api.helpers;
 import org.springframework.data.domain.Page;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
 /**
- * The {@link com.iperka.vacations.api.helpers.Metadata} class defines the
- * structure of a metadata object. This object is mostly used for
- * {@link org.springframework.data.domain.Page} objects and describe their
- * metadata. Use the special constructor to create a object from page object.
- * 
- * Will be serialized as: <code>
- * "metadata": {
- *   "totalElements": 0,
- *   "totalPages": 0,
- *   "page": 1,
- *   "perPage": 20
- * }
- * </code>
+ * Metadata object indicating paging and sorting. Simplified Page object
+ * provided by Spring Boot.
  * 
  * @author Michael Beutler
- * @version 0.0.4
- * @since 2021-05-14
+ * @version 1.0.0
+ * @since 1.0.0
  */
+@Data
+@AllArgsConstructor
 public class Metadata {
     private long totalElements = 0;
     private long totalPages = 0;
     private long page = 1L;
     private long perPage = 0;
-    private String query;
-
-    public Metadata(long totalElements, long totalPages, long page, long perPage) {
-        this.totalElements = totalElements;
-        this.totalPages = totalPages;
-        this.page = page;
-        this.perPage = perPage;
-    }
-
-    public Metadata(long totalElements, long totalPages, long page, long perPage, String query) {
-        this.totalElements = totalElements;
-        this.totalPages = totalPages;
-        this.page = page;
-        this.perPage = perPage;
-        this.query = query;
-    }
+    private String query = null;
+    private boolean firstPage = false;
+    private boolean lastPage = false;
 
     public Metadata(Page<?> page) {
         this.totalElements = page.getTotalElements();
@@ -52,6 +32,8 @@ public class Metadata {
         // Add one to slice number to achieve page 1
         this.page = page.getNumber() + 1L;
         this.perPage = page.getSize();
+        this.firstPage = page.isFirst();
+        this.lastPage = page.isLast();
     }
 
     public Metadata(Page<?> page, String query) {
@@ -62,6 +44,8 @@ public class Metadata {
         this.page = page.getNumber() + 1L;
         this.perPage = page.getSize();
         this.query = query;
+        this.firstPage = page.isFirst();
+        this.lastPage = page.isLast();
     }
 
     @Schema(description = "Total amount of items matching request.", example = "200", required = true)
@@ -69,17 +53,9 @@ public class Metadata {
         return totalElements;
     }
 
-    public void setTotalElements(long totalElements) {
-        this.totalElements = totalElements;
-    }
-
     @Schema(description = "Maximum amount of pages relative to page size.", example = "2", required = true)
     public long getTotalPages() {
         return totalPages;
-    }
-
-    public void setTotalPages(long totalPages) {
-        this.totalPages = totalPages;
     }
 
     @Schema(description = "Page according to page request.", example = "1", required = true)
@@ -87,17 +63,9 @@ public class Metadata {
         return page;
     }
 
-    public void setPage(long page) {
-        this.page = page;
-    }
-
     @Schema(description = "Response object page size.", example = "20", required = true)
     public long getPerPage() {
         return perPage;
-    }
-
-    public void setPerPage(long perPage) {
-        this.perPage = perPage;
     }
 
     @Schema(description = "If the request uses a specific filter query it will be represented.", example = "name=Test", required = true)
@@ -105,8 +73,13 @@ public class Metadata {
         return query;
     }
 
-    public void setQuery(String query) {
-        this.query = query;
+    @Schema(description = "If requested page is the first, it will be true.", example = "true", required = true)
+    public boolean isFirstPage() {
+        return firstPage;
     }
 
+    @Schema(description = "If requested page is the last, it will be true.", example = "false", required = true)
+    public boolean isLastPage() {
+        return lastPage;
+    }
 }

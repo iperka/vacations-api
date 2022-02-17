@@ -9,13 +9,13 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
 /**
- * The {@link com.iperka.vacations.api.vacations.VacationRepository}
+ * The {@link com.iperka.vacations.api.VacationRepository}
  * interface defines the methods that will interact with the
- * {@link com.iperka.vacations.api.vacations.Vacation} model.
+ * {@link com.iperka.vacations.api.Vacation} model.
  * 
  * @author Michael Beutler
- * @version 0.0.1
- * @since 2021-12-28
+ * @version 1.0.0
+ * @since 1.0.0
  */
 @Repository
 public interface VacationRepository extends PagingAndSortingRepository<Vacation, UUID> {
@@ -23,95 +23,63 @@ public interface VacationRepository extends PagingAndSortingRepository<Vacation,
      * Retrieves all vacations as {@link org.springframework.data.domain.Page}
      * object. Bare in mind that these method should be explicit to administrative
      * roles.
+     * 
+     * @since 1.0.0
+     * @param pageable Pageable object.
+     * @return Optional Page with Vacation objects.
      */
     public Page<Vacation> findAll(Pageable pageable);
 
     /**
      * Retrieves all vacations owned by given user as
-     * {@link org.springframework.data.domain.Page}
-     * object.
+     * {@link org.springframework.data.domain.Page} object.
      * 
+     * @since 1.0.0
      * @param pageable Pageable object.
-     * @param owner    user ID of owner.
+     * @param owner    Owner user id provided by Auth0.
+     * @return Optional Page with Vacation objects.
      */
     public Page<Vacation> findAllByOwner(Pageable pageable, String owner);
 
     /**
-     * Returns the user object matching the given uuid as
-     * {@link java.util.Optional}. Bare in mind that these method should be explicit
-     * to administrative roles.
+     * Returns vacation with given UUID.
+     * Bare in mind that these method should be explicit to administrative
+     * roles.
      * 
-     * @param uuid Vacation uuid.
-     * @return Optional
+     * @since 1.0.0
+     * @param uuid UUID of desired object.
+     * @return Optional with Vacation object.
      */
     public Optional<Vacation> findByUuid(UUID uuid);
 
     /**
-     * Returns the user object matching the given uuid and owner as
-     * {@link java.util.Optional}.
+     * Returns vacation with given UUID and object must be owned
+     * by given user.
      * 
-     * @param uuid  Vacation uuid.
-     * @param owner user ID of owner.
-     * @return Optional
+     * @since 1.0.0
+     * @param uuid  UUID of desired object.
+     * @param owner Owner user id provided by Auth0.
+     * @return Optional with Vacation object.
      */
     public Optional<Vacation> findByUuidAndOwner(UUID uuid, String owner);
 
     /**
-     * Returns the user object matching the given name as
-     * {@link java.util.Optional}. Bare in mind that these method should be explicit
-     * to administrative roles.
+     * Deletes vacation with given UUID.
+     * Bare in mind that these method should be explicit to administrative
+     * roles.
      * 
-     * @param name Vacation name.
-     * @return Optional
-     */
-    public Optional<Vacation> findByNameIgnoreCase(String name);
-
-    /**
-     * Returns the user object matching the given name and owner as
-     * {@link java.util.Optional}.
-     * 
-     * @param name  Vacation name.
-     * @param owner user ID of owner.
-     * @return Optional
-     */
-    public Optional<Vacation> findByNameIgnoreCaseAndOwner(String name, String owner);
-
-    /**
-     * Returns the vacation objects matching the given name as
-     * {@link java.util.Page}. Bare in mind that these method should be explicit
-     * to administrative roles.
-     * 
-     * @param pageable Pageable object.
-     * @param name     Vacation name.
-     * @return Page
-     */
-    public Page<Vacation> findByNameContainingIgnoreCase(Pageable pageable, String name);
-
-    /**
-     * Returns the vacation objects matching the given name and owner as
-     * {@link java.util.Page}.
-     * 
-     * @param pageable Pageable object.
-     * @param name     Vacation name.
-     * @param owner    user ID of owner.
-     * @return Page
-     */
-    public Page<Vacation> findByNameContainingIgnoreCaseAndOwner(Pageable pageable, String name, String owner);
-
-    /**
-     * Deletes the user object matching the given uuid. Bare in mind that these
-     * method should be explicit to administrative roles.
-     * 
-     * @param uuid  Vacation uuid.
-     * @param owner user ID of owner.
+     * @since 1.0.0
+     * @param uuid UUID of desired object.
      */
     public void deleteByUuid(UUID uuid);
 
     /**
-     * Deletes the user object matching the given uuid and owner.
+     * Deletes vacation with given UUID and object must be owned
+     * by given user.
      * 
-     * @param uuid  Vacation uuid.
-     * @param owner user ID of owner.
+     * @since 1.0.0
+     * @param uuid  UUID of desired object.
+     * @param owner Owner user id provided by Auth0.
      */
     public void deleteByUuidAndOwner(UUID uuid, String owner);
 }

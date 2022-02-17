@@ -5,7 +5,7 @@ package com.iperka.vacations.api.helpers;
  * 
  * @author Michael Beutler
  * @version 1.0.0
- * @since 2021-05-14
+ * @since 1.0.0
  */
 public interface DTO<T> {
 

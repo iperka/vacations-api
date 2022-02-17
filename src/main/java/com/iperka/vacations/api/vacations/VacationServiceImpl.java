@@ -7,156 +7,175 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import javax.transaction.Transactional;
-
+import com.iperka.vacations.api.audit.AuditOperation;
 import com.iperka.vacations.api.helpers.DateCalculator;
-import com.iperka.vacations.api.vacations.dto.VacationDTO;
-import com.iperka.vacations.api.vacations.exceptions.VacationInvalidDateRange;
-import com.iperka.vacations.api.vacations.exceptions.VacationNotFound;
+import com.iperka.vacations.api.security.Auditable;
+import com.iperka.vacations.api.vacations.exceptions.VacationNotFoundException;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
-import lombok.extern.slf4j.Slf4j;
-
 /**
- * The
- * {@link com.iperka.vacations.api.vacations.VacationServiceImpl}
- * class implements the
- * {@link com.iperka.vacations.api.vacations.VacationService} interface
- * and is used to manage the vacation.
+ * The {@link com.iperka.vacations.api.VacationServiceImpl}
+ * class implements defines the
+ * {@link com.iperka.vacations.api.VacationServiceImpl}
+ * interface and provides service layer methods.
  * 
  * @author Michael Beutler
- * @version 0.0.5
- * @since 2021-12-28
+ * @version 1.0.0
+ * @since 1.0.0
  */
 @Service
-@Slf4j
-public class VacationServiceImpl implements VacationService {
-
+public class VacationServiceImpl extends Auditable implements VacationService {
+    @Autowired
     private VacationRepository vacationRepository;
 
-    public VacationServiceImpl(VacationRepository vacationRepository) {
-        this.vacationRepository = vacationRepository;
-    }
-
+    /**
+     * Retrieves all vacations as {@link org.springframework.data.domain.Page}
+     * object. Bare in mind that these method should be explicit to administrative
+     * roles.
+     * 
+     * @since 1.0.0
+     * @param pageable Pageable object.
+     * @return Optional Page with Vacation objects.
+     */
     @Override
     @PreAuthorize("hasAnyAuthority('SCOPE_vacations:all:read', 'SCOPE_vacations:all:write')")
     public Page<Vacation> findAll(Pageable pageable) {
-        log.debug("findAll called");
-        return this.vacationRepository.findAll(pageable);
+        return vacationRepository.findAll(pageable);
     }
 
-    @Override
-    @PreAuthorize("hasAnyAuthority('SCOPE_vacations:all:read', 'SCOPE_vacations:all:write')")
-    public Page<Vacation> findByNameContainingIgnoreCase(Pageable pageable, String name) {
-        log.debug("findAllByName called");
-        return this.vacationRepository.findByNameContainingIgnoreCase(pageable, name);
-    }
-
-    @Override
-    @PreAuthorize("hasAnyAuthority('SCOPE_vacations:all:read', 'SCOPE_vacations:all:write')")
-    public Vacation findByUuid(UUID uuid) throws VacationNotFound {
-        log.debug("findByUUID called");
-        return this.vacationRepository.findByUuid(uuid).orElseThrow(VacationNotFound::new);
-    }
-
-    @Override
-    @PreAuthorize("hasAnyAuthority('SCOPE_vacations:write', 'SCOPE_vacations:all:write')")
-    public Vacation create(Vacation vacation) throws VacationInvalidDateRange {
-        log.debug("create called");
-        if (vacation.getStartDate().getTime() > vacation.getEndDate().getTime()) {
-            throw new VacationInvalidDateRange();
-        }
-
-        // Check if days are less than 0.25
-        if (vacation.getDays() < 0.25) {
-            log.info("Vacation.days < 0.25 => set to 0.25!");
-            vacation.setDays(0.25);
-        }
-
-        return this.vacationRepository.save(vacation);
-    }
-
-    @Override
-    @PreAuthorize("hasAnyAuthority('SCOPE_vacations:all:read', 'SCOPE_vacations:all:write')")
-    public Optional<Vacation> findByNameIgnoreCase(String name) {
-        log.debug("findByNameIgnoreCase called");
-        return this.vacationRepository.findByNameIgnoreCase(name);
-    }
-
-    @Override
-    @PreAuthorize("hasAuthority('SCOPE_vacations:all:write')")
-    @Transactional
-    public void deleteByUuid(UUID uuid) {
-        this.vacationRepository.deleteByUuid(uuid);
-    }
-
+    /**
+     * Retrieves all vacations owned by given user as
+     * {@link org.springframework.data.domain.Page} object.
+     * 
+     * @since 1.0.0
+     * @param pageable Pageable object.
+     * @param owner    Owner user id provided by Auth0.
+     * @return Optional Page with Vacation objects.
+     */
     @Override
     @PreAuthorize("hasAnyAuthority('SCOPE_vacations:read', 'SCOPE_vacations:write', 'SCOPE_vacations:all:read', 'SCOPE_vacations:all:write')")
     public Page<Vacation> findAllByOwner(Pageable pageable, String owner) {
-        return this.vacationRepository.findAllByOwner(pageable, owner);
+        return vacationRepository.findAllByOwner(pageable, owner);
     }
 
+    /**
+     * Returns vacation with given UUID.
+     * Bare in mind that these method should be explicit to administrative
+     * roles.
+     * 
+     * @since 1.0.0
+     * @param uuid UUID of desired object.
+     * @return Vacation object.
+     * @throws VacationNotFoundException if vacation could not be found.
+     */
+    @Override
+    @PreAuthorize("hasAnyAuthority('SCOPE_vacations:all:read', 'SCOPE_vacations:all:write')")
+    public Vacation findByUuid(UUID uuid) throws VacationNotFoundException {
+        return vacationRepository.findByUuid(uuid).orElseThrow(VacationNotFoundException::new);
+    }
+
+    /**
+     * Returns vacation with given UUID and object must be owned
+     * by given user.
+     * 
+     * @since 1.0.0
+     * @param uuid  UUID of desired object.
+     * @param owner Owner user id provided by Auth0.
+     * @return Vacation object.
+     * @throws VacationNotFoundException if vacation could not be found.
+     */
     @Override
     @PreAuthorize("hasAnyAuthority('SCOPE_vacations:read', 'SCOPE_vacations:write', 'SCOPE_vacations:all:read', 'SCOPE_vacations:all:write')")
-    public Page<Vacation> findByNameContainingIgnoreCaseAndOwner(Pageable pageable, String name, String owner) {
-        return this.vacationRepository.findByNameContainingIgnoreCaseAndOwner(pageable, name, owner);
+    public Vacation findByUuidAndOwner(UUID uuid, String owner) throws VacationNotFoundException {
+        return vacationRepository.findByUuidAndOwner(uuid, owner).orElseThrow(VacationNotFoundException::new);
     }
 
-    @Override
-    @PreAuthorize("hasAnyAuthority('SCOPE_vacations:read', 'SCOPE_vacations:write', 'SCOPE_vacations:all:read', 'SCOPE_vacations:all:write')")
-    public Vacation findByUuidAndOwner(UUID uuid, String owner) throws VacationNotFound {
-        return this.vacationRepository.findByUuidAndOwner(uuid, owner)
-                .orElseThrow(VacationNotFound::new);
-    }
-
-    @Override
-    @PreAuthorize("hasAnyAuthority('SCOPE_vacations:read', 'SCOPE_vacations:write', 'SCOPE_vacations:all:read', 'SCOPE_vacations:all:write')")
-    public Optional<Vacation> findByNameIgnoreCaseAndOwner(String name, String owner) {
-        return this.vacationRepository.findByNameIgnoreCaseAndOwner(name, owner);
-    }
-
+    /**
+     * Creates and returns vacation.
+     * 
+     * @since 1.0.0
+     * @param vacation new object.
+     * @return Vacation created object.
+     * @throws VacationNotFoundException if vacation could not be found.
+     */
     @Override
     @PreAuthorize("hasAnyAuthority('SCOPE_vacations:write', 'SCOPE_vacations:all:write')")
-    @Transactional
-    public void deleteByUuidAndOwner(UUID uuid, String owner) {
-        this.vacationRepository.deleteByUuidAndOwner(uuid, owner);
+    public Vacation create(Vacation vacation) {
+        vacation = vacationRepository.save(vacation);
+        this.audit(AuditOperation.CREATE, null, vacation);
+        return vacation;
     }
 
+    /**
+     * Updates and returns vacation with given object.
+     * 
+     * @since 1.0.0
+     * @param vacation new object.
+     * @return Vacation updated object.
+     * @throws VacationNotFoundException if vacation could not be found.
+     */
     @Override
-    @PreAuthorize("hasAnyAuthority('SCOPE_vacations:all:write', 'SCOPE_vacations:all:write')")
-    public Vacation updateByUuid(UUID uuid, VacationDTO vacationDTO)
-            throws VacationNotFound, VacationInvalidDateRange {
-        Vacation vacation = this.vacationRepository.findByUuid(uuid).orElseThrow(VacationNotFound::new);
-
-        this.updateFromDTO(vacation, vacationDTO);
-
-        // Should only be enabled by higher priviliged principal
-        if (!vacationDTO.getStatus().toString().equals(vacation.getStatus().toString())) {
-            vacation.setStatus(vacationDTO.getStatus());
-        }
-
-        return this.vacationRepository.save(vacation);
+    @PreAuthorize("hasAnyAuthority('SCOPE_vacations:all:write')")
+    public Vacation update(Vacation vacation) throws VacationNotFoundException {
+        Vacation before = this.findByUuid(vacation.getUuid());
+        Vacation after = vacationRepository.save(vacation);
+        this.audit(AuditOperation.UPDATE, before, after);
+        return after;
     }
 
+    /**
+     * Updates and returns vacation with given object if owner equals given owner.
+     * 
+     * @since 1.0.0
+     * @param vacation new object.
+     * @param owner    Owner user id provided by Auth0.
+     * @return Vacation updated object.
+     * @throws VacationNotFoundException if vacation could not be found.
+     */
     @Override
     @PreAuthorize("hasAnyAuthority('SCOPE_vacations:write', 'SCOPE_vacations:all:write')")
-    public Vacation updateByUuidAndOwner(UUID uuid, String owner, VacationDTO vacationDTO)
-            throws VacationNotFound, VacationInvalidDateRange {
-        Vacation vacation = this.vacationRepository.findByUuidAndOwner(uuid, owner)
-                .orElseThrow(VacationNotFound::new);
+    public Vacation updateByOwner(Vacation vacation, String owner) throws VacationNotFoundException {
+        Vacation before = this.findByUuidAndOwner(vacation.getUuid(), owner);
+        Vacation after = vacationRepository.save(vacation);
+        this.audit(AuditOperation.UPDATE, before, after);
+        return after;
+    }
 
-        this.updateFromDTO(vacation, vacationDTO);
+    /**
+     * Deletes vacation with given UUID.
+     * Bare in mind that these method should be explicit to administrative
+     * roles.
+     * 
+     * @since 1.0.0
+     * @param uuid UUID of desired object.
+     * @throws VacationNotFoundException if vacation could not be found.
+     */
+    @Override
+    @PreAuthorize("hasAuthority('SCOPE_vacations:all:write')")
+    public void deleteByUuid(UUID uuid) throws VacationNotFoundException {
+        Vacation vacation = this.findByUuid(uuid);
+        vacationRepository.deleteByUuid(vacation.getUuid());
+    }
 
-        // Should only be enabled by higher priviliged principal
-        if (!vacationDTO.getStatus().toString().equals(vacation.getStatus().toString())) {
-            log.warn("Unprivileged principal tried to setStatus!");
-        }
-
-        return this.vacationRepository.save(vacation);
+    /**
+     * Deletes vacation with given UUID and object must be owned
+     * by given user.
+     * 
+     * @since 1.0.0
+     * @param uuid  UUID of desired object.
+     * @param owner Owner user id provided by Auth0.
+     * @throws VacationNotFoundException if vacation could not be found.
+     */
+    @Override
+    @PreAuthorize("hasAnyAuthority('SCOPE_vacations:write', 'SCOPE_vacations:all:write')")
+    public void deleteByUuidAndOwner(UUID uuid, String owner) throws VacationNotFoundException {
+        Vacation vacation = this.findByUuidAndOwner(uuid, owner);
+        vacationRepository.deleteByUuidAndOwner(vacation.getUuid(), owner);
     }
 
     @PreAuthorize("hasAnyAuthority('SCOPE_vacations:read', 'SCOPE_vacations:write', 'SCOPE_vacations:all:read', 'SCOPE_vacations:all:write')")
@@ -188,35 +207,5 @@ public class VacationServiceImpl implements VacationService {
         }
 
         return vacationMonthViewDTO;
-    }
-
-    private Vacation updateFromDTO(Vacation vacation, VacationDTO vacationDTO) throws VacationInvalidDateRange {
-        if (!vacationDTO.getName().equals(vacation.getName())) {
-            vacation.setName(vacationDTO.getName());
-        }
-
-        if (vacationDTO.getStartDate().getTime() > vacationDTO.getEndDate().getTime()) {
-            throw new VacationInvalidDateRange();
-        }
-
-        if (vacationDTO.getStartDate().getTime() != (vacation.getStartDate().getTime())) {
-            vacation.setStartDate(vacationDTO.getStartDate());
-        }
-
-        if (vacationDTO.getEndDate().getTime() != (vacation.getEndDate().getTime())) {
-            vacation.setEndDate(vacationDTO.getEndDate());
-        }
-
-        // Check if days are less than 0.25
-        if (vacationDTO.getDays() < 0.25) {
-            log.info("Vacation.days < 0.25 => set to 0.25!");
-            vacationDTO.setDays(0.25);
-        }
-
-        if (vacationDTO.getDays() != vacation.getDays()) {
-            vacation.setDays(vacationDTO.getDays());
-        }
-
-        return vacation;
     }
 }

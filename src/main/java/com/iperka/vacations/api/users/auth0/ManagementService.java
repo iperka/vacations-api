@@ -11,7 +11,7 @@ import com.iperka.vacations.api.users.exceptions.UserNotFound;
  * interface defines the basic user operations provided by auth0.
  * 
  * @author Michael Beutler
- * @version 0.0.1
+ * @version 1.0.0
  * @since 2021-12-31
  */
 public interface ManagementService {

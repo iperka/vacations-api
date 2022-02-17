@@ -1,12 +1,13 @@
-package com.iperka.vacations.api;
+package com.iperka.vacations.api.helpers;
 
 import java.text.MessageFormat;
 
-import com.iperka.vacations.api.helpers.APIError;
-import com.iperka.vacations.api.helpers.Response;
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
 
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -27,13 +28,21 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * Global exception handler. In Spring exception handling like this can be
+ * tricky. Just add exceptions to this class (maybe it works ;D).
+ * 
+ * @author Michael Beutler
+ * @version 1.0.0
+ * @since 1.0.0
+ */
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @ControllerAdvice
 @RestControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
-    private ResponseEntity<Object> toResponseEntity(Response<Object> response) {
+    private ResponseEntity<Object> toResponseEntity(final GenericResponse<Object> response) {
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 
@@ -47,9 +56,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
      * @return {@link ResponseEntity}
      */
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<Response<Object>> handleResourceNotFoundException(final ResourceNotFoundException ex) {
+    public ResponseEntity<GenericResponse<Object>> handleResourceNotFoundException(final ResourceNotFoundException ex) {
 
-        final Response<Object> response = new Response<>(HttpStatus.NOT_FOUND);
+        final GenericResponse<Object> response = new GenericResponse<>(HttpStatus.NOT_FOUND);
         response.addError(new APIError(ex));
         log.info("Resource not found.", ex);
 
@@ -64,11 +73,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
      * @return {@link ResponseEntity}
      */
     @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<Response<Object>> handleAccessDeniedException(final AccessDeniedException ex) {
+    public ResponseEntity<GenericResponse<Object>> handleAccessDeniedException(final AccessDeniedException ex) {
         final String errorMessage = "The request requires higher privileges than provided by the access token.";
         final String cause = "The authenticated user has not been granted the required scope(s).";
 
-        final Response<Object> responseObject = new Response<>(HttpStatus.FORBIDDEN);
+        final GenericResponse<Object> responseObject = new GenericResponse<>(HttpStatus.FORBIDDEN);
         responseObject.addError(new APIError("OAuthException", errorMessage, cause, 403));
 
         return responseObject.build();
@@ -83,10 +92,10 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
      * @return {@link ResponseEntity}
      */
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    protected ResponseEntity<Response<Object>> handleMethodArgumentTypeMismatch(
+    protected ResponseEntity<GenericResponse<Object>> handleMethodArgumentTypeMismatch(
             final MethodArgumentTypeMismatchException ex, final WebRequest request) {
 
-        final Response<Object> response = new Response<>(HttpStatus.BAD_REQUEST);
+        final GenericResponse<Object> response = new GenericResponse<>(HttpStatus.BAD_REQUEST);
         response.addError(new APIError(ex));
         log.info("Method Argument mismatch.", ex);
 
@@ -102,9 +111,10 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
      * @return {@link ResponseEntity}
      */
     @ExceptionHandler(IllegalArgumentException.class)
-    protected ResponseEntity<Response<Object>> handleIllegalArgumentException(final IllegalArgumentException ex) {
+    protected ResponseEntity<GenericResponse<Object>> handleIllegalArgumentException(
+            final IllegalArgumentException ex) {
 
-        final Response<Object> response = new Response<>(HttpStatus.BAD_REQUEST);
+        final GenericResponse<Object> response = new GenericResponse<>(HttpStatus.BAD_REQUEST);
         response.addError(new APIError(ex));
         log.info("Illegal argument provided.", ex);
 
@@ -116,7 +126,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             final MissingServletRequestParameterException ex, final HttpHeaders headers, final HttpStatus status,
             final WebRequest request) {
 
-        final Response<Object> response = new Response<>(HttpStatus.BAD_REQUEST);
+        final GenericResponse<Object> response = new GenericResponse<>(HttpStatus.BAD_REQUEST);
         response.addError(new APIError(ex.getClass().getSimpleName(), "Required parameter missing.",
                 ex.getParameterName() + " parameter is missing", ex.getParameterName(), 400));
 
@@ -127,7 +137,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<Object> handleMethodArgumentNotValid(final MethodArgumentNotValidException ex,
             final HttpHeaders headers, final HttpStatus status, final WebRequest request) {
 
-        final Response<Object> response = new Response<>(HttpStatus.BAD_REQUEST);
+        final GenericResponse<Object> response = new GenericResponse<>(HttpStatus.BAD_REQUEST);
         ex.getBindingResult().getFieldErrors().stream()
                 .forEach(e -> response.addError(new APIError(ex.getClass().getSimpleName(), "Invalid value provided.",
                         String.format("Field '%s' %s.", e.getField(), e.getDefaultMessage()), e.getField(), 400)));
@@ -139,10 +149,27 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<Object> handleHttpMessageNotReadable(final HttpMessageNotReadableException ex,
             final HttpHeaders headers, final HttpStatus status, final WebRequest request) {
 
-        final Response<Object> response = new Response<>(HttpStatus.BAD_REQUEST);
+        final GenericResponse<Object> response = new GenericResponse<>(HttpStatus.BAD_REQUEST);
         response.addError(new APIError(ex.getClass().getSimpleName(), "Cannot deserialize body value.",
                 "JSON parse error while parsing body.", 400));
         log.error("HttpMessageNotReadableException", ex);
+
+        return toResponseEntity(response);
+    }
+
+    @ExceptionHandler(value = ConstraintViolationException.class)
+    public ResponseEntity<Object> handleConstraintViolationException(ConstraintViolationException ex) {
+        final GenericResponse<Object> response = new GenericResponse<>(HttpStatus.BAD_REQUEST);
+
+        for (ConstraintViolation<?> violation : ex.getConstraintViolations()) {
+            APIError apiError = new APIError(
+                    "ConstraintViolationException",
+                    violation.getMessage(),
+                    null,
+                    violation.getPropertyPath().toString(),
+                    400);
+            response.addError(apiError);
+        }
 
         return toResponseEntity(response);
     }
@@ -151,7 +178,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<Object> handleHttpMediaTypeNotSupported(final HttpMediaTypeNotSupportedException ex,
             final HttpHeaders headers, final HttpStatus status, final WebRequest request) {
 
-        final Response<Object> response = new Response<>(HttpStatus.UNSUPPORTED_MEDIA_TYPE);
+        final GenericResponse<Object> response = new GenericResponse<>(HttpStatus.UNSUPPORTED_MEDIA_TYPE);
         ex.getSupportedMediaTypes().forEach(t -> response.addError(new APIError(ex.getClass().getSimpleName(),
                 MessageFormat.format("The content type '{}' is not supported by this resource.", t),
                 "The request body content type is not supported by this resource.",
@@ -164,7 +191,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<Object> handleNoHandlerFoundException(final NoHandlerFoundException ex,
             final HttpHeaders headers, final HttpStatus status, final WebRequest request) {
 
-        final Response<Object> response = new Response<>(HttpStatus.NOT_FOUND);
+        log.info("Exception:", ex);
+        final GenericResponse<Object> response = new GenericResponse<>(HttpStatus.NOT_FOUND);
         response.addError(
                 new APIError(ex.getClass().getSimpleName(), "No endpoint found for the requested method / location.",
                         "Invalid request method and / or location.", 404));
@@ -178,7 +206,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             final HttpRequestMethodNotSupportedException ex, final HttpHeaders headers, final HttpStatus status,
             final WebRequest request) {
 
-        final Response<Object> response = new Response<>(HttpStatus.NOT_FOUND);
+        final GenericResponse<Object> response = new GenericResponse<>(HttpStatus.NOT_FOUND);
         response.addError(
                 new APIError(ex.getClass().getSimpleName(), "No endpoint found for the requested method / location.",
                         "Invalid request method and / or location.", 404));
@@ -186,10 +214,20 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return toResponseEntity(response);
     }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<Response<Object>> handleAll(final Exception ex, final WebRequest request) {
+    @ExceptionHandler(value = DataAccessResourceFailureException.class)
+    public ResponseEntity<Object> handleDataAccessResourceFailureException(DataAccessResourceFailureException ex) {
+        final GenericResponse<Object> response = new GenericResponse<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        log.error("DataAccessResourceFailureException", ex);
+        response.addError(
+                new APIError("DataAccessResourceFailureException", ex.getMessage(), 500));
 
-        final Response<Object> response = new Response<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        return toResponseEntity(response);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<GenericResponse<Object>> handleAll(final Exception ex, final WebRequest request) {
+
+        final GenericResponse<Object> response = new GenericResponse<>(HttpStatus.INTERNAL_SERVER_ERROR);
         response.addError(new APIError(ex));
 
         return response.build();

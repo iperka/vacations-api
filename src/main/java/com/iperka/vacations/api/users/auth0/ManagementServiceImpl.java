@@ -27,7 +27,7 @@ import lombok.extern.slf4j.Slf4j;
  * and is used to manage the users.
  * 
  * @author Michael Beutler
- * @version 0.0.1
+ * @version 1.0.0
  * @since 2021-12-31
  */
 @Service

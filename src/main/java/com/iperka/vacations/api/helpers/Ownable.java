@@ -6,7 +6,7 @@ package com.iperka.vacations.api.helpers;
  * 
  * @author Michael Beutler
  * @version 1.0.0
- * @since 2021-12-24
+ * @since 1.0.0
  */
 public interface Ownable {
     public String getOwner();

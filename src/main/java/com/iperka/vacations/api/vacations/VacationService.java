@@ -2,24 +2,21 @@ package com.iperka.vacations.api.vacations;
 
 import java.time.Year;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
-import com.iperka.vacations.api.vacations.dto.VacationDTO;
-import com.iperka.vacations.api.vacations.exceptions.VacationInvalidDateRange;
-import com.iperka.vacations.api.vacations.exceptions.VacationNotFound;
+import com.iperka.vacations.api.vacations.exceptions.VacationNotFoundException;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 /**
- * The {@link com.iperka.vacations.api.vacations.VacationService}
+ * The {@link com.iperka.vacations.api.VacationService}
  * interface defines the methods that will interact with the
- * {@link com.iperka.vacations.api.organisations.OrganisationRepository} model.
+ * {@link com.iperka.vacations.api.VacationRepository} interface.
  * 
  * @author Michael Beutler
- * @version 0.0.1
- * @since 2021-12-28
+ * @version 1.0.0
+ * @since 1.0.0
  */
 public interface VacationService {
     /**
@@ -27,146 +24,108 @@ public interface VacationService {
      * object. Bare in mind that these method should be explicit to administrative
      * roles.
      * 
-     * Required scopes: vacations:all:read || vacations:all:write
-     * 
-     * @return Page object.
+     * @since 1.0.0
+     * @param pageable Pageable object.
+     * @return Optional Page with Vacation objects.
      */
-    public Page<Vacation> findAll(Pageable pageable);
+    public abstract Page<Vacation> findAll(Pageable pageable);
 
     /**
-     * Retrieves all vacations as {@link org.springframework.data.domain.Page}
-     * object.
-     * 
-     * Required scopes: vacations:read || vacations:write
-     * 
-     * @return Page object.
-     */
-    public Page<Vacation> findAllByOwner(Pageable pageable, String owner);
-
-    /**
-     * Retrieves all vacations matching the given name as
-     * {@link org.springframework.data.domain.Page} object. Bare in mind that these
-     * method should be explicit to administrative roles.
-     * 
-     * Required scopes: vacations:all:read || vacations:all:write
-     * 
-     * @return Page object.
-     */
-    public Page<Vacation> findByNameContainingIgnoreCase(Pageable pageable, String name);
-
-    /**
-     * Retrieves all vacations matching the given name as
+     * Retrieves all vacations owned by given user as
      * {@link org.springframework.data.domain.Page} object.
      * 
-     * Required scopes: vacations:read || vacations:write
-     * 
-     * @return Page object.
+     * @since 1.0.0
+     * @param pageable Pageable object.
+     * @param owner    Owner user id provided by Auth0.
+     * @return Optional Page with Vacation objects.
      */
-    public Page<Vacation> findByNameContainingIgnoreCaseAndOwner(Pageable pageable, String name, String owner);
+    public abstract Page<Vacation> findAllByOwner(Pageable pageable, String owner);
 
     /**
-     * Returns the vacation object matching the given uuid as
-     * {@link java.util.Optional}. Bare in mind that these
-     * method should be explicit to administrative roles.
+     * Returns vacation with given UUID.
+     * Bare in mind that these method should be explicit to administrative
+     * roles.
      * 
-     * Required scopes: vacations:all:read || vacations:all:write
-     * 
-     * @param uuid Objects uuid.
-     * @return Optional
+     * @since 1.0.0
+     * @param uuid UUID of desired object.
+     * @return Vacation object.
+     * @throws VacationNotFoundException if vacation could not be found.
      */
-    public Vacation findByUuid(UUID uuid) throws VacationNotFound;
+    public abstract Vacation findByUuid(UUID uuid) throws VacationNotFoundException;
 
     /**
-     * Returns the vacation object matching the given uuid as
-     * {@link java.util.Optional}.
+     * Returns vacation with given UUID and object must be owned
+     * by given user.
      * 
-     * Required scopes: vacations:read || vacations:write
-     * 
-     * @param uuid Objects uuid.
-     * @return Optional
+     * @since 1.0.0
+     * @param uuid  UUID of desired object.
+     * @param owner Owner user id provided by Auth0.
+     * @return Vacation object.
+     * @throws VacationNotFoundException if vacation could not be found.
      */
-    public Vacation findByUuidAndOwner(UUID uuid, String owner) throws VacationNotFound;
+    public abstract Vacation findByUuidAndOwner(UUID uuid, String owner) throws VacationNotFoundException;
 
     /**
-     * Returns the vacation object matching the given name as
-     * {@link java.util.Optional}. Bare in mind that these
-     * method should be explicit to administrative roles.
+     * Creates and returns vacation.
      * 
-     * Required scopes: vacations:all:read || vacations:all:write
-     * 
-     * @param name Objects name.
-     * @return Optional
+     * @since 1.0.0
+     * @param vacation new object.
+     * @return Vacation created object.
+     * @throws VacationNotFoundException if vacation could not be found.
      */
-    public Optional<Vacation> findByNameIgnoreCase(String name);
+    public abstract Vacation create(Vacation vacation);
 
     /**
-     * Returns the vacation object matching the given name as
-     * {@link java.util.Optional}.
-     * Required scopes: vacations:read || vacations:write
+     * Updates and returns vacation with given object.
      * 
-     * @param name Objects name.
-     * @return Optional
+     * @since 1.0.0
+     * @param vacation new object.
+     * @return Vacation updated object.
+     * @throws VacationNotFoundException if vacation could not be found.
      */
-    public Optional<Vacation> findByNameIgnoreCaseAndOwner(String name, String owner);
+    public abstract Vacation update(Vacation vacation) throws VacationNotFoundException;
 
     /**
-     * Saves a given object to database. This will create a new one if it doesn't
-     * exists.
+     * Updates and returns vacation with given object if owner equals given owner.
      * 
-     * Required scopes: vacations:write
-     * 
-     * @param vacation Vacation object.
-     * @return created vacation
+     * @since 1.0.0
+     * @param vacation new object.
+     * @param owner    Owner user id provided by Auth0.
+     * @return Vacation updated object.
+     * @throws VacationNotFoundException if vacation could not be found.
      */
-    public Vacation create(Vacation vacation) throws VacationInvalidDateRange;
+    public abstract Vacation updateByOwner(Vacation vacation, String owner) throws VacationNotFoundException;
 
     /**
-     * Deletes the vacation object matching the given uuid. Bare in mind that
-     * these method should be explicit to administrative roles.
+     * Deletes vacation with given UUID.
+     * Bare in mind that these method should be explicit to administrative
+     * roles.
      * 
-     * Required scopes: vacations:all:write
-     * 
-     * @param uuid Objects uuid.
+     * @since 1.0.0
+     * @param uuid UUID of desired object.
+     * @throws VacationNotFoundException if vacation could not be found.
      */
-    public void deleteByUuid(UUID uuid) throws VacationNotFound;
+    public abstract void deleteByUuid(UUID uuid) throws VacationNotFoundException;
 
     /**
-     * Deletes the vacation object matching the given uuid.
+     * Deletes vacation with given UUID and object must be owned
+     * by given user.
      * 
-     * Required scopes: vacations:write
-     * 
-     * @param uuid Objects uuid.
+     * @since 1.0.0
+     * @param uuid  UUID of desired object.
+     * @param owner Owner user id provided by Auth0.
+     * @throws VacationNotFoundException if vacation could not be found.
      */
-    public void deleteByUuidAndOwner(UUID uuid, String owner) throws VacationNotFound;
-
-    /**
-     * Deletes the vacation object matching the given uuid. Bare in mind that
-     * these method should be explicit to administrative roles.
-     * 
-     * Required scopes: vacations:all:write
-     * 
-     * @param uuid Objects uuid.
-     */
-    public Vacation updateByUuid(UUID uuid, VacationDTO vacationDTO) throws VacationNotFound, VacationInvalidDateRange;
-
-    /**
-     * Deletes the vacation object matching the given uuid.
-     * 
-     * Required scopes: vacations:write
-     * 
-     * @param uuid Objects uuid.
-     */
-    public Vacation updateByUuidAndOwner(UUID uuid, String owner, VacationDTO vacationDTO)
-            throws VacationNotFound, VacationInvalidDateRange;
+    public abstract void deleteByUuidAndOwner(UUID uuid, String owner) throws VacationNotFoundException;
 
     /**
      * Calculates dates between start and end date and returns a List with the
      * number of days ordered by month.
      * 
-     * Required scopes: vacations:all:read || vacations:all:write
-     * 
-     * @param vacations
-     * @return
+     * @since 1.0.0
+     * @param vacations List of vacations
+     * @param year Desired year.
+     * @return Array of sum's.
      */
     public double[] getDaysCountByMonth(List<Vacation> vacations, Year year);
 }

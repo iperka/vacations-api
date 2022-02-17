@@ -13,11 +13,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  * Helper controller to serve static files.
- * Even if its bad practice...
+ * Even if its bad practice to do it this way...
  * 
  * @author Michael Beutler
- * @version 0.0.1
- * @since 2021-12-19
+ * @version 1.0.0
+ * @since 1.0.0
  */
 @RestController
 @RequestMapping(value = "/")
@@ -31,10 +31,10 @@ public class HelperController {
 
     @Value("classpath:static/favicon.ico")
     private Resource favicon;
-
+    
     @GetMapping(value = "/favicon.ico", produces = MediaType.ALL_VALUE)
     public byte[] getFavicon() throws IOException {
-        return favicon.getInputStream().readAllBytes();
+    return favicon.getInputStream().readAllBytes();
     }
 
     @GetMapping(value = "/oauth2-redirect.html", produces = MediaType.TEXT_HTML_VALUE)

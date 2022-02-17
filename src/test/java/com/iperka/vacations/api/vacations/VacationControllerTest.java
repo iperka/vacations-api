@@ -41,7 +41,7 @@ class VacationControllerTest {
 
     @Test
     @WithMockUser(username = "test", authorities = { Scopes.SCOPE_VACATIONS_READ })
-    void shouldHandleScopeOrganizationsRead() throws Exception {
+    void shouldHandleScopeVacationsRead() throws Exception {
         this.mockMvc.perform(get("/vacations")).andExpect(status().isOk())
                 .andExpect(content().string(containsString("OK")));
 
@@ -55,13 +55,13 @@ class VacationControllerTest {
 
     @Test
     @WithMockUser(username = "test", authorities = { Scopes.SCOPE_VACATIONS_WRITE })
-    void shouldHandleScopeOrganizationsWrite() throws Exception {
+    void shouldHandleScopeVacationsWrite() throws Exception {
         this.mockMvc.perform(get("/vacations")).andExpect(status().isOk())
                 .andExpect(content().string(containsString("OK")));
         this.mockMvc
                 .perform(post("/vacations").contentType(MediaType.APPLICATION_JSON)
                         .content(
-                                "{\"name\": \"Skiferien\",\"startDate\": \"2022-03-14\",\"endDate\": \"2022-03-15\",\"status\": \"accepted\"}"))
+                                "{\"name\": \"Summer Vacation\",\"startDate\": \"2022-02-17T18:32:22.418Z\",\"endDate\": \"2022-02-17T18:32:22.418Z\",\"days\": 1.5,\"status\": \"requested\"}"))
                 .andExpect(status().isCreated())
                 .andExpect(content().string(containsString("Created")));
     }

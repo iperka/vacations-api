@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.iperka.vacations.api.helpers.APIError;
-import com.iperka.vacations.api.helpers.Response;
+import com.iperka.vacations.api.helpers.GenericResponse;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -18,31 +18,38 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * The {@link com.iperka.vacations.api.security.CustomOAuth2AccessDeniedHandler}
- * class handels requests with insufficient authentication.
- * 
- * TODO: Extend Error message object.
+ * Overrides default handler class provided by Spring Security 5. Converts the
+ * AuthenticationEntryPoint into a Generic Response with the APIError. This
+ * exception suggests a missing Barer token or invalid token in general.
  * 
  * @author Michael Beutler
- * @version 0.0.2
- * @since 2021-09-29
+ * @version 1.0.0
+ * @since 1.0.0
  */
 @Slf4j
 public class CustomOAuth2AuthenticationEntryPoint implements AuthenticationEntryPoint {
 
+    /**
+     * Handler function for built in Exception.
+     * 
+     * @since 1.0.0
+     */
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException e)
             throws IOException {
+        // TODO: Probably log?
         log.warn("Request from user {} has been blocked due to insufficient authentication.",
                 request.getRemoteAddr());
 
+        // Apply custom error message
         String errorMessage = "Insufficient authentication details.";
         if (e instanceof InvalidBearerTokenException) {
+            // Extract field
             errorMessage = e.getLocalizedMessage();
         }
 
         ObjectMapper mapper = new ObjectMapper();
-        Response<?> responseObject = new Response<>(HttpStatus.UNAUTHORIZED);
+        GenericResponse<?> responseObject = new GenericResponse<>(HttpStatus.UNAUTHORIZED);
         responseObject.addError(new APIError("OAuthException", errorMessage,
                 "Missing or invalid Bearer Token in Authentication header.", 401));
 

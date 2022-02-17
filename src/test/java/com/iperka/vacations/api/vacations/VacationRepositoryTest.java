@@ -19,42 +19,22 @@ class VacationRepositoryTest {
 	private VacationRepository vacationRepository;
 
 	@Test
-	void shouldFindVacationByName() {
+	void shouldFindVacationByUuid() {
 		VacationDTO vacationDTO = new VacationDTO();
-		vacationDTO.setName("Test");
-		vacationDTO.setStartDate(new Date());
-		vacationDTO.setEndDate(new Date());
 		Vacation vacationBeforeSave = vacationDTO.toObject();
 		vacationBeforeSave.setOwner("me");
+		vacationBeforeSave.setName("test");
+		vacationBeforeSave.setStartDate(new Date());
+		vacationBeforeSave.setEndDate(new Date());
 
 		Vacation vacation = vacationRepository.save(vacationBeforeSave);
 
-		Optional<Vacation> result = vacationRepository.findByNameIgnoreCase("test");
+		Optional<Vacation> result = vacationRepository.findByUuid(vacation.getUuid());
 		assertEquals(true, result.isPresent());
 		if (result.isPresent()) {
 			assertEquals(true, result.get().getUuid().compareTo(vacation.getUuid()) == 0);
 		}
 
-		assertFalse(vacationRepository.findByNameIgnoreCase("invalidName").isPresent());
-	}
-
-	@Test
-	void shouldFindVacationById() {
-		VacationDTO vacationDTO = new VacationDTO();
-		vacationDTO.setName("Test");
-		vacationDTO.setStartDate(new Date());
-		vacationDTO.setEndDate(new Date());
-		Vacation vacationBeforeSave = vacationDTO.toObject();
-		vacationBeforeSave.setOwner("me");
-
-		Vacation vacation = vacationRepository.save(vacationBeforeSave);
-
-		Optional<Vacation> result = vacationRepository.findById(vacation.getUuid());
-		assertEquals(true, result.isPresent());
-		if (result.isPresent()) {
-			assertEquals(true, result.get().getUuid().compareTo(vacation.getUuid()) == 0);
-		}
-
-		assertFalse(vacationRepository.findById(UUID.randomUUID()).isPresent());
+		assertFalse(vacationRepository.findByUuid(UUID.randomUUID()).isPresent());
 	}
 }

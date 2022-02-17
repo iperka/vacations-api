@@ -1,8 +1,8 @@
 package com.iperka.vacations.api.users;
 
 import com.auth0.json.mgmt.users.User;
-import com.iperka.vacations.api.OpenApiConfig;
-import com.iperka.vacations.api.helpers.Response;
+import com.iperka.vacations.api.config.OpenApiConfig;
+import com.iperka.vacations.api.helpers.GenericResponse;
 import com.iperka.vacations.api.security.Scopes;
 import com.iperka.vacations.api.users.auth0.ManagementService;
 import com.iperka.vacations.api.users.auth0.exceptions.NotConfigured;
@@ -29,7 +29,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
  * class defines the structure of a basic users route.
  * 
  * @author Michael Beutler
- * @version 0.0.1
+ * @version 1.0.0
  * @since 2021-12-31
  */
 @RestController
@@ -63,12 +63,12 @@ public class UserController {
         }
     )
     // @formatter:on
-    public ResponseEntity<Response<User>> getUserById(
+    public ResponseEntity<GenericResponse<User>> getUserById(
     // @formatter:off
         @PathVariable("userId") final String userId
     // @formatter:on
     ) {
-        final Response<User> response = new Response<>(HttpStatus.OK);
+        final GenericResponse<User> response = new GenericResponse<>(HttpStatus.OK);
 
         try {
             User user = managementService.getUserById(userId).orElseThrow();
@@ -84,7 +84,7 @@ public class UserController {
         }
     }
 
-    private final class UserResponse extends Response<User> {
+    private final class UserResponse extends GenericResponse<User> {
         public UserResponse(final HttpStatus status) {
             super(status);
         }

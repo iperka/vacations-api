@@ -2,11 +2,11 @@ package com.iperka.vacations.api.helpers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import com.iperka.vacations.api.organizations.exceptions.OrganizationAlreadyExists;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
+@ActiveProfiles("test")
 @SpringBootTest
 class ApiErrorTest {
     @Test
@@ -38,13 +38,6 @@ class ApiErrorTest {
         assertEquals("testCause", apiError.getCause());
         assertEquals(200, apiError.getCode());
         assertEquals("testField", apiError.getField());
-
-        apiError = new APIError(new OrganizationAlreadyExists());
-        assertEquals("OrganizationAlreadyExists", apiError.getType());
-        assertEquals(null, apiError.getMessage());
-        assertEquals(null, apiError.getCause());
-        assertEquals(-1, apiError.getCode());
-        assertEquals(null, apiError.getField());
     }
 
     @Test
