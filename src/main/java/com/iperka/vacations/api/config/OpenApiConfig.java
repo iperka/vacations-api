@@ -59,7 +59,11 @@ public class OpenApiConfig {
             Scopes.VACATIONS_READ, 
             Scopes.VACATIONS_WRITE, 
             Scopes.VACATIONS_ALL_READ, 
-            Scopes.VACATIONS_ALL_WRITE
+            Scopes.VACATIONS_ALL_WRITE,
+            Scopes.USERS_ALL_READ,
+            Scopes.USERS_ALL_WRITE,
+            Scopes.AUDITS_ALL_READ,
+            Scopes.AUDITS_ALL_WRITE
         )))
         .components(new Components()
         .addSecuritySchemes(OAUTH2,
@@ -76,6 +80,8 @@ public class OpenApiConfig {
                        .addString(Scopes.VACATIONS_ALL_WRITE, "Create, update and delete all vacations.") 
                        .addString(Scopes.USERS_ALL_READ, "Read all users.") 
                        .addString(Scopes.USERS_ALL_WRITE, "Create, update and delete all users.") 
+                       .addString(Scopes.AUDITS_ALL_READ, "Read all audit logs.") 
+                       .addString(Scopes.AUDITS_ALL_WRITE, "Create, update and delete all audit logs.") 
                     )
                 )
             )

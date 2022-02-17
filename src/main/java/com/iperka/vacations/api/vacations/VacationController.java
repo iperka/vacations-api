@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.UUID;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Pattern;
 
 import com.iperka.vacations.api.config.OpenApiConfig;
 import com.iperka.vacations.api.helpers.GenericResponse;
@@ -206,7 +205,7 @@ public class VacationController {
     public ResponseEntity<GenericResponse<Vacation>> findByUuid(
     // @formatter:off
         final Authentication authentication,
-        @Pattern(regexp = "^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i", message = "Invalid object uuid provided.") @PathVariable("uuid") final UUID uuid
+        @PathVariable("uuid") final UUID uuid
      // @formatter:on
     ) {
         GenericResponse<Vacation> response = new GenericResponse<>(HttpStatus.OK);
@@ -307,7 +306,7 @@ public class VacationController {
     public ResponseEntity<GenericResponse<Vacation>> updateByUuid(
     // @formatter:off
         final Authentication authentication,
-        @Pattern(regexp = "^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i", message = "Invalid object uuid provided.") @PathVariable("uuid") final UUID uuid,
+        @PathVariable("uuid") final UUID uuid,
         @Valid @RequestBody(required = true, content = @Content(schema =  @Schema(implementation = VacationDTO.class))) @org.springframework.web.bind.annotation.RequestBody final VacationDTO vacationsDTO
      // @formatter:on
     ) {
@@ -358,7 +357,7 @@ public class VacationController {
     public ResponseEntity<GenericResponse<Vacation>> deleteByUuid(
     // @formatter:off
         final Authentication authentication,
-        @Pattern(regexp = "^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i", message = "Invalid object uuid provided.") @PathVariable("uuid") final UUID uuid,
+        @PathVariable("uuid") final UUID uuid,
         @Valid @RequestBody(required = true, content = @Content(schema =  @Schema(implementation = VacationDTO.class))) @org.springframework.web.bind.annotation.RequestBody final VacationDTO vacationDTO
      // @formatter:on
     ) {

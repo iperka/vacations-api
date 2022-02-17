@@ -7,6 +7,7 @@ import com.iperka.vacations.api.audit.exceptions.AuditNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 /**
@@ -26,13 +27,12 @@ public class AuditServiceImpl implements AuditService {
      * Returns all audits as {@link Page} object to offer pagination
      * metadata.
      * 
-     * TODO: Add method Security and document scopes.
-     * 
      * @since 1.0.0
      * @param pageable Page request data.
      * @return Page object.
      */
     @Override
+    @PreAuthorize("hasAnyAuthority('SCOPE_audits:all:read', 'SCOPE_audits:all:write')")
     public Page<Audit> findAll(Pageable pageable) {
         return auditRepository.findAll(pageable);
     }
@@ -40,13 +40,12 @@ public class AuditServiceImpl implements AuditService {
     /**
      * Returns a audit identified by given id as {@link Audit}.
      * 
-     * TODO: Add method Security and document scopes.
-     * 
      * @since 1.0.0
      * @param id Object id of desired audit.
      * @return Audit object.
      */
     @Override
+    @PreAuthorize("hasAnyAuthority('SCOPE_audits:all:read', 'SCOPE_audits:all:write')")
     public Audit findById(UUID uuid) throws AuditNotFoundException {
         return auditRepository.findById(uuid).orElseThrow(AuditNotFoundException::new);
     }
@@ -60,14 +59,13 @@ public class AuditServiceImpl implements AuditService {
      * @return Page object containing Audit logs.
      */
     @Override
+    @PreAuthorize("hasAnyAuthority('SCOPE_audits:all:read', 'SCOPE_audits:all:write')")
     public Page<Audit> findAllByObjectId(UUID objectUuid, Pageable pageable) {
         return auditRepository.findAllByObjectUuid(objectUuid, pageable);
     }
 
     /**
      * Returns a audit created based on given object as {@link Audit}.
-     * 
-     * TODO: Add method Security and document scopes.
      * 
      * @since 1.0.0
      * @param audit Audit object to save.

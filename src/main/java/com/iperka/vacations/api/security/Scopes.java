@@ -11,18 +11,6 @@ package com.iperka.vacations.api.security;
 public class Scopes {
     private static final String SCOPE_PREFIX = "SCOPE_";
 
-    public static final String ORGANIZATIONS_READ = "organizations:read";
-    public static final String SCOPE_ORGANIZATIONS_READ = SCOPE_PREFIX + ORGANIZATIONS_READ;
-
-    public static final String ORGANIZATIONS_WRITE = "organizations:write";
-    public static final String SCOPE_ORGANIZATIONS_WRITE = SCOPE_PREFIX + ORGANIZATIONS_WRITE;
-
-    public static final String ORGANIZATIONS_ALL_READ = "organizations:all:read";
-    public static final String SCOPE_ORGANIZATIONS_ALL_READ = SCOPE_PREFIX + ORGANIZATIONS_ALL_READ;
-
-    public static final String ORGANIZATIONS_ALL_WRITE = "organizations:all:write";
-    public static final String SCOPE_ORGANIZATIONS_ALL_WRITE = SCOPE_PREFIX + ORGANIZATIONS_ALL_WRITE;
-
     public static final String VACATIONS_READ = "vacations:read";
     public static final String SCOPE_VACATIONS_READ = SCOPE_PREFIX + VACATIONS_READ;
 
@@ -40,6 +28,12 @@ public class Scopes {
 
     public static final String USERS_ALL_WRITE = "users:all:write";
     public static final String SCOPE_USERS_ALL_WRITE = SCOPE_PREFIX + USERS_ALL_WRITE;
+
+    public static final String AUDITS_ALL_READ = "audits:all:read";
+    public static final String SCOPE_AUDITS_ALL_READ = SCOPE_PREFIX + AUDITS_ALL_READ;
+
+    public static final String AUDITS_ALL_WRITE = "audits:all:write";
+    public static final String SCOPE_AUDITS_ALL_WRITE = SCOPE_PREFIX + AUDITS_ALL_WRITE;
 
     private Scopes() {
     }

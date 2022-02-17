@@ -49,8 +49,8 @@ public interface AuditService {
      * Returns a Audit created based on given object as {@link Audit}.
      * 
      * @since 1.0.0
-     * @param Audit Audit object to save.
+     * @param audit Audit object to save.
      * @return Audit object.
      */
-    public abstract Audit create(Audit Audit);
+    public abstract Audit create(Audit audit);
 }

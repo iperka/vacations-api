@@ -36,9 +36,9 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private static final String ROUTE_ORGANIZATIONS = "/organizations/**";
     private static final String ROUTE_VACATIONS = "/vacations/**";
     private static final String ROUTE_USERS = "/users/**";
+    private static final String ROUTE_AUDITS = "/audits/**";
 
     @Value("${auth0.audience}")
     private String audience;
@@ -73,15 +73,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .mvcMatchers(HttpMethod.GET, "/oauth2-redirect.html").permitAll()
                 .mvcMatchers(HttpMethod.GET, "/tea").permitAll()
 
-                // Organizations
-                .mvcMatchers(HttpMethod.OPTIONS, ROUTE_ORGANIZATIONS).hasAnyAuthority(Scopes.SCOPE_ORGANIZATIONS_READ, Scopes.SCOPE_ORGANIZATIONS_WRITE, Scopes.SCOPE_ORGANIZATIONS_ALL_READ, Scopes.ORGANIZATIONS_ALL_WRITE)
-                .mvcMatchers(HttpMethod.GET, ROUTE_ORGANIZATIONS).hasAnyAuthority(Scopes.SCOPE_ORGANIZATIONS_READ, Scopes.SCOPE_ORGANIZATIONS_WRITE, Scopes.SCOPE_ORGANIZATIONS_ALL_READ, Scopes.ORGANIZATIONS_ALL_WRITE)
-                .mvcMatchers(HttpMethod.POST, ROUTE_ORGANIZATIONS).hasAnyAuthority(Scopes.SCOPE_ORGANIZATIONS_WRITE, Scopes.ORGANIZATIONS_ALL_WRITE)
-                .mvcMatchers(HttpMethod.DELETE, ROUTE_ORGANIZATIONS).hasAnyAuthority(Scopes.SCOPE_ORGANIZATIONS_WRITE, Scopes.ORGANIZATIONS_ALL_WRITE)
-                .mvcMatchers(HttpMethod.PUT, ROUTE_ORGANIZATIONS).hasAnyAuthority(Scopes.SCOPE_ORGANIZATIONS_WRITE, Scopes.ORGANIZATIONS_ALL_WRITE)
-                .mvcMatchers(HttpMethod.PATCH, ROUTE_ORGANIZATIONS).hasAnyAuthority(Scopes.SCOPE_ORGANIZATIONS_WRITE, Scopes.ORGANIZATIONS_ALL_WRITE)
-                // End Organizations
-
                 // Vacations
                 .mvcMatchers(HttpMethod.OPTIONS, ROUTE_VACATIONS).hasAnyAuthority(Scopes.SCOPE_VACATIONS_READ, Scopes.SCOPE_VACATIONS_WRITE, Scopes.SCOPE_VACATIONS_ALL_READ, Scopes.VACATIONS_ALL_WRITE)
                 .mvcMatchers(HttpMethod.GET, ROUTE_VACATIONS).hasAnyAuthority(Scopes.SCOPE_VACATIONS_READ, Scopes.SCOPE_VACATIONS_WRITE, Scopes.SCOPE_VACATIONS_ALL_READ, Scopes.VACATIONS_ALL_WRITE)
@@ -95,6 +86,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .mvcMatchers(HttpMethod.OPTIONS, ROUTE_USERS).hasAnyAuthority(Scopes.SCOPE_USERS_ALL_READ, Scopes.SCOPE_USERS_ALL_WRITE)
                 .mvcMatchers(HttpMethod.GET, ROUTE_USERS).hasAnyAuthority(Scopes.SCOPE_USERS_ALL_READ, Scopes.SCOPE_USERS_ALL_WRITE)
                 // End Users
+
+                // Audits (Admin only)
+                .mvcMatchers(HttpMethod.OPTIONS, ROUTE_AUDITS).hasAnyAuthority(Scopes.SCOPE_AUDITS_ALL_READ, Scopes.SCOPE_AUDITS_ALL_WRITE)
+                .mvcMatchers(HttpMethod.GET, ROUTE_AUDITS).hasAnyAuthority(Scopes.SCOPE_AUDITS_ALL_READ, Scopes.SCOPE_AUDITS_ALL_WRITE)
+                // End Audits
+
                 .anyRequest().authenticated()
             ) 
             .cors().configurationSource(corsConfigurationSource())
