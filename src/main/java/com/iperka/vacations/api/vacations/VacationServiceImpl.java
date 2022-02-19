@@ -107,9 +107,9 @@ public class VacationServiceImpl extends Auditable implements VacationService {
      */
     @Override
     @PreAuthorize("hasAnyAuthority('SCOPE_vacations:read', 'SCOPE_vacations:write', 'SCOPE_vacations:all:read', 'SCOPE_vacations:all:write')")
-    public Vacation findByOwnerAndStartDateGreaterThanOrderByStartDateAsc(String owner, Date startDate)
+    public Vacation findByOwnerAndStartDateGreaterThanEqualOrderByStartDateAsc(String owner, Date startDate)
             throws VacationNotFoundException {
-        return vacationRepository.findByOwnerAndStartDateGreaterThanOrderByStartDateAsc(owner, startDate)
+        return vacationRepository.findByOwnerAndStartDateGreaterThanEqualOrderByStartDateAsc(owner, startDate)
                 .orElseThrow(VacationNotFoundException::new);
     }
 

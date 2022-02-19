@@ -227,10 +227,10 @@ public class VacationController {
             Vacation vacation;
             // Check if authenticated user has been granted vacations:all:read
             if (Helpers.hasScope(Scopes.VACATIONS_ALL_READ, authentication) && StringUtils.hasText(owner)) {
-                vacation = this.vacationService.findByOwnerAndStartDateGreaterThanOrderByStartDateAsc(owner,
+                vacation = this.vacationService.findByOwnerAndStartDateGreaterThanEqualOrderByStartDateAsc(owner,
                         date);
             } else {
-                vacation = this.vacationService.findByOwnerAndStartDateGreaterThanOrderByStartDateAsc(userId,
+                vacation = this.vacationService.findByOwnerAndStartDateGreaterThanEqualOrderByStartDateAsc(userId,
                         date);
             }
 

@@ -75,7 +75,7 @@ public interface VacationService {
      * @return Next vacation according to given owner and date.
      * @throws VacationNotFoundException if no vacation could not be found.
      */
-    public abstract Vacation findByOwnerAndStartDateGreaterThanOrderByStartDateAsc(String owner, Date startDate)
+    public abstract Vacation findByOwnerAndStartDateGreaterThanEqualOrderByStartDateAsc(String owner, Date startDate)
             throws VacationNotFoundException;
 
     /**

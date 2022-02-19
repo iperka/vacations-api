@@ -72,7 +72,7 @@ public interface VacationRepository extends PagingAndSortingRepository<Vacation,
      * @param startDate Start date for relative search.
      * @return Next vacation according to given owner and date.
      */
-    public Optional<Vacation> findByOwnerAndStartDateGreaterThanOrderByStartDateAsc(String owner, Date startDate);
+    public Optional<Vacation> findByOwnerAndStartDateGreaterThanEqualOrderByStartDateAsc(String owner, Date startDate);
 
     /**
      * Deletes vacation with given UUID.
