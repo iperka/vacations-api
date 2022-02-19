@@ -3,6 +3,7 @@ package com.iperka.vacations.api.vacations;
 import java.time.LocalDate;
 import java.time.Year;
 import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -93,6 +94,23 @@ public class VacationServiceImpl extends Auditable implements VacationService {
     @PreAuthorize("hasAnyAuthority('SCOPE_vacations:read', 'SCOPE_vacations:write', 'SCOPE_vacations:all:read', 'SCOPE_vacations:all:write')")
     public Vacation findByUuidAndOwner(UUID uuid, String owner) throws VacationNotFoundException {
         return vacationRepository.findByUuidAndOwner(uuid, owner).orElseThrow(VacationNotFoundException::new);
+    }
+
+    /**
+     * Returns next vacation for given user relative to given date.
+     * 
+     * @since 1.0.1
+     * @param owner     Owner user id provided by Auth0.
+     * @param startDate Start date for relative search.
+     * @return Next vacation according to given owner and date.
+     * @throws VacationNotFoundException if no vacation could not be found.
+     */
+    @Override
+    @PreAuthorize("hasAnyAuthority('SCOPE_vacations:read', 'SCOPE_vacations:write', 'SCOPE_vacations:all:read', 'SCOPE_vacations:all:write')")
+    public Vacation findByOwnerAndStartDateGreaterThanOrderByStartDateAsc(String owner, Date startDate)
+            throws VacationNotFoundException {
+        return vacationRepository.findByOwnerAndStartDateGreaterThanOrderByStartDateAsc(owner, startDate)
+                .orElseThrow(VacationNotFoundException::new);
     }
 
     /**

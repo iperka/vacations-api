@@ -1,6 +1,7 @@
 package com.iperka.vacations.api.vacations;
 
 import java.time.Year;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -127,6 +128,16 @@ public class VacationController {
         return GenericResponse.<Vacation>fromPage(HttpStatus.OK, page, query).build();
     }
 
+    /**
+     * Returns an overview array for given year. This allows for charts and
+     * better vacation distribution visualizations.
+     * 
+     * @since 1.0.0
+     * @param authentication Will be provided by Spring Security.
+     * @param year           Year for array.
+     * @param owner          Optional owner.
+     * @return Vacation day count for each month as array.
+     */
     @GetMapping(value = "/overview/{year}")
     // @formatter:off
     @Operation(
@@ -166,6 +177,67 @@ public class VacationController {
         }
 
         response.setData(this.vacationService.getDaysCountByMonth(vacations, year));
+
+        return response.build();
+    }
+
+    /**
+     * Searches for the next vacation according to current date.
+     * 
+     * @since 1.0.1
+     * @param authentication Will be provided by Spring Security.
+     * @param owner          Optional owner.
+     * @return Next vacation object or 404 error.
+     */
+    @GetMapping(value = "/next")
+    // @formatter:off
+    @Operation(
+        summary = "Finds next vacation.", 
+        description = "Finds next vacation for authenticated user. If there is none, it will return 404.", 
+        security = {
+            @SecurityRequirement(
+                name = OpenApiConfig.OAUTH2,
+                scopes = {Scopes.VACATIONS_READ, Scopes.VACATIONS_WRITE, Scopes.VACATIONS_ALL_READ, Scopes.VACATIONS_ALL_WRITE}
+            )
+        }, 
+        tags = {"Vacations"}, 
+        responses = {
+            @ApiResponse(description = "Success", responseCode = "200", content = @Content(mediaType = OpenApiConfig.APPLICATION_JSON, schema = @Schema(implementation = VacationResponse.class))),
+            @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content(mediaType = OpenApiConfig.APPLICATION_JSON, schema = @Schema(implementation = UnauthorizedResponse.class))),
+            @ApiResponse(description = "Forbidden", responseCode = "403", content = @Content(mediaType = OpenApiConfig.APPLICATION_JSON, schema = @Schema(implementation = ForbiddenResponse.class))),
+            @ApiResponse(description = "Not Found", responseCode = "404", content = @Content(mediaType = OpenApiConfig.APPLICATION_JSON)),
+            @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content(mediaType = OpenApiConfig.APPLICATION_JSON, schema = @Schema(implementation = InternalServerErrorResponse.class)))
+        }
+    )
+    // @formatter:on
+    public ResponseEntity<GenericResponse<Vacation>> getNextVacation(
+    // @formatter:off
+        final Authentication authentication,
+        @RequestParam(required = false) @Parameter(description = "Filter vacations by owner (advanced scopes required).") final String owner
+     // @formatter:on
+    ) {
+        final String userId = Helpers.getUserId(authentication);
+        final GenericResponse<Vacation> response = new GenericResponse<>(HttpStatus.OK);
+
+        // Get midnight today
+        Long time = new Date().getTime();
+        Date date = new Date(time - time % (24 * 60 * 60 * 1000));
+
+        try {
+            Vacation vacation;
+            // Check if authenticated user has been granted vacations:all:read
+            if (Helpers.hasScope(Scopes.VACATIONS_ALL_READ, authentication) && StringUtils.hasText(owner)) {
+                vacation = this.vacationService.findByOwnerAndStartDateGreaterThanOrderByStartDateAsc(owner,
+                        date);
+            } else {
+                vacation = this.vacationService.findByOwnerAndStartDateGreaterThanOrderByStartDateAsc(userId,
+                        date);
+            }
+
+            response.setData(vacation);
+        } catch (VacationNotFoundException e) {
+            return response.fromError(HttpStatus.NOT_FOUND, e.toApiError()).build();
+        }
 
         return response.build();
     }

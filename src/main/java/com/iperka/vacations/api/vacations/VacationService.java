@@ -1,6 +1,7 @@
 package com.iperka.vacations.api.vacations;
 
 import java.time.Year;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -66,6 +67,18 @@ public interface VacationService {
     public abstract Vacation findByUuidAndOwner(UUID uuid, String owner) throws VacationNotFoundException;
 
     /**
+     * Returns next vacation for given user relative to given date.
+     * 
+     * @since 1.0.1
+     * @param owner     Owner user id provided by Auth0.
+     * @param startDate Start date for relative search.
+     * @return Next vacation according to given owner and date.
+     * @throws VacationNotFoundException if no vacation could not be found.
+     */
+    public abstract Vacation findByOwnerAndStartDateGreaterThanOrderByStartDateAsc(String owner, Date startDate)
+            throws VacationNotFoundException;
+
+    /**
      * Creates and returns vacation.
      * 
      * @since 1.0.0
@@ -124,7 +137,7 @@ public interface VacationService {
      * 
      * @since 1.0.0
      * @param vacations List of vacations
-     * @param year Desired year.
+     * @param year      Desired year.
      * @return Array of sum's.
      */
     public double[] getDaysCountByMonth(List<Vacation> vacations, Year year);

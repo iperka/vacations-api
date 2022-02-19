@@ -1,5 +1,6 @@
 package com.iperka.vacations.api.vacations;
 
+import java.util.Date;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -62,6 +63,16 @@ public interface VacationRepository extends PagingAndSortingRepository<Vacation,
      * @return Optional with Vacation object.
      */
     public Optional<Vacation> findByUuidAndOwner(UUID uuid, String owner);
+
+    /**
+     * Returns next vacation for given user relative to given date.
+     * 
+     * @since 1.0.1
+     * @param owner     Owner user id provided by Auth0.
+     * @param startDate Start date for relative search.
+     * @return Next vacation according to given owner and date.
+     */
+    public Optional<Vacation> findByOwnerAndStartDateGreaterThanOrderByStartDateAsc(String owner, Date startDate);
 
     /**
      * Deletes vacation with given UUID.
