@@ -28,12 +28,13 @@ public class DateCalculator {
             LocalDate endDate,
             final Optional<List<LocalDate>> holidays) throws IllegalArgumentException {
         // Validate method arguments
+
+        endDate = endDate.plusDays(1);
         if (startDate == null || endDate == null || startDate.isAfter(endDate)) {
             throw new IllegalArgumentException(
                     "Invalid method argument(s) to countBusinessDaysBetween (" + startDate
                             + "," + endDate + "," + holidays + ")");
         }
-        endDate = endDate.plusDays(1);
 
         // Predicate 1: Is a given date is a holiday
         Predicate<LocalDate> isHoliday = date -> holidays.isPresent()
