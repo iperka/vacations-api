@@ -8,6 +8,7 @@ import com.auth0.client.mgmt.filter.UserFilter;
 import com.auth0.exception.APIException;
 import com.auth0.exception.Auth0Exception;
 import com.auth0.json.auth.TokenHolder;
+import com.auth0.json.mgmt.users.Identity;
 import com.auth0.json.mgmt.users.User;
 import com.auth0.net.AuthRequest;
 import com.iperka.vacations.api.users.auth0.exceptions.NotConfigured;
@@ -28,7 +29,7 @@ import lombok.extern.slf4j.Slf4j;
  * 
  * @author Michael Beutler
  * @version 1.0.0
- * @since 2021-12-31
+ * @since 1.0.0
  */
 @Service
 @Slf4j
@@ -90,5 +91,22 @@ public class ManagementServiceImpl implements ManagementService {
             log.error("Exception occur while searching user with userId: <" + userId + ">", e);
             throw new UserNotFound();
         }
+    }
+
+    @Override
+    public String getGoogleApiAccessToken(String userId) throws NotConfigured, UserNotFound {
+        User user = this.getUserById(userId).orElseThrow();
+        String accessToken = null;
+        for (Identity identity : user.getIdentities()) {
+            if (!identity.isSocial()) {
+                continue;
+            }
+
+            if (identity.getConnection().equalsIgnoreCase("google-oauth2")) {
+                accessToken = identity.getAccessToken();
+            }
+        }
+
+        return accessToken;
     }
 }

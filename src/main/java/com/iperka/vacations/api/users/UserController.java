@@ -30,7 +30,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
  * 
  * @author Michael Beutler
  * @version 1.0.0
- * @since 2021-12-31
+ * @since 1.0.0
  */
 @RestController
 @RequestMapping(path = { "/users" }, produces = MediaType.APPLICATION_JSON_VALUE)

@@ -12,7 +12,7 @@ import com.iperka.vacations.api.users.exceptions.UserNotFound;
  * 
  * @author Michael Beutler
  * @version 1.0.0
- * @since 2021-12-31
+ * @since 1.0.0
  */
 public interface ManagementService {
     /**
@@ -20,9 +20,22 @@ public interface ManagementService {
      * 
      * Required scopes: users:all:read || users:all:write
      * 
+     * @since 1.0.0
      * @param userId Auth0 user id.
      * @return Optional with user object.
      * @throws UserNotFound If user doesn't exists
      */
     public Optional<User> getUserById(final String userId) throws NotConfigured, UserNotFound;
+
+    /**
+     * Returns access token for given user object provided by Auth0.
+     * 
+     * Required scopes: users:all:read || users:all:write
+     * 
+     * @since 1.0.0
+     * @param userId Auth0 user id.
+     * @return Access token.
+     * @throws UserNotFound If user doesn't exists
+     */
+    public String getGoogleApiAccessToken(final String userId) throws NotConfigured, UserNotFound;
 }
