@@ -77,4 +77,17 @@ public class Vacation extends GenericFields implements Ownable {
     public String getStatus() {
         return this.status.toString().toLowerCase();
     }
+
+    /**
+     * Vacation type.
+     */
+    @Column(nullable = false)
+    @NotNull
+    @Schema(description = "Defines the Vacation tpye.", example = "private", required = true)
+    @Enumerated(EnumType.STRING)
+    private VacationType type = VacationType.PRIVATE;
+
+    public String getType() {
+        return this.type.toString().toLowerCase();
+    }
 }

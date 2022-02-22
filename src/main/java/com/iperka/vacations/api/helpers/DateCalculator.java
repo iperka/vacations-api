@@ -29,7 +29,6 @@ public class DateCalculator {
             final Optional<List<LocalDate>> holidays) throws IllegalArgumentException {
         // Validate method arguments
 
-        endDate = endDate.plusDays(1);
         if (startDate == null || endDate == null || startDate.isAfter(endDate)) {
             throw new IllegalArgumentException(
                     "Invalid method argument(s) to countBusinessDaysBetween (" + startDate
