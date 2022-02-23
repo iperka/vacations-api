@@ -14,7 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 class DateCalculatorTest {
     @Test
     void shouldReturnCorrectCountOfDates() {
-        assertEquals(1, DateCalculator.countBusinessDaysBetween(LocalDate.now(), LocalDate.now(),
+        assertEquals(1, DateCalculator.countBusinessDaysBetween(LocalDate.of(2022,2,23), LocalDate.of(2022,2,23),
                 Optional.empty()));
 
         assertEquals(5, DateCalculator.countBusinessDaysBetween(LocalDate.of(2021, 12, 20),
