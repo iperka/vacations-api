@@ -125,7 +125,7 @@ public class GenericResponse<T> {
         this.errors.add(new APIError(exception));
     }
 
-    @Schema(description = "Hostname serving the response. (Defines Kubernetes pod.)", example = "festiqs-api-xxxxxxxxx-xxxxx", required = true)
+    @Schema(description = "Hostname serving the response. (Defines Kubernetes pod.)", example = "vacations-api-xxxxxxxxx-xxxxx", required = true)
     public String getHost() {
         return host;
     }

@@ -17,10 +17,10 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class Metadata {
-    private long totalElements = 0;
-    private long totalPages = 0;
+    private long totalElements = 0L;
+    private long totalPages = 0L;
     private long page = 1L;
-    private long perPage = 0;
+    private long perPage = 0L;
     private String query = null;
     private boolean firstPage = false;
     private boolean lastPage = false;
@@ -48,7 +48,7 @@ public class Metadata {
         this.lastPage = page.isLast();
     }
 
-    @Schema(description = "Total amount of items matching request.", example = "200", required = true)
+    @Schema(description = "Total amount of items matching request query.", example = "200", required = true)
     public long getTotalElements() {
         return totalElements;
     }

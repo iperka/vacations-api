@@ -17,6 +17,13 @@ import org.hibernate.validator.constraints.Length;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+import net.fortuna.ical4j.model.Calendar;
+import net.fortuna.ical4j.model.PropertyList;
+import net.fortuna.ical4j.model.component.VEvent;
+import net.fortuna.ical4j.model.property.CalScale;
+import net.fortuna.ical4j.model.property.ProdId;
+import net.fortuna.ical4j.model.property.Version;
+import net.fortuna.ical4j.util.UidGenerator;
 
 /**
  * The {@link com.iperka.vacations.api.vacations.Vacation} class defines
@@ -89,5 +96,21 @@ public class Vacation extends GenericFields implements Ownable {
 
     public String getType() {
         return this.type.toString().toLowerCase();
+    }
+
+    public String toICal() {
+        // Create calendar object
+        Calendar calendar = new Calendar();
+        calendar.getProperties().add(new ProdId("-//iperka//iCal4j 1.0//EN"));
+        calendar.getProperties().add(Version.VERSION_2_0);
+        calendar.getProperties().add(CalScale.GREGORIAN);
+
+        // Add event to calendar
+        net.fortuna.ical4j.model.Date startDate = new net.fortuna.ical4j.model.Date(this.getStartDate());
+        net.fortuna.ical4j.model.Date endDate = new net.fortuna.ical4j.model.Date(this.getEndDate());
+        VEvent vacation = new VEvent(startDate, endDate, this.name);
+
+        calendar.getComponents().add(vacation);
+        return calendar.toString();
     }
 }

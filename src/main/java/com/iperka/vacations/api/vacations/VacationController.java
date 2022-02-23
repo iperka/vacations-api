@@ -294,6 +294,55 @@ public class VacationController {
     }
 
     /**
+     * Returns vacation with given UUID as ICal object.
+     * 
+     * @since 1.0.0
+     * @param authentication Will be provided by Spring Security.
+     * @param uuid           Id of demanded Vacations object.
+     * @return A generic Response with Vacation ICal as data property.
+     */
+    @GetMapping(value = "/{uuid}/ical")
+    // @formatter:off
+    @Operation(
+        summary = "Finds Vacations with given uuid.", 
+        // TODO: Extend description.
+        description = "Finds Vacations with given uuid.", 
+        security = {
+            @SecurityRequirement(
+                name = OpenApiConfig.OAUTH2,
+                scopes = {Scopes.VACATIONS_READ, Scopes.VACATIONS_WRITE, Scopes.VACATIONS_ALL_READ, Scopes.VACATIONS_ALL_WRITE}
+            )
+        }, 
+        tags = {"Vacations"}, 
+        responses = {
+            @ApiResponse(description = "Success", responseCode = "200", content = @Content(mediaType = OpenApiConfig.APPLICATION_JSON, schema = @Schema(implementation = VacationICalResponse.class))),
+            @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content(mediaType = OpenApiConfig.APPLICATION_JSON, schema = @Schema(implementation = UnauthorizedResponse.class))),
+            @ApiResponse(description = "Forbidden", responseCode = "403", content = @Content(mediaType = OpenApiConfig.APPLICATION_JSON, schema = @Schema(implementation = ForbiddenResponse.class))),
+            @ApiResponse(description = "Not Found", responseCode = "404", content = @Content(mediaType = OpenApiConfig.APPLICATION_JSON)),
+            @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content(mediaType = OpenApiConfig.APPLICATION_JSON, schema = @Schema(implementation = InternalServerErrorResponse.class)))
+        }
+    )
+    // @formatter:on
+    public ResponseEntity<GenericResponse<String>> findByUuidAsIcal(
+    // @formatter:off
+        final Authentication authentication,
+        @PathVariable("uuid") final UUID uuid
+     // @formatter:on
+    ) {
+        GenericResponse<String> response = new GenericResponse<>(HttpStatus.OK);
+
+        try {
+            Vacation vacation = this.vacationService.findByUuid(uuid);
+            response.setData(vacation.toICal());
+        } catch (VacationNotFoundException e) {
+            log.info("Vacation could not be found.");
+            return response.fromError(HttpStatus.NOT_FOUND, e.toApiError()).build();
+        }
+
+        return response.build();
+    }
+
+    /**
      * Index route for /vacations endpoint. Creates a new Vacations. (if user is
      * authorized).
      * 
@@ -453,7 +502,6 @@ public class VacationController {
      * @since 1.0.0
      */
     private final class VacationListResponse extends GenericResponse<List<Vacation>> {
-
         /**
          * Default Constructor required by Java.
          * 
@@ -480,6 +528,31 @@ public class VacationController {
          */
         public VacationResponse(final HttpStatus status) {
             super(status);
+        }
+    };
+
+    /**
+     * Helper class for OpenAPI generation.
+     * 
+     * @author Michael Beutler
+     * @version 1.0.0
+     * @since 1.0.0
+     */
+    private final class VacationICalResponse extends GenericResponse<String> {
+        private String data;
+
+        /**
+         * Default Constructor required by Java.
+         * 
+         * @param status HTTP Status.
+         */
+        public VacationICalResponse(final HttpStatus status) {
+            super(status);
+        }
+
+        @Schema(example = "BEGIN:VCALENDAR\r\nPRODID:-//iperka//iCal4j 1.0//EN\r\nVERSION:2.0\r\nCALSCALE:GREGORIAN\r\nBEGIN:VEVENT\r\nDTSTAMP:20220223T073404Z\r\nDTSTART;VALUE=DATE:20220223\r\nDTEND;VALUE=DATE:20220223\r\nSUMMARY:Summer Vacation\r\nEND:VEVENT\r\nEND:VCALENDAR\r\n")
+        public String getData() {
+            return this.data;
         }
     };
 
