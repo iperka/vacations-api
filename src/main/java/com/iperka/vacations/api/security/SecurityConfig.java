@@ -28,8 +28,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
  * validating given JWT's.
  * 
  * @author Michael Beutler
- * @version 1.0.0
- * @since 2021-09-29
+ * @version 1.0.2
+ * @since 1.0.0
  */
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
@@ -37,6 +37,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private static final String ROUTE_VACATIONS = "/vacations/**";
+    private static final String ROUTE_FRIENDSHIPS = "/friendships/**";
     private static final String ROUTE_USERS = "/users/**";
     private static final String ROUTE_AUDITS = "/audits/**";
 
@@ -81,6 +82,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .mvcMatchers(HttpMethod.PUT, ROUTE_VACATIONS).hasAnyAuthority(Scopes.SCOPE_VACATIONS_WRITE, Scopes.VACATIONS_ALL_WRITE)
                 .mvcMatchers(HttpMethod.PATCH, ROUTE_VACATIONS).hasAnyAuthority(Scopes.SCOPE_VACATIONS_WRITE, Scopes.VACATIONS_ALL_WRITE)
                 // End Vacations
+
+                // Friendship endpoint
+                .mvcMatchers(HttpMethod.OPTIONS, ROUTE_FRIENDSHIPS).hasAnyAuthority(Scopes.SCOPE_FRIENDSHIPS_READ, Scopes.SCOPE_FRIENDSHIPS_WRITE, Scopes.SCOPE_FRIENDSHIPS_ALL_READ, Scopes.FRIENDSHIPS_ALL_WRITE)
+                .mvcMatchers(HttpMethod.GET, ROUTE_FRIENDSHIPS).hasAnyAuthority(Scopes.SCOPE_FRIENDSHIPS_READ, Scopes.SCOPE_FRIENDSHIPS_WRITE, Scopes.SCOPE_FRIENDSHIPS_ALL_READ, Scopes.FRIENDSHIPS_ALL_WRITE)
+                .mvcMatchers(HttpMethod.POST, ROUTE_FRIENDSHIPS).hasAnyAuthority(Scopes.SCOPE_FRIENDSHIPS_WRITE, Scopes.FRIENDSHIPS_ALL_WRITE)
+                .mvcMatchers(HttpMethod.DELETE, ROUTE_FRIENDSHIPS).hasAnyAuthority(Scopes.SCOPE_FRIENDSHIPS_WRITE, Scopes.FRIENDSHIPS_ALL_WRITE)
+                .mvcMatchers(HttpMethod.PUT, ROUTE_FRIENDSHIPS).hasAnyAuthority(Scopes.SCOPE_FRIENDSHIPS_WRITE, Scopes.FRIENDSHIPS_ALL_WRITE)
+                .mvcMatchers(HttpMethod.PATCH, ROUTE_FRIENDSHIPS).hasAnyAuthority(Scopes.SCOPE_FRIENDSHIPS_WRITE, Scopes.FRIENDSHIPS_ALL_WRITE)
+                // End Friendship endpoint
 
                 // Users (Admin only)
                 .mvcMatchers(HttpMethod.OPTIONS, ROUTE_USERS).hasAnyAuthority(Scopes.SCOPE_USERS_ALL_READ, Scopes.SCOPE_USERS_ALL_WRITE)

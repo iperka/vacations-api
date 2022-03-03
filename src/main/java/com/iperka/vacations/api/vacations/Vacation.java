@@ -18,12 +18,10 @@ import org.hibernate.validator.constraints.Length;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import net.fortuna.ical4j.model.Calendar;
-import net.fortuna.ical4j.model.PropertyList;
 import net.fortuna.ical4j.model.component.VEvent;
 import net.fortuna.ical4j.model.property.CalScale;
 import net.fortuna.ical4j.model.property.ProdId;
 import net.fortuna.ical4j.model.property.Version;
-import net.fortuna.ical4j.util.UidGenerator;
 
 /**
  * The {@link com.iperka.vacations.api.vacations.Vacation} class defines
@@ -31,7 +29,7 @@ import net.fortuna.ical4j.util.UidGenerator;
  * 
  * @author Michael Beutler
  * @version 1.0.0
- * @since 2021-12-28
+ * @since 1.0.0
  */
 @Entity
 @Table(name = "vacations", uniqueConstraints = {
@@ -90,7 +88,7 @@ public class Vacation extends GenericFields implements Ownable {
      */
     @Column(nullable = false)
     @NotNull
-    @Schema(description = "Defines the Vacation tpye.", example = "private", required = true)
+    @Schema(description = "Defines the Vacation type.", example = "private", required = true)
     @Enumerated(EnumType.STRING)
     private VacationType type = VacationType.PRIVATE;
 
