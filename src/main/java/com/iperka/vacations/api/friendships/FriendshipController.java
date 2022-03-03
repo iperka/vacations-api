@@ -8,6 +8,7 @@ import javax.validation.Valid;
 import com.iperka.vacations.api.config.OpenApiConfig;
 import com.iperka.vacations.api.friendships.dto.FriendshipDTO;
 import com.iperka.vacations.api.friendships.exceptions.FriendshipNotFoundException;
+import com.iperka.vacations.api.friendships.exceptions.FriendshipRelationAlreadyExistsException;
 import com.iperka.vacations.api.helpers.GenericResponse;
 import com.iperka.vacations.api.helpers.openapi.responses.BadRequestResponse;
 import com.iperka.vacations.api.helpers.openapi.responses.ConflictResponse;
@@ -67,6 +68,9 @@ public class FriendshipController {
     @Autowired
     private FriendshipService friendshipService;
 
+    // @Autowired
+    // private VacationService vacationService;
+
     /**
      * Index route for /friendships endpoint. Returns all friendships (if user is
      * authorized).
@@ -85,7 +89,7 @@ public class FriendshipController {
         security = {
             @SecurityRequirement(
                 name = OpenApiConfig.OAUTH2,
-                scopes = {Scopes.VACATIONS_READ, Scopes.VACATIONS_WRITE, Scopes.VACATIONS_ALL_READ, Scopes.VACATIONS_ALL_WRITE}
+                scopes = {Scopes.FRIENDSHIPS_READ, Scopes.FRIENDSHIPS_WRITE, Scopes.FRIENDSHIPS_ALL_READ, Scopes.FRIENDSHIPS_ALL_WRITE}
             )
         }, 
         tags = {"Friendships"}, 
@@ -119,16 +123,16 @@ public class FriendshipController {
 
         Page<Friendship> page;
         // Check if authenticated user has been granted friendships:all:read
-        if (Helpers.hasScope(Scopes.VACATIONS_ALL_READ, authentication) && !StringUtils.hasText(owner)
+        if (Helpers.hasScope(Scopes.FRIENDSHIPS_ALL_READ, authentication) && !StringUtils.hasText(owner)
                 && !StringUtils.hasText(user)) {
             page = this.friendshipService.findAll(pageable);
-        } else if (Helpers.hasScope(Scopes.VACATIONS_ALL_READ, authentication) && StringUtils.hasText(owner)
+        } else if (Helpers.hasScope(Scopes.FRIENDSHIPS_ALL_READ, authentication) && StringUtils.hasText(owner)
                 && StringUtils.hasText(user)) {
             page = this.friendshipService.findAllByOwnerAndUser(pageable, owner, user);
-        } else if (Helpers.hasScope(Scopes.VACATIONS_ALL_READ, authentication) && StringUtils.hasText(owner)
+        } else if (Helpers.hasScope(Scopes.FRIENDSHIPS_ALL_READ, authentication) && StringUtils.hasText(owner)
                 && !StringUtils.hasText(user)) {
             page = this.friendshipService.findAllByOwner(pageable, owner);
-        } else if (Helpers.hasScope(Scopes.VACATIONS_ALL_READ, authentication) && !StringUtils.hasText(owner)
+        } else if (Helpers.hasScope(Scopes.FRIENDSHIPS_ALL_READ, authentication) && !StringUtils.hasText(owner)
                 && StringUtils.hasText(user)) {
             page = this.friendshipService.findAllByOwnerAndUser(pageable, userId, user);
         } else if (StringUtils.hasText(user)) {
@@ -160,7 +164,7 @@ public class FriendshipController {
         security = {
             @SecurityRequirement(
                 name = OpenApiConfig.OAUTH2,
-                scopes = {Scopes.VACATIONS_READ, Scopes.VACATIONS_WRITE, Scopes.VACATIONS_ALL_READ, Scopes.VACATIONS_ALL_WRITE}
+                scopes = {Scopes.FRIENDSHIPS_READ, Scopes.FRIENDSHIPS_WRITE, Scopes.FRIENDSHIPS_ALL_READ, Scopes.FRIENDSHIPS_ALL_WRITE}
             )
         }, 
         tags = {"Friendships"}, 
@@ -179,11 +183,18 @@ public class FriendshipController {
         @PathVariable("uuid") final UUID uuid
      // @formatter:on
     ) {
+        final String userId = Helpers.getUserId(authentication);
         GenericResponse<Friendship> response = new GenericResponse<>(HttpStatus.OK);
 
         try {
-            Friendship friendship = this.friendshipService.findByUuid(uuid);
-            response.setData(friendship);
+            if (Helpers.hasScope(Scopes.FRIENDSHIPS_ALL_READ, authentication)
+                    || Helpers.hasScope(Scopes.FRIENDSHIPS_ALL_WRITE, authentication)) {
+                Friendship friendship = this.friendshipService.findByUuid(uuid);
+                response.setData(friendship);
+            } else {
+                Friendship friendship = this.friendshipService.findByUuidAndOwner(uuid, userId);
+                response.setData(friendship);
+            }
         } catch (FriendshipNotFoundException e) {
             log.info("Friendship could not be found.");
             return response.fromError(HttpStatus.NOT_FOUND, e.toApiError()).build();
@@ -211,7 +222,7 @@ public class FriendshipController {
         security = {
             @SecurityRequirement(
                 name = OpenApiConfig.OAUTH2,
-                scopes = {Scopes.VACATIONS_WRITE, Scopes.VACATIONS_ALL_WRITE}
+                scopes = {Scopes.FRIENDSHIPS_WRITE, Scopes.FRIENDSHIPS_ALL_WRITE}
             )
         }, 
         tags = {"Friendships"}, 
@@ -235,7 +246,12 @@ public class FriendshipController {
 
         Friendship friendship = friendshipsDTO.toObject();
         friendship.setOwner(Helpers.getUserId(authentication));
-        friendship = this.friendshipService.create(friendship);
+
+        try {
+            friendship = this.friendshipService.create(friendship);
+        } catch (FriendshipRelationAlreadyExistsException e) {
+            return response.fromError(HttpStatus.CONFLICT, e.toApiError()).build();
+        }
         response.setData(friendship);
 
         return response.build();
@@ -260,7 +276,7 @@ public class FriendshipController {
         security = {
             @SecurityRequirement(
                 name = OpenApiConfig.OAUTH2,
-                scopes = {Scopes.VACATIONS_WRITE, Scopes.VACATIONS_ALL_WRITE}
+                scopes = {Scopes.FRIENDSHIPS_WRITE, Scopes.FRIENDSHIPS_ALL_WRITE}
             )
         }, 
         tags = {"Friendships"}, 
@@ -281,11 +297,15 @@ public class FriendshipController {
         @Valid @RequestBody(required = true, content = @Content(schema =  @Schema(implementation = FriendshipDTO.class))) @org.springframework.web.bind.annotation.RequestBody final FriendshipDTO friendshipsDTO
      // @formatter:on
     ) {
+        final String userId = Helpers.getUserId(authentication);
         GenericResponse<Friendship> response = new GenericResponse<>(HttpStatus.NO_CONTENT);
 
         try {
-            Friendship friendship = this.friendshipService.update(friendshipsDTO.toObject());
-            response.setData(friendship);
+            if (Helpers.hasScope(Scopes.FRIENDSHIPS_ALL_WRITE, authentication)) {
+                response.setData(this.friendshipService.update(friendshipsDTO.toObject()));
+            } else {
+                response.setData(this.friendshipService.updateByOwner(friendshipsDTO.toObject(), userId));
+            }
         } catch (FriendshipNotFoundException e) {
             log.info("Friendship could not be found.");
             return response.fromError(HttpStatus.NOT_FOUND, e.toApiError()).build();
@@ -311,7 +331,7 @@ public class FriendshipController {
         security = {
             @SecurityRequirement(
                 name = OpenApiConfig.OAUTH2,
-                scopes = {Scopes.VACATIONS_WRITE, Scopes.VACATIONS_ALL_WRITE}
+                scopes = {Scopes.FRIENDSHIPS_WRITE, Scopes.FRIENDSHIPS_ALL_WRITE}
             )
         }, 
         tags = {"Friendships"}, 
@@ -332,10 +352,15 @@ public class FriendshipController {
         @Valid @RequestBody(required = true, content = @Content(schema =  @Schema(implementation = FriendshipDTO.class))) @org.springframework.web.bind.annotation.RequestBody final FriendshipDTO friendshipDTO
      // @formatter:on
     ) {
+        final String userId = Helpers.getUserId(authentication);
         GenericResponse<Friendship> response = new GenericResponse<>(HttpStatus.NO_CONTENT);
 
         try {
-            this.friendshipService.deleteByUuid(uuid);
+            if (Helpers.hasScope(Scopes.FRIENDSHIPS_ALL_WRITE, authentication)) {
+                this.friendshipService.deleteByUuid(uuid);
+            } else {
+                this.friendshipService.deleteByUuidAndOwner(uuid, userId);
+            }
         } catch (FriendshipNotFoundException e) {
             log.info("Friendship could not be found.");
             return response.fromError(HttpStatus.NOT_FOUND, e.toApiError()).build();

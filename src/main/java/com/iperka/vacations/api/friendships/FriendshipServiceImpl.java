@@ -1,9 +1,11 @@
 package com.iperka.vacations.api.friendships;
 
+import java.util.List;
 import java.util.UUID;
 
 import com.iperka.vacations.api.audit.AuditOperation;
 import com.iperka.vacations.api.friendships.exceptions.FriendshipNotFoundException;
+import com.iperka.vacations.api.friendships.exceptions.FriendshipRelationAlreadyExistsException;
 import com.iperka.vacations.api.security.Auditable;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,6 +62,34 @@ public class FriendshipServiceImpl extends Auditable implements FriendshipServic
 
     /**
      * Retrieves all friendships owned by given user as
+     * List object.
+     * 
+     * @since 1.0.6
+     * @param pageable Pageable object.
+     * @param owner    Owner user id provided by Auth0.
+     * @param user     Related user id provided by Auth0.
+     * @return List with Friendship objects.
+     */
+    public List<Friendship> findAllByOwnerOrUser(String owner, String user) {
+        return friendshipRepository.findAllByOwnerOrUser(owner, user);
+    }
+
+    /**
+     * Checks if friendship relation already exists and returns a boolean.
+     * 
+     * @since 1.0.6
+     * @param owner Owner user id provided by Auth0.
+     * @param user  Related user id provided by Auth0.
+     * @return True if relation already exists.
+     */
+    @Override
+    @PreAuthorize("hasAnyAuthority('SCOPE_friendships:read', 'SCOPE_friendships:write', 'SCOPE_friendships:all:read', 'SCOPE_friendships:all:write')")
+    public boolean existsByOwnerAndUserIgnoreCase(String owner, String user) {
+        return friendshipRepository.existsByOwnerAndUserIgnoreCase(owner, user);
+    }
+
+    /**
+     * Retrieves all friendships owned by given user as
      * {@link org.springframework.data.domain.Page} object.
      * 
      * @since 1.0.5
@@ -111,11 +141,15 @@ public class FriendshipServiceImpl extends Auditable implements FriendshipServic
      * @since 1.0.5
      * @param friendship new object.
      * @return Friendship created object.
-     * @throws FriendshipNotFoundException if friendship could not be found.
+     * @throws FriendshipRelationAlreadyExistsException if friendship relation
+     *                                                  already exists.
      */
     @Override
     @PreAuthorize("hasAnyAuthority('SCOPE_friendships:write', 'SCOPE_friendships:all:write')")
-    public Friendship create(Friendship friendship) {
+    public Friendship create(Friendship friendship) throws FriendshipRelationAlreadyExistsException {
+        if (this.existsByOwnerAndUserIgnoreCase(friendship.getOwner(), friendship.getUser())) {
+            throw new FriendshipRelationAlreadyExistsException();
+        }
         friendship = friendshipRepository.save(friendship);
         this.audit(AuditOperation.CREATE, null, friendship);
         return friendship;
@@ -133,6 +167,11 @@ public class FriendshipServiceImpl extends Auditable implements FriendshipServic
     @PreAuthorize("hasAnyAuthority('SCOPE_friendships:all:write')")
     public Friendship update(Friendship friendship) throws FriendshipNotFoundException {
         Friendship before = this.findByUuid(friendship.getUuid());
+
+        // Set immutable properties
+        friendship.setOwner(before.getOwner());
+        friendship.setUser(before.getUser());
+
         Friendship after = friendshipRepository.save(friendship);
         this.audit(AuditOperation.UPDATE, before, after);
         return after;
@@ -145,12 +184,19 @@ public class FriendshipServiceImpl extends Auditable implements FriendshipServic
      * @param friendship new object.
      * @param owner      Owner user id provided by Auth0.
      * @return Friendship updated object.
-     * @throws FriendshipNotFoundException if friendship could not be found.
+     * @throws FriendshipNotFoundException if friendship could not be
+     *                                     found.
      */
     @Override
     @PreAuthorize("hasAnyAuthority('SCOPE_friendships:write', 'SCOPE_friendships:all:write')")
-    public Friendship updateByOwner(Friendship friendship, String owner) throws FriendshipNotFoundException {
+    public Friendship updateByOwner(Friendship friendship, String owner)
+            throws FriendshipNotFoundException {
         Friendship before = this.findByUuidAndOwner(friendship.getUuid(), owner);
+
+        // Set immutable properties
+        friendship.setOwner(before.getOwner());
+        friendship.setUser(before.getUser());
+
         Friendship after = friendshipRepository.save(friendship);
         this.audit(AuditOperation.UPDATE, before, after);
         return after;

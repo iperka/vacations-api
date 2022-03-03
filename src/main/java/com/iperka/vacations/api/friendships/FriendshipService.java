@@ -1,8 +1,10 @@
 package com.iperka.vacations.api.friendships;
 
+import java.util.List;
 import java.util.UUID;
 
 import com.iperka.vacations.api.friendships.exceptions.FriendshipNotFoundException;
+import com.iperka.vacations.api.friendships.exceptions.FriendshipRelationAlreadyExistsException;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -52,6 +54,28 @@ public interface FriendshipService {
     public abstract Page<Friendship> findAllByOwnerAndUser(Pageable pageable, String owner, String user);
 
     /**
+     * Retrieves all friendships owned by given user as
+     * List object.
+     * 
+     * @since 1.0.6
+     * @param pageable Pageable object.
+     * @param owner    Owner user id provided by Auth0.
+     * @param user     Related user id provided by Auth0.
+     * @return List with Friendship objects.
+     */
+    public abstract List<Friendship> findAllByOwnerOrUser(String owner, String user);
+
+    /**
+     * Checks if friendship relation already exists and returns a boolean.
+     * 
+     * @since 1.0.6
+     * @param owner Owner user id provided by Auth0.
+     * @param user  Related user id provided by Auth0.
+     * @return True if relation already exists.
+     */
+    public abstract boolean existsByOwnerAndUserIgnoreCase(String owner, String user);
+
+    /**
      * Returns friendship with given UUID.
      * Bare in mind that these method should be explicit to administrative
      * roles.
@@ -81,9 +105,10 @@ public interface FriendshipService {
      * @since 1.0.5
      * @param friendship new object.
      * @return Friendship created object.
-     * @throws FriendshipNotFoundException if friendship could not be found.
+     * @throws FriendshipRelationAlreadyExistsException if friendship object already
+     *                                                  exists.
      */
-    public abstract Friendship create(Friendship friendship);
+    public abstract Friendship create(Friendship friendship) throws FriendshipRelationAlreadyExistsException;
 
     /**
      * Updates and returns friendship with given object.

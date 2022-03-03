@@ -19,7 +19,7 @@ public class FriendshipDTO implements DTO<Friendship> {
     private String user;
 
     @NotNull
-    private FriendshipStatus status = FriendshipStatus.REQUESTED;
+    private FriendshipStatus status = FriendshipStatus.ACCEPTED;
 
     @Override
     public Friendship toObject() {
@@ -35,7 +35,7 @@ public class FriendshipDTO implements DTO<Friendship> {
         this.user = user;
     }
 
-    @Schema(description = "Defines the Friendship status.", example = "requested", required = true)
+    @Schema(description = "Defines the Friendship status.", example = "accepted", required = true)
     public void setStatus(String status) {
         this.status = FriendshipStatus.valueOf(status.toUpperCase());
     }

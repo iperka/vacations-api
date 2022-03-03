@@ -8,6 +8,8 @@ import java.util.UUID;
 import javax.validation.Valid;
 
 import com.iperka.vacations.api.config.OpenApiConfig;
+import com.iperka.vacations.api.friendships.FriendshipService;
+import com.iperka.vacations.api.helpers.APIError;
 import com.iperka.vacations.api.helpers.GenericResponse;
 import com.iperka.vacations.api.helpers.openapi.responses.BadRequestResponse;
 import com.iperka.vacations.api.helpers.openapi.responses.ConflictResponse;
@@ -69,6 +71,9 @@ public class VacationController {
 
     @Autowired
     private VacationService vacationService;
+
+    @Autowired
+    private FriendshipService friendshipService;
 
     /**
      * Index route for /vacations endpoint. Returns all vacations (if user is
@@ -227,9 +232,20 @@ public class VacationController {
             Vacation vacation;
             // Check if authenticated user has been granted vacations:all:read
             if (Helpers.hasScope(Scopes.VACATIONS_ALL_READ, authentication) && StringUtils.hasText(owner)) {
-                vacation = this.vacationService.findByOwnerAndStartDateGreaterThanEqualOrderByStartDateAsc(owner,
-                        date);
+                vacation = this.vacationService.findByOwnerAndStartDateGreaterThanEqualOrderByStartDateAsc(owner, date);
+            } else if (StringUtils.hasText(owner) && Helpers.isFriend(
+                    authentication,
+                    owner,
+                    friendshipService.findAllByOwnerOrUser(userId, userId))) {
+                vacation = this.vacationService.findByOwnerAndStartDateGreaterThanEqualOrderByStartDateAsc(owner, date);
             } else {
+                if (StringUtils.hasText(owner)) {
+                    return response
+                            .fromError(HttpStatus.FORBIDDEN, new APIError("OAuthException",
+                                    "The request requires higher privileges than provided by the access token.",
+                                    "The authenticated user has not been granted the required scope(s).", null, 403))
+                            .build();
+                }
                 vacation = this.vacationService.findByOwnerAndStartDateGreaterThanEqualOrderByStartDateAsc(userId,
                         date);
             }
@@ -280,11 +296,18 @@ public class VacationController {
         @PathVariable("uuid") final UUID uuid
      // @formatter:on
     ) {
+        final String userId = Helpers.getUserId(authentication);
         GenericResponse<Vacation> response = new GenericResponse<>(HttpStatus.OK);
 
         try {
-            Vacation vacation = this.vacationService.findByUuid(uuid);
-            response.setData(vacation);
+            if (Helpers.hasScope(Scopes.VACATIONS_ALL_READ, authentication)
+                    || Helpers.hasScope(Scopes.VACATIONS_ALL_WRITE, authentication)) {
+                Vacation vacation = this.vacationService.findByUuid(uuid);
+                response.setData(vacation);
+            } else {
+                Vacation vacation = this.vacationService.findByUuidAndOwner(uuid, userId);
+                response.setData(vacation);
+            }
         } catch (VacationNotFoundException e) {
             log.info("Vacation could not be found.");
             return response.fromError(HttpStatus.NOT_FOUND, e.toApiError()).build();
@@ -329,11 +352,18 @@ public class VacationController {
         @PathVariable("uuid") final UUID uuid
      // @formatter:on
     ) {
+        final String userId = Helpers.getUserId(authentication);
         GenericResponse<String> response = new GenericResponse<>(HttpStatus.OK);
 
         try {
-            Vacation vacation = this.vacationService.findByUuid(uuid);
-            response.setData(vacation.toICal());
+            if (Helpers.hasScope(Scopes.VACATIONS_ALL_READ, authentication)
+                    || Helpers.hasScope(Scopes.VACATIONS_ALL_WRITE, authentication)) {
+                Vacation vacation = this.vacationService.findByUuid(uuid);
+                response.setData(vacation.toICal());
+            } else {
+                Vacation vacation = this.vacationService.findByUuidAndOwner(uuid, userId);
+                response.setData(vacation.toICal());
+            }
         } catch (VacationNotFoundException e) {
             log.info("Vacation could not be found.");
             return response.fromError(HttpStatus.NOT_FOUND, e.toApiError()).build();
@@ -431,11 +461,17 @@ public class VacationController {
         @Valid @RequestBody(required = true, content = @Content(schema =  @Schema(implementation = VacationDTO.class))) @org.springframework.web.bind.annotation.RequestBody final VacationDTO vacationsDTO
      // @formatter:on
     ) {
+        final String userId = Helpers.getUserId(authentication);
         GenericResponse<Vacation> response = new GenericResponse<>(HttpStatus.NO_CONTENT);
 
         try {
-            Vacation vacation = this.vacationService.update(vacationsDTO.toObject());
-            response.setData(vacation);
+            if (Helpers.hasScope(Scopes.VACATIONS_ALL_WRITE, authentication)) {
+                Vacation vacation = this.vacationService.update(vacationsDTO.toObject());
+                response.setData(vacation);
+            } else {
+                Vacation vacation = this.vacationService.updateByOwner(vacationsDTO.toObject(), userId);
+                response.setData(vacation);
+            }
         } catch (VacationNotFoundException e) {
             log.info("Vacation could not be found.");
             return response.fromError(HttpStatus.NOT_FOUND, e.toApiError()).build();
@@ -482,10 +518,15 @@ public class VacationController {
         @Valid @RequestBody(required = true, content = @Content(schema =  @Schema(implementation = VacationDTO.class))) @org.springframework.web.bind.annotation.RequestBody final VacationDTO vacationDTO
      // @formatter:on
     ) {
+        final String userId = Helpers.getUserId(authentication);
         GenericResponse<Vacation> response = new GenericResponse<>(HttpStatus.NO_CONTENT);
 
         try {
-            this.vacationService.deleteByUuid(uuid);
+            if (Helpers.hasScope(Scopes.VACATIONS_ALL_WRITE, authentication)) {
+                this.vacationService.deleteByUuid(uuid);
+            } else {
+                this.vacationService.deleteByUuidAndOwner(uuid, userId);
+            }
         } catch (VacationNotFoundException e) {
             log.info("Vacation could not be found.");
             return response.fromError(HttpStatus.NOT_FOUND, e.toApiError()).build();

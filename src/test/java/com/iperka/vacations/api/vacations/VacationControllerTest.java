@@ -9,6 +9,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.UUID;
+
 import com.iperka.vacations.api.security.Scopes;
 
 import org.junit.jupiter.api.Test;
@@ -44,6 +46,9 @@ class VacationControllerTest {
     void shouldHandleScopeVacationsRead() throws Exception {
         this.mockMvc.perform(get("/vacations")).andExpect(status().isOk())
                 .andExpect(content().string(containsString("OK")));
+
+        this.mockMvc.perform(get("/vacations/" + UUID.randomUUID().toString())).andExpect(status().isNotFound())
+                .andExpect(content().string(containsString("NotFound")));
 
         this.mockMvc.perform(post("/vacations")).andExpect(status().isForbidden())
                 .andExpect(content().string(containsString("OAuthException")));

@@ -40,9 +40,9 @@ public class Friendship extends GenericFields {
      */
     @Column(nullable = false)
     @NotNull
-    @Schema(description = "Defines the Friendship status.", example = "requested", required = true)
+    @Schema(description = "Defines the Friendship status.", example = "accepted", required = true)
     @Enumerated(EnumType.STRING)
-    private FriendshipStatus status = FriendshipStatus.REQUESTED;
+    private FriendshipStatus status = FriendshipStatus.ACCEPTED;
 
     public String getType() {
         return this.status.toString().toLowerCase();

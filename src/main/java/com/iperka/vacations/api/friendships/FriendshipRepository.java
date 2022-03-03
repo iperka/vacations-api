@@ -1,5 +1,6 @@
 package com.iperka.vacations.api.friendships;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -52,6 +53,28 @@ public interface FriendshipRepository extends PagingAndSortingRepository<Friends
      * @return Page with Friendship objects.
      */
     public Page<Friendship> findAllByOwnerAndUser(Pageable pageable, String owner, String user);
+
+    /**
+     * Retrieves all friendships owned by given user as
+     * List object.
+     * 
+     * @since 1.0.6
+     * @param pageable Pageable object.
+     * @param owner    Owner user id provided by Auth0.
+     * @param user     Related user id provided by Auth0.
+     * @return List with Friendship objects.
+     */
+    public List<Friendship> findAllByOwnerOrUser(String owner, String user);
+
+    /**
+     * Checks if friendship relation already exists and returns a boolean.
+     * 
+     * @since 1.0.6
+     * @param owner Owner user id provided by Auth0.
+     * @param user  Related user id provided by Auth0.
+     * @return True if relation already exists.
+     */
+    public boolean existsByOwnerAndUserIgnoreCase(String owner, String user);
 
     /**
      * Returns friendship with given UUID.
