@@ -514,8 +514,7 @@ public class VacationController {
     public ResponseEntity<GenericResponse<Vacation>> deleteByUuid(
     // @formatter:off
         final Authentication authentication,
-        @PathVariable("uuid") final UUID uuid,
-        @Valid @RequestBody(required = true, content = @Content(schema =  @Schema(implementation = VacationDTO.class))) @org.springframework.web.bind.annotation.RequestBody final VacationDTO vacationDTO
+        @PathVariable("uuid") final UUID uuid
      // @formatter:on
     ) {
         final String userId = Helpers.getUserId(authentication);

@@ -348,8 +348,7 @@ public class FriendshipController {
     public ResponseEntity<GenericResponse<Friendship>> deleteByUuid(
     // @formatter:off
         final Authentication authentication,
-        @PathVariable("uuid") final UUID uuid,
-        @Valid @RequestBody(required = true, content = @Content(schema =  @Schema(implementation = FriendshipDTO.class))) @org.springframework.web.bind.annotation.RequestBody final FriendshipDTO friendshipDTO
+        @PathVariable("uuid") final UUID uuid
      // @formatter:on
     ) {
         final String userId = Helpers.getUserId(authentication);
