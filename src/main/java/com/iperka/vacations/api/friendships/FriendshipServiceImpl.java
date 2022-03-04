@@ -3,6 +3,8 @@ package com.iperka.vacations.api.friendships;
 import java.util.List;
 import java.util.UUID;
 
+import javax.transaction.Transactional;
+
 import com.iperka.vacations.api.audit.AuditOperation;
 import com.iperka.vacations.api.friendships.exceptions.FriendshipNotFoundException;
 import com.iperka.vacations.api.friendships.exceptions.FriendshipRelationAlreadyExistsException;
@@ -212,6 +214,7 @@ public class FriendshipServiceImpl extends Auditable implements FriendshipServic
      * @throws FriendshipNotFoundException if friendship could not be found.
      */
     @Override
+    @Transactional
     @PreAuthorize("hasAuthority('SCOPE_friendships:all:write')")
     public void deleteByUuid(UUID uuid) throws FriendshipNotFoundException {
         Friendship friendship = this.findByUuid(uuid);
@@ -228,6 +231,7 @@ public class FriendshipServiceImpl extends Auditable implements FriendshipServic
      * @throws FriendshipNotFoundException if friendship could not be found.
      */
     @Override
+    @Transactional
     @PreAuthorize("hasAnyAuthority('SCOPE_friendships:write', 'SCOPE_friendships:all:write')")
     public void deleteByUuidAndOwner(UUID uuid, String owner) throws FriendshipNotFoundException {
         Friendship friendship = this.findByUuidAndOwner(uuid, owner);

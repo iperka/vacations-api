@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import javax.transaction.Transactional;
+
 import com.iperka.vacations.api.audit.AuditOperation;
 import com.iperka.vacations.api.helpers.DateCalculator;
 import com.iperka.vacations.api.security.Auditable;
@@ -174,6 +176,7 @@ public class VacationServiceImpl extends Auditable implements VacationService {
      * @throws VacationNotFoundException if vacation could not be found.
      */
     @Override
+    @Transactional
     @PreAuthorize("hasAuthority('SCOPE_vacations:all:write')")
     public void deleteByUuid(UUID uuid) throws VacationNotFoundException {
         Vacation vacation = this.findByUuid(uuid);
@@ -190,6 +193,7 @@ public class VacationServiceImpl extends Auditable implements VacationService {
      * @throws VacationNotFoundException if vacation could not be found.
      */
     @Override
+    @Transactional
     @PreAuthorize("hasAnyAuthority('SCOPE_vacations:write', 'SCOPE_vacations:all:write')")
     public void deleteByUuidAndOwner(UUID uuid, String owner) throws VacationNotFoundException {
         Vacation vacation = this.findByUuidAndOwner(uuid, owner);
