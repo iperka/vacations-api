@@ -66,7 +66,7 @@ class VacationControllerTest {
         this.mockMvc
                 .perform(post("/vacations").contentType(MediaType.APPLICATION_JSON)
                         .content(
-                                "{\"name\": \"Summer Vacation\",\"startDate\": \"2022-02-17T18:32:22.418Z\",\"endDate\": \"2022-02-17T18:32:22.418Z\",\"days\": 1.5,\"status\": \"requested\"}"))
+                                "{\"title\": \"Summer Vacation\",\"startDate\": \"2022-02-17T18:32:22.418Z\",\"endDate\": \"2022-02-17T18:32:22.418Z\",\"days\": 1.5,\"status\": \"requested\"}"))
                 .andExpect(status().isCreated())
                 .andExpect(content().string(containsString("Created")));
     }

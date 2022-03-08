@@ -23,7 +23,7 @@ class VacationRepositoryTest {
 		VacationDTO vacationDTO = new VacationDTO();
 		Vacation vacationBeforeSave = vacationDTO.toObject();
 		vacationBeforeSave.setOwner("me");
-		vacationBeforeSave.setName("test");
+		vacationBeforeSave.setTitle("test");
 		vacationBeforeSave.setStartDate(new Date());
 		vacationBeforeSave.setEndDate(new Date());
 

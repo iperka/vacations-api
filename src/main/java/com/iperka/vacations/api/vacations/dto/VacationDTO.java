@@ -28,7 +28,7 @@ public class VacationDTO implements DTO<Vacation> {
 
     @Length(min = 4, max = 100)
     @NotNull
-    private String name;
+    private String title;
 
     @NotNull
     private Date startDate;
@@ -46,7 +46,7 @@ public class VacationDTO implements DTO<Vacation> {
     public Vacation toObject() {
         final Vacation vacation = new Vacation();
 
-        vacation.setName(this.name);
+        vacation.setTitle(this.title);
         vacation.setStartDate(this.startDate);
         vacation.setEndDate(this.endDate);
 
@@ -67,9 +67,9 @@ public class VacationDTO implements DTO<Vacation> {
         return vacation;
     }
 
-    @Schema(description = "Defines the name of the vacation.", nullable = false, example = "Summer Vacation")
-    public void setName(String name) {
-        this.name = name;
+    @Schema(description = "Defines the title of the vacation.", nullable = false, example = "Summer Vacation")
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     @Schema(description = "Defines the start of the vacation.", nullable = false, example = "2022-01-01")

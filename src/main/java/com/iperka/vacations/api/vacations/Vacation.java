@@ -44,7 +44,7 @@ public class Vacation extends GenericFields implements Ownable {
     @Length(min = 4, max = 100)
     @NotNull
     @Schema(description = "Unique human readable identifier of the Vacation.", example = "Ski Trip", required = true)
-    private String name;
+    private String title;
 
     /**
      * Start date of the vacations.
@@ -106,7 +106,7 @@ public class Vacation extends GenericFields implements Ownable {
         // Add event to calendar
         net.fortuna.ical4j.model.Date startDate = new net.fortuna.ical4j.model.Date(this.getStartDate());
         net.fortuna.ical4j.model.Date endDate = new net.fortuna.ical4j.model.Date(this.getEndDate());
-        VEvent vacation = new VEvent(startDate, endDate, this.name);
+        VEvent vacation = new VEvent(startDate, endDate, this.title);
 
         calendar.getComponents().add(vacation);
         return calendar.toString();

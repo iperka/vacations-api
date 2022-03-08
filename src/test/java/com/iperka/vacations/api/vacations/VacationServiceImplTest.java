@@ -28,7 +28,7 @@ class VacationServiceImplTest {
     void createVacation() {
         Vacation vacation = new Vacation();
         vacation.setOwner("test");
-        vacation.setName("test");
+        vacation.setTitle("test");
         vacation.setStartDate(new Date());
         vacation.setStartDate(new Date());
 
@@ -36,7 +36,7 @@ class VacationServiceImplTest {
         when(vacationRepository.save(any(Vacation.class))).thenReturn(vacation);
 
         Vacation savedVacation = vacationRepository.save(vacation);
-        assertNotNull(savedVacation.getName());
+        assertNotNull(savedVacation.getTitle());
     }
 
 }
