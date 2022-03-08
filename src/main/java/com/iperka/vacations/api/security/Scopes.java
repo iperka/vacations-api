@@ -23,6 +23,12 @@ public class Scopes {
     public static final String VACATIONS_ALL_WRITE = "vacations:all:write";
     public static final String SCOPE_VACATIONS_ALL_WRITE = SCOPE_PREFIX + VACATIONS_ALL_WRITE;
 
+    public static final String USERS_READ = "users:read";
+    public static final String SCOPE_USERS_READ = SCOPE_PREFIX + USERS_READ;
+
+    public static final String USERS_WRITE = "users:write";
+    public static final String SCOPE_USERS_WRITE = SCOPE_PREFIX + USERS_WRITE;
+
     public static final String USERS_ALL_READ = "users:all:read";
     public static final String SCOPE_USERS_ALL_READ = SCOPE_PREFIX + USERS_ALL_READ;
 

@@ -64,6 +64,8 @@ public class OpenApiConfig {
             Scopes.FRIENDSHIPS_WRITE, 
             Scopes.FRIENDSHIPS_ALL_READ, 
             Scopes.FRIENDSHIPS_ALL_WRITE,
+            Scopes.USERS_READ,
+            Scopes.USERS_WRITE,
             Scopes.USERS_ALL_READ,
             Scopes.USERS_ALL_WRITE,
             Scopes.AUDITS_ALL_READ,
@@ -86,6 +88,8 @@ public class OpenApiConfig {
                        .addString(Scopes.FRIENDSHIPS_WRITE, "Create, update and delete owned friendships.") 
                        .addString(Scopes.FRIENDSHIPS_ALL_READ, "Read all friendships.") 
                        .addString(Scopes.FRIENDSHIPS_ALL_WRITE, "Create, update and delete all friendships.") 
+                       .addString(Scopes.USERS_READ, "Read basic user metadata.") 
+                       .addString(Scopes.USERS_WRITE, "Update basic user metadata.") 
                        .addString(Scopes.USERS_ALL_READ, "Read all users.") 
                        .addString(Scopes.USERS_ALL_WRITE, "Create, update and delete all users.") 
                        .addString(Scopes.AUDITS_ALL_READ, "Read all audit logs.") 

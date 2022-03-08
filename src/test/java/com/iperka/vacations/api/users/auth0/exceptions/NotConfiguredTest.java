@@ -11,10 +11,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 class NotConfiguredTest {
     @Test
     void shouldReturnCorrectFields() {
-        NotConfigured notConfigured = new NotConfigured();
+        NotConfiguredException notConfigured = new NotConfiguredException();
 
         APIError apiError = new APIError("NotConfigured", "Auth0 Management API not configured.",
-                "Not able to authenticate with Auth0 Management API.", null, 404);
+                "Not able to authenticate with Auth0 Management API.", null, 500);
 
         assertEquals(apiError.getMessage(), notConfigured.toApiError().getMessage());
         assertEquals(apiError.getCause(), notConfigured.toApiError().getCause());

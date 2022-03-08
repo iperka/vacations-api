@@ -28,7 +28,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
  * validating given JWT's.
  * 
  * @author Michael Beutler
- * @version 1.0.2
+ * @version 1.0.3
  * @since 1.0.0
  */
 @Configuration
@@ -92,9 +92,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .mvcMatchers(HttpMethod.PATCH, ROUTE_FRIENDSHIPS).hasAnyAuthority(Scopes.SCOPE_FRIENDSHIPS_WRITE, Scopes.FRIENDSHIPS_ALL_WRITE)
                 // End Friendship endpoint
 
-                // Users (Admin only)
-                .mvcMatchers(HttpMethod.OPTIONS, ROUTE_USERS).hasAnyAuthority(Scopes.SCOPE_USERS_ALL_READ, Scopes.SCOPE_USERS_ALL_WRITE)
-                .mvcMatchers(HttpMethod.GET, ROUTE_USERS).hasAnyAuthority(Scopes.SCOPE_USERS_ALL_READ, Scopes.SCOPE_USERS_ALL_WRITE)
+                // Users
+                .mvcMatchers(HttpMethod.OPTIONS, ROUTE_USERS).hasAnyAuthority(Scopes.SCOPE_USERS_READ, Scopes.SCOPE_USERS_WRITE,Scopes.SCOPE_USERS_ALL_READ, Scopes.SCOPE_USERS_ALL_WRITE)
+                .mvcMatchers(HttpMethod.GET, ROUTE_USERS).hasAnyAuthority(Scopes.SCOPE_USERS_READ, Scopes.SCOPE_USERS_WRITE,Scopes.SCOPE_USERS_ALL_READ, Scopes.SCOPE_USERS_ALL_WRITE)
                 // End Users
 
                 // Audits (Admin only)

@@ -5,7 +5,8 @@ import com.iperka.vacations.api.config.OpenApiConfig;
 import com.iperka.vacations.api.helpers.GenericResponse;
 import com.iperka.vacations.api.security.Scopes;
 import com.iperka.vacations.api.users.auth0.ManagementService;
-import com.iperka.vacations.api.users.auth0.exceptions.NotConfigured;
+import com.iperka.vacations.api.users.auth0.exceptions.NotConfiguredException;
+import com.iperka.vacations.api.users.dto.SimpleUserDTO;
 import com.iperka.vacations.api.users.exceptions.UserNotFound;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +51,7 @@ public class UserController {
         security = {
             @SecurityRequirement(
                 name = OpenApiConfig.OAUTH2, 
-                scopes = {Scopes.USERS_ALL_READ, Scopes.USERS_ALL_WRITE}
+                scopes = {Scopes.USERS_READ, Scopes.USERS_WRITE,Scopes.USERS_ALL_READ, Scopes.USERS_ALL_WRITE}
             )
         }, 
         tags = {"Users"}, 
@@ -63,28 +64,35 @@ public class UserController {
         }
     )
     // @formatter:on
-    public ResponseEntity<GenericResponse<User>> getUserById(
+    public ResponseEntity<GenericResponse<SimpleUserDTO>> getUserById(
     // @formatter:off
         @PathVariable("userId") final String userId
     // @formatter:on
     ) {
-        final GenericResponse<User> response = new GenericResponse<>(HttpStatus.OK);
+        final GenericResponse<SimpleUserDTO> response = new GenericResponse<>(HttpStatus.OK);
 
         try {
             User user = managementService.getUserById(userId).orElseThrow();
 
             // Set data object
-            response.setData(user);
+            if (user.getUsername() == null) {
+                response.setData(
+                        new SimpleUserDTO(user.getId(), user.getName(), user.getEmail().split("@")[0],
+                                user.getPicture()));
+            } else {
+                response.setData(
+                        new SimpleUserDTO(user.getId(), user.getName(), user.getUsername(), user.getPicture()));
+            }
 
             return response.build();
         } catch (final UserNotFound e) {
             return response.fromError(HttpStatus.NOT_FOUND, e.toApiError()).build();
-        } catch (final NotConfigured e) {
+        } catch (final NotConfiguredException e) {
             return response.fromError(HttpStatus.NOT_ACCEPTABLE, e.toApiError()).build();
         }
     }
 
-    private final class UserResponse extends GenericResponse<User> {
+    private final class UserResponse extends GenericResponse<SimpleUserDTO> {
         public UserResponse(final HttpStatus status) {
             super(status);
         }

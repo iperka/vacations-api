@@ -3,7 +3,7 @@ package com.iperka.vacations.api.users.auth0;
 import java.util.Optional;
 
 import com.auth0.json.mgmt.users.User;
-import com.iperka.vacations.api.users.auth0.exceptions.NotConfigured;
+import com.iperka.vacations.api.users.auth0.exceptions.NotConfiguredException;
 import com.iperka.vacations.api.users.exceptions.UserNotFound;
 
 /**
@@ -25,7 +25,7 @@ public interface ManagementService {
      * @return Optional with user object.
      * @throws UserNotFound If user doesn't exists
      */
-    public Optional<User> getUserById(final String userId) throws NotConfigured, UserNotFound;
+    public Optional<User> getUserById(final String userId) throws NotConfiguredException, UserNotFound;
 
     /**
      * Returns access token for given user object provided by Auth0.
@@ -37,5 +37,5 @@ public interface ManagementService {
      * @return Access token.
      * @throws UserNotFound If user doesn't exists
      */
-    public String getGoogleApiAccessToken(final String userId) throws NotConfigured, UserNotFound;
+    public String getGoogleApiAccessToken(final String userId) throws NotConfiguredException, UserNotFound;
 }

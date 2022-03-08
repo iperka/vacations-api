@@ -11,7 +11,7 @@ import com.auth0.json.auth.TokenHolder;
 import com.auth0.json.mgmt.users.Identity;
 import com.auth0.json.mgmt.users.User;
 import com.auth0.net.AuthRequest;
-import com.iperka.vacations.api.users.auth0.exceptions.NotConfigured;
+import com.iperka.vacations.api.users.auth0.exceptions.NotConfiguredException;
 import com.iperka.vacations.api.users.exceptions.UserNotFound;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -52,11 +52,11 @@ public class ManagementServiceImpl implements ManagementService {
     @Value("${spring.security.oauth2.resourceserver.jwt.issuer-uri}")
     private String issuer;
 
-    private void initialize() throws NotConfigured {
+    private void initialize() throws NotConfiguredException {
         try {
             this.managementAPI = new ManagementAPI(domain, getApiToken());
         } catch (APIException e) {
-            throw new NotConfigured();
+            throw new NotConfiguredException();
         }
 
     }
@@ -76,8 +76,8 @@ public class ManagementServiceImpl implements ManagementService {
         return holder.getAccessToken();
     }
 
-    @PreAuthorize("hasAnyAuthority('SCOPE_users:all:read', 'SCOPE_users:all:write')")
-    public Optional<User> getUserById(final String userId) throws NotConfigured, UserNotFound {
+    @PreAuthorize("hasAnyAuthority('SCOPE_users:read', 'SCOPE_users:write', 'SCOPE_users:all:read', 'SCOPE_users:all:write')")
+    public Optional<User> getUserById(final String userId) throws NotConfiguredException, UserNotFound {
         initialize();
         UserFilter userFilter = new UserFilter();
 
@@ -85,7 +85,7 @@ public class ManagementServiceImpl implements ManagementService {
             return Optional.of(this.managementAPI.users().get(userId, userFilter).execute());
         } catch (Auth0Exception e) {
             if (e.getMessage().contains("400: Bad HTTP authentication header format")) {
-                throw new NotConfigured();
+                throw new NotConfiguredException();
             }
 
             log.error("Exception occur while searching user with userId: <" + userId + ">", e);
@@ -94,7 +94,7 @@ public class ManagementServiceImpl implements ManagementService {
     }
 
     @Override
-    public String getGoogleApiAccessToken(String userId) throws NotConfigured, UserNotFound {
+    public String getGoogleApiAccessToken(String userId) throws NotConfiguredException, UserNotFound {
         User user = this.getUserById(userId).orElseThrow();
         String accessToken = null;
         for (Identity identity : user.getIdentities()) {
