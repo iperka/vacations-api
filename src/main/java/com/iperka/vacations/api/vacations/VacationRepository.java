@@ -10,7 +10,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
 /**
- * The {@link com.iperka.vacations.api.VacationRepository}
+ * The {@link com.iperka.vacations.api.UserRepository}
  * interface defines the methods that will interact with the
  * {@link com.iperka.vacations.api.Vacation} model.
  * 

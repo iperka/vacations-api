@@ -11,9 +11,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 /**
- * The {@link com.iperka.vacations.api.VacationService}
+ * The {@link com.iperka.vacations.api.UserService}
  * interface defines the methods that will interact with the
- * {@link com.iperka.vacations.api.VacationRepository} interface.
+ * {@link com.iperka.vacations.api.UserRepository} interface.
  * 
  * @author Michael Beutler
  * @version 1.0.0
@@ -140,5 +140,5 @@ public interface VacationService {
      * @param year      Desired year.
      * @return Array of sum's.
      */
-    public double[] getDaysCountByMonth(List<Vacation> vacations, Year year);
+    public abstract double[] getDaysCountByMonth(List<Vacation> vacations, Year year);
 }

@@ -4,7 +4,7 @@ import java.util.Optional;
 
 import com.auth0.json.mgmt.users.User;
 import com.iperka.vacations.api.users.auth0.exceptions.NotConfiguredException;
-import com.iperka.vacations.api.users.exceptions.UserNotFound;
+import com.iperka.vacations.api.users.exceptions.UserNotFoundException;
 
 /**
  * The {@link com.iperka.vacations.api.users.auth0.ManagementService}
@@ -23,9 +23,9 @@ public interface ManagementService {
      * @since 1.0.0
      * @param userId Auth0 user id.
      * @return Optional with user object.
-     * @throws UserNotFound If user doesn't exists
+     * @throws UserNotFoundException If user doesn't exists
      */
-    public Optional<User> getUserById(final String userId) throws NotConfiguredException, UserNotFound;
+    public Optional<User> getUserById(final String userId) throws NotConfiguredException, UserNotFoundException;
 
     /**
      * Returns access token for given user object provided by Auth0.
@@ -35,7 +35,7 @@ public interface ManagementService {
      * @since 1.0.0
      * @param userId Auth0 user id.
      * @return Access token.
-     * @throws UserNotFound If user doesn't exists
+     * @throws UserNotFoundException If user doesn't exists
      */
-    public String getGoogleApiAccessToken(final String userId) throws NotConfiguredException, UserNotFound;
+    public String getGoogleApiAccessToken(final String userId) throws NotConfiguredException, UserNotFoundException;
 }

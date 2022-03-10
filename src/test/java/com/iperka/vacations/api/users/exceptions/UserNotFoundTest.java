@@ -11,7 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 class UserNotFoundTest {
     @Test
     void shouldReturnCorrectFields() {
-        UserNotFound userNotFound = new UserNotFound();
+        UserNotFoundException userNotFound = new UserNotFoundException();
 
         APIError apiError = new APIError("UserNotFound", "User not found.", "There is no user matching given query.",
                 null, 404);

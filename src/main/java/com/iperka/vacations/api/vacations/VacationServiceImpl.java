@@ -22,9 +22,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 /**
- * The {@link com.iperka.vacations.api.VacationServiceImpl}
+ * The {@link com.iperka.vacations.api.UserServiceImpl}
  * class implements defines the
- * {@link com.iperka.vacations.api.VacationServiceImpl}
+ * {@link com.iperka.vacations.api.UserServiceImpl}
  * interface and provides service layer methods.
  * 
  * @author Michael Beutler
@@ -121,7 +121,6 @@ public class VacationServiceImpl extends Auditable implements VacationService {
      * @since 1.0.0
      * @param vacation new object.
      * @return Vacation created object.
-     * @throws VacationNotFoundException if vacation could not be found.
      */
     @Override
     @PreAuthorize("hasAnyAuthority('SCOPE_vacations:write', 'SCOPE_vacations:all:write')")

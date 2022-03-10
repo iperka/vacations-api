@@ -112,8 +112,8 @@ public class FriendshipController {
         final String userId = Helpers.getUserId(authentication);
         String query = null;
 
-        // Check if owner is set
-        if (StringUtils.hasText(owner) && StringUtils.hasText(owner)) {
+        // Check query params
+        if (StringUtils.hasText(owner) && StringUtils.hasText(user)) {
             query = String.format("owner=*%s*,user=*%s*", owner, user);
         } else if (StringUtils.hasText(owner)) {
             query = String.format("owner=*%s*", owner);

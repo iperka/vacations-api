@@ -12,7 +12,7 @@ import com.auth0.json.mgmt.users.Identity;
 import com.auth0.json.mgmt.users.User;
 import com.auth0.net.AuthRequest;
 import com.iperka.vacations.api.users.auth0.exceptions.NotConfiguredException;
-import com.iperka.vacations.api.users.exceptions.UserNotFound;
+import com.iperka.vacations.api.users.exceptions.UserNotFoundException;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -77,7 +77,7 @@ public class ManagementServiceImpl implements ManagementService {
     }
 
     @PreAuthorize("hasAnyAuthority('SCOPE_users:read', 'SCOPE_users:write', 'SCOPE_users:all:read', 'SCOPE_users:all:write')")
-    public Optional<User> getUserById(final String userId) throws NotConfiguredException, UserNotFound {
+    public Optional<User> getUserById(final String userId) throws NotConfiguredException, UserNotFoundException {
         initialize();
         UserFilter userFilter = new UserFilter();
 
@@ -89,12 +89,12 @@ public class ManagementServiceImpl implements ManagementService {
             }
 
             log.error("Exception occur while searching user with userId: <" + userId + ">", e);
-            throw new UserNotFound();
+            throw new UserNotFoundException();
         }
     }
 
     @Override
-    public String getGoogleApiAccessToken(String userId) throws NotConfiguredException, UserNotFound {
+    public String getGoogleApiAccessToken(String userId) throws NotConfiguredException, UserNotFoundException {
         User user = this.getUserById(userId).orElseThrow();
         String accessToken = null;
         for (Identity identity : user.getIdentities()) {
