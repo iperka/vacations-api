@@ -82,7 +82,7 @@ public class ManagementServiceImpl implements ManagementService {
         UserFilter userFilter = new UserFilter();
 
         try {
-            return Optional.of(this.managementAPI.users().get(userId, userFilter).execute());
+            return Optional.of(this.managementAPI.users().get(userId.replace('_', '|'), userFilter).execute());
         } catch (Auth0Exception e) {
             if (e.getMessage().contains("400: Bad HTTP authentication header format")) {
                 throw new NotConfiguredException();

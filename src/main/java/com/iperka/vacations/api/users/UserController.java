@@ -90,7 +90,7 @@ public class UserController {
         final GenericResponse<SimpleUserDTO> response = new GenericResponse<>(HttpStatus.OK);
 
         try {
-            User user = managementService.getUserById(userId).orElseThrow();
+            User user = managementService.getUserById(userId.replace('_', '|')).orElseThrow();
 
             // Set data object
             if (user.getUsername() == null) {
