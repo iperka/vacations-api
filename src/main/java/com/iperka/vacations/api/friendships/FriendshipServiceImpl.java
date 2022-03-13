@@ -1,6 +1,8 @@
 package com.iperka.vacations.api.friendships;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.transaction.Transactional;
@@ -9,12 +11,22 @@ import com.iperka.vacations.api.audit.AuditOperation;
 import com.iperka.vacations.api.friendships.exceptions.FriendshipNotFoundException;
 import com.iperka.vacations.api.friendships.exceptions.FriendshipRelationAlreadyExistsException;
 import com.iperka.vacations.api.security.Auditable;
+import com.iperka.vacations.api.users.auth0.ManagementService;
+import com.iperka.vacations.api.users.auth0.exceptions.NotConfiguredException;
+import com.iperka.vacations.api.users.exceptions.UserNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * The {@link com.iperka.vacations.api.friendships.FriendshipServiceImpl}
@@ -23,13 +35,26 @@ import org.springframework.stereotype.Service;
  * interface and provides service layer methods.
  * 
  * @author Michael Beutler
- * @version 1.0.0
+ * @version 1.5.1
  * @since 1.0.5
  */
 @Service
+@Slf4j
 public class FriendshipServiceImpl extends Auditable implements FriendshipService {
     @Autowired
     private FriendshipRepository friendshipRepository;
+
+    @Autowired
+    private ManagementService managementService;
+
+    @Value("${oneSignal.appId}")
+    private String appId;
+
+    @Value("${oneSignal.apiKey}")
+    private String apiKey;
+
+    @Value("${oneSignal.enabled}")
+    private boolean enabled;
 
     /**
      * Retrieves all friendships as {@link org.springframework.data.domain.Page}
@@ -152,6 +177,54 @@ public class FriendshipServiceImpl extends Auditable implements FriendshipServic
         if (this.existsByOwnerAndUserIgnoreCase(friendship.getOwner(), friendship.getUser())) {
             throw new FriendshipRelationAlreadyExistsException();
         }
+
+        if (this.enabled) {
+            String username;
+            try {
+                if (appId.isEmpty() || apiKey.isEmpty()) {
+                    throw new NotConfiguredException();
+                }
+
+                username = this.managementService.getUserById(friendship.getOwner()).get().getName();
+
+                HttpHeaders headers = new HttpHeaders();
+                headers.setContentType(MediaType.APPLICATION_JSON);
+                headers.setBasicAuth(apiKey);
+
+                Map<String, Object> data = new HashMap<String, Object>();
+
+                Map<String, String> contents = new HashMap<String, String>();
+                contents.put("en", username + " wants to become your friend!");
+
+                Map<String, String> headings = new HashMap<String, String>();
+                headings.put("en", "New Friend Request");
+
+                data.put("app_id", appId);
+                data.put("contents", contents);
+                data.put("headings", headings);
+                data.put("channel_for_external_user_ids", "push");
+
+                String[] externalUserIds = { friendship.getUser() };
+                data.put("include_external_user_ids", externalUserIds);
+
+                HttpEntity<Map<String, Object>> request = new HttpEntity<>(data, headers);
+
+                final String uri = "https://onesignal.com/api/v1/notifications";
+
+                RestTemplate restTemplate = new RestTemplate();
+                String result = restTemplate.postForObject(uri, request, String.class);
+                log.info("Sent notification...");
+                log.info(result);
+
+            } catch (NotConfiguredException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (UserNotFoundException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+
         friendship = friendshipRepository.save(friendship);
         this.audit(AuditOperation.CREATE, null, friendship);
         return friendship;

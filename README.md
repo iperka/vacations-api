@@ -162,3 +162,6 @@ Please note that some default values are also provided by configuration profiles
 | `MAIL_FROM_ADDRESS`              | Will send Mails from this address.                                     | `email`                     | `no-reply@iperka.com`                  |
 | `MAIL_FROM_NAME`                 | Will send Mails from this name.                                        | `string`                    | `iperka`                               |
 | `GOOGLE_RECAPTCHA_SECRET`        | Google Recaptcha secret for validating requests.                       | `string`                    | `reCAPTCHA_site_secret`                |
+| `ONE_SIGNAL_ENABLED`             | If set to `true` the app will send push notifications.                 | `boolean`                   | `false`                                |
+| `ONE_SIGNAL_APP_ID`              | App Id provided by one signal.                                         | `string`                    | `MY_APP_ID`                            |
+| `ONE_SIGNAL_API_KEY`             | Api KEY provided by one signal.                                        | `string`                    | `MY_API_KEY`                           |
