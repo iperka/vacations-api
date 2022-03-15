@@ -106,7 +106,8 @@ public class FriendshipController {
         final Authentication authentication,
         @ParameterObject @PageableDefault(size = 20, sort = "createdAt") final Pageable pageable,
         @RequestParam(required = false) @Parameter(description = "Filter friendships by owner.") final String owner,
-        @RequestParam(required = false) @Parameter(description = "Filter friendships by user.") final String user
+        @RequestParam(required = false) @Parameter(description = "Filter friendships by user.") final String user,
+        @RequestParam(required = false) @Parameter(description = "Filter friendships by user and or owner.") final String search
      // @formatter:on
     ) {
         final String userId = Helpers.getUserId(authentication);

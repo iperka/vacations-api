@@ -84,7 +84,7 @@ public class FriendshipServiceImpl extends Auditable implements FriendshipServic
     @Override
     @PreAuthorize("hasAnyAuthority('SCOPE_friendships:read', 'SCOPE_friendships:write', 'SCOPE_friendships:all:read', 'SCOPE_friendships:all:write')")
     public Page<Friendship> findAllByOwnerAndUser(Pageable pageable, String owner, String user) {
-        return friendshipRepository.findAllByOwnerAndUser(pageable, owner, user);
+        return friendshipRepository.findAllByOwnerAndUser(pageable, owner.replace('_', '|'), user.replace('_', '|'));
     }
 
     /**
@@ -98,7 +98,7 @@ public class FriendshipServiceImpl extends Auditable implements FriendshipServic
      * @return List with Friendship objects.
      */
     public List<Friendship> findAllByOwnerOrUser(String owner, String user) {
-        return friendshipRepository.findAllByOwnerOrUser(owner, user);
+        return friendshipRepository.findAllByOwnerOrUser(owner.replace('_', '|'), user.replace('_', '|'));
     }
 
     /**
@@ -112,7 +112,7 @@ public class FriendshipServiceImpl extends Auditable implements FriendshipServic
     @Override
     @PreAuthorize("hasAnyAuthority('SCOPE_friendships:read', 'SCOPE_friendships:write', 'SCOPE_friendships:all:read', 'SCOPE_friendships:all:write')")
     public boolean existsByOwnerAndUserIgnoreCase(String owner, String user) {
-        return friendshipRepository.existsByOwnerAndUserIgnoreCase(owner, user);
+        return friendshipRepository.existsByOwnerAndUserIgnoreCase(owner.replace('_', '|'), user.replace('_', '|'));
     }
 
     /**
@@ -127,7 +127,7 @@ public class FriendshipServiceImpl extends Auditable implements FriendshipServic
     @Override
     @PreAuthorize("hasAnyAuthority('SCOPE_friendships:read', 'SCOPE_friendships:write', 'SCOPE_friendships:all:read', 'SCOPE_friendships:all:write')")
     public Page<Friendship> findAllByOwner(Pageable pageable, String owner) {
-        return friendshipRepository.findAllByOwner(pageable, owner);
+        return friendshipRepository.findAllByOwner(pageable, owner.replace('_', '|'));
     }
 
     /**
@@ -159,7 +159,8 @@ public class FriendshipServiceImpl extends Auditable implements FriendshipServic
     @Override
     @PreAuthorize("hasAnyAuthority('SCOPE_friendships:read', 'SCOPE_friendships:write', 'SCOPE_friendships:all:read', 'SCOPE_friendships:all:write')")
     public Friendship findByUuidAndOwner(UUID uuid, String owner) throws FriendshipNotFoundException {
-        return friendshipRepository.findByUuidAndOwner(uuid, owner).orElseThrow(FriendshipNotFoundException::new);
+        return friendshipRepository.findByUuidAndOwner(uuid, owner.replace('_', '|'))
+                .orElseThrow(FriendshipNotFoundException::new);
     }
 
     /**
@@ -174,7 +175,7 @@ public class FriendshipServiceImpl extends Auditable implements FriendshipServic
     @Override
     @PreAuthorize("hasAnyAuthority('SCOPE_friendships:write', 'SCOPE_friendships:all:write')")
     public Friendship create(Friendship friendship) throws FriendshipRelationAlreadyExistsException {
-        if (this.existsByOwnerAndUserIgnoreCase(friendship.getOwner(), friendship.getUser())) {
+        if (this.existsByOwnerAndUserIgnoreCase(friendship.getOwner(), friendship.getUser().replace('_', '|'))) {
             throw new FriendshipRelationAlreadyExistsException();
         }
 
@@ -185,7 +186,7 @@ public class FriendshipServiceImpl extends Auditable implements FriendshipServic
                     throw new NotConfiguredException();
                 }
 
-                username = this.managementService.getUserById(friendship.getOwner()).get().getName();
+                username = this.managementService.getUserById(friendship.getOwner().replace('_', '|')).get().getName();
 
                 HttpHeaders headers = new HttpHeaders();
                 headers.setContentType(MediaType.APPLICATION_JSON);
@@ -200,11 +201,17 @@ public class FriendshipServiceImpl extends Auditable implements FriendshipServic
                 headings.put("en", "New Friend Request");
 
                 data.put("app_id", appId);
+                data.put("url", "vacations://friends/add/" + friendship.getOwner().replace('|', '_'));
+
+                Object[] buttons = { getButton("friend_request_accept", "Accept Request"),
+                        getButton("friend_request_ignore", "Ignore Request") };
+                // data.put("buttons", buttons);
+
                 data.put("contents", contents);
                 data.put("headings", headings);
                 data.put("channel_for_external_user_ids", "push");
 
-                String[] externalUserIds = { friendship.getUser() };
+                String[] externalUserIds = { friendship.getUser().replace('_', '|') };
                 data.put("include_external_user_ids", externalUserIds);
 
                 HttpEntity<Map<String, Object>> request = new HttpEntity<>(data, headers);
@@ -244,8 +251,8 @@ public class FriendshipServiceImpl extends Auditable implements FriendshipServic
         Friendship before = this.findByUuid(friendship.getUuid());
 
         // Set immutable properties
-        friendship.setOwner(before.getOwner());
-        friendship.setUser(before.getUser());
+        friendship.setOwner(before.getOwner().replace('_', '|'));
+        friendship.setUser(before.getUser().replace('_', '|'));
 
         Friendship after = friendshipRepository.save(friendship);
         this.audit(AuditOperation.UPDATE, before, after);
@@ -266,11 +273,11 @@ public class FriendshipServiceImpl extends Auditable implements FriendshipServic
     @PreAuthorize("hasAnyAuthority('SCOPE_friendships:write', 'SCOPE_friendships:all:write')")
     public Friendship updateByOwner(Friendship friendship, String owner)
             throws FriendshipNotFoundException {
-        Friendship before = this.findByUuidAndOwner(friendship.getUuid(), owner);
+        Friendship before = this.findByUuidAndOwner(friendship.getUuid(), owner.replace('_', '|'));
 
         // Set immutable properties
-        friendship.setOwner(before.getOwner());
-        friendship.setUser(before.getUser());
+        friendship.setOwner(before.getOwner().replace('_', '|'));
+        friendship.setUser(before.getUser().replace('_', '|'));
 
         Friendship after = friendshipRepository.save(friendship);
         this.audit(AuditOperation.UPDATE, before, after);
@@ -307,7 +314,14 @@ public class FriendshipServiceImpl extends Auditable implements FriendshipServic
     @Transactional
     @PreAuthorize("hasAnyAuthority('SCOPE_friendships:write', 'SCOPE_friendships:all:write')")
     public void deleteByUuidAndOwner(UUID uuid, String owner) throws FriendshipNotFoundException {
-        Friendship friendship = this.findByUuidAndOwner(uuid, owner);
-        friendshipRepository.deleteByUuidAndOwner(friendship.getUuid(), owner);
+        Friendship friendship = this.findByUuidAndOwner(uuid, owner.replace('_', '|'));
+        friendshipRepository.deleteByUuidAndOwner(friendship.getUuid(), owner.replace('_', '|'));
+    }
+
+    private Map<String, Object> getButton(String id, String text) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("id", id);
+        map.put("text", text);
+        return map;
     }
 }
