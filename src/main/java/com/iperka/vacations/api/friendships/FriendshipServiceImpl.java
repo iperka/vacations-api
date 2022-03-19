@@ -203,10 +203,6 @@ public class FriendshipServiceImpl extends Auditable implements FriendshipServic
                 data.put("app_id", appId);
                 data.put("url", "vacations://friends/add/" + friendship.getOwner().replace('|', '_'));
 
-                Object[] buttons = { getButton("friend_request_accept", "Accept Request"),
-                        getButton("friend_request_ignore", "Ignore Request") };
-                // data.put("buttons", buttons);
-
                 data.put("contents", contents);
                 data.put("headings", headings);
                 data.put("channel_for_external_user_ids", "push");
@@ -224,10 +220,8 @@ public class FriendshipServiceImpl extends Auditable implements FriendshipServic
                 log.info(result);
 
             } catch (NotConfiguredException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             } catch (UserNotFoundException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
@@ -318,10 +312,10 @@ public class FriendshipServiceImpl extends Auditable implements FriendshipServic
         friendshipRepository.deleteByUuidAndOwner(friendship.getUuid(), owner.replace('_', '|'));
     }
 
-    private Map<String, Object> getButton(String id, String text) {
-        Map<String, Object> map = new HashMap<>();
-        map.put("id", id);
-        map.put("text", text);
-        return map;
-    }
+    // private Map<String, Object> getButton(String id, String text) {
+    // Map<String, Object> map = new HashMap<>();
+    // map.put("id", id);
+    // map.put("text", text);
+    // return map;
+    // }
 }
