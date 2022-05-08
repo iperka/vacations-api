@@ -1,5 +1,3 @@
-[![Uptime](https://badgen.net/uptime-robot/status/m790176317-818ced6f0430585b9e70c6ab)](https://status.iperka.com)[![Uptime](https://badgen.net/uptime-robot/day/m790176317-818ced6f0430585b9e70c6ab)](https://status.iperka.com)[![Uptime](https://badgen.net/uptime-robot/week/m790176317-818ced6f0430585b9e70c6ab)](https://status.iperka.com)[![Uptime](https://badgen.net/uptime-robot/month/m790176317-818ced6f0430585b9e70c6ab)](https://status.iperka.com)
-
 # 1. Vacations API 📅
 
 Access iperka vacations with the API. This API is built with Java Spring Boot and is built with scalability in mind.
