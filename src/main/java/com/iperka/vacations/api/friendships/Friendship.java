@@ -10,15 +10,18 @@ import javax.validation.constraints.NotNull;
 
 import com.iperka.vacations.api.helpers.GenericFields;
 
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * The {@link com.iperka.vacations.api.friendships.Friendship} class defines
  * the structure of a basic friendship.
  * 
  * @author Michael Beutler
- * @version 1.0.0
+ * @version 1.0.1
  * @since 1.0.5
  */
 @Entity
@@ -26,6 +29,8 @@ import lombok.Data;
         @UniqueConstraint(columnNames = { "uuid" })
 })
 @Data
+@EqualsAndHashCode(callSuper=false)
+@Document(collection = "friendships")
 public class Friendship extends GenericFields {
     /**
      * Defines the user connected with this object.

@@ -12,6 +12,7 @@ spring:
     web.pageable:
       max-page-size: ${REST_MAX_PAGE_SIZE:100}
     rest.max-page-size: ${REST_MAX_PAGE_SIZE:100}
+  mongodb.embedded.version: 3.2.2
   security:
     oauth2:
       resourceserver:
@@ -63,33 +64,31 @@ mail:
     name: ${MAIL_FROM_NAME:iperka}
 ---
 spring:
+  autoconfigure.exclude:
+    - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+    - org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
+    - org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration
   config.activate.on-profile: development
-  h2:
-    console:
-      enabled: true
-  datasource:
-    url: jdbc:h2:mem:vacations-development
-    driverClassName: org.h2.Driver
-    username: sa
-    password:
+  data:
+    mongodb:
+      database: ${MONGODB_DATABASE:festiqs-api-development}
+      uri: ${MONGODB_URI:mongodb://localhost:27017/?readPreference=primary&appname=MongoDB%20Compass&ssl=false}
 springdoc:
   api-docs.enabled: true
   swagger-ui.enabled: true
 ---
 spring:
+  autoconfigure.exclude:
+    - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+    - org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
+    - org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration
   config.activate.on-profile: production
   devtools:
     add-properties: false
-  datasource:
-    url: ${DATASOURCE_URL}
-    driver-class-name: ${DATASOURCE_DRIVER}
-    username: ${DATASOURCE_USERNAME}
-    password: ${DATASOURCE_PASSWORD}
-  jpa:
-    hibernate.ddl-auto: ${JPA_DDL_AUTO:validate}
-    properties:
-      hibernate:
-        dialect: ${JPA_HIBERNATE_DIALECT}
+  data:
+    mongodb:
+      database: ${MONGODB_DATABASE:festiqs-api-production}
+      uri: ${MONGODB_URI:mongodb://localhost:27017/?readPreference=primary&appname=MongoDB%20Compass&ssl=false}
 springdoc:
   api-docs.enabled: ${API_DOCS_ENABLED:false}
   # Requires API_DOCS_ENABLED

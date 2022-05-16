@@ -10,9 +10,11 @@ import com.iperka.vacations.api.helpers.GenericFields;
 import com.iperka.vacations.api.helpers.Ownable;
 
 import org.hibernate.validator.constraints.Length;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * The {@link com.iperka.vacations.api.users.User} class defines
@@ -20,7 +22,7 @@ import lombok.Data;
  * suggestions.
  * 
  * @author Michael Beutler
- * @version 1.0.0
+ * @version 1.0.1
  * @since 1.0.9
  */
 @Entity
@@ -28,6 +30,8 @@ import lombok.Data;
         @UniqueConstraint(columnNames = { "uuid" })
 })
 @Data
+@EqualsAndHashCode(callSuper = false)
+@Document(collection = "users")
 public class User extends GenericFields implements Ownable {
     @Column(nullable = false, length = 500)
     @Length(min = 25, max = 500)

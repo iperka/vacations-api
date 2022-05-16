@@ -14,6 +14,7 @@ import com.vladmihalcea.hibernate.type.json.JsonType;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.TypeDefs;
+import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.lang.NonNull;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -38,6 +39,7 @@ import lombok.NoArgsConstructor;
 @TypeDefs({
         @TypeDef(name = "json", typeClass = JsonType.class)
 })
+@Document(collection = "audits")
 public class Audit extends GenericFields {
     @NonNull
     @Schema(example = "com.iperka.vacations.api.Example")
