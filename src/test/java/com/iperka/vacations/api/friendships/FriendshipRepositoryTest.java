@@ -4,21 +4,20 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.util.Optional;
-import java.util.UUID;
 
 import com.iperka.vacations.api.friendships.dto.FriendshipDTO;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 
-@DataJpaTest
+@DataMongoTest
 class FriendshipRepositoryTest {
 	@Autowired
 	private FriendshipRepository friendshipRepository;
 
 	@Test
-	void shouldFindFriendshipByUuid() {
+	void shouldFindFriendshipById() {
 		FriendshipDTO friendshipDTO = new FriendshipDTO();
 		Friendship friendshipBeforeSave = friendshipDTO.toObject();
 		friendshipBeforeSave.setOwner("test");
@@ -27,12 +26,12 @@ class FriendshipRepositoryTest {
 
 		Friendship friendship = friendshipRepository.save(friendshipBeforeSave);
 
-		Optional<Friendship> result = friendshipRepository.findByUuid(friendship.getUuid());
+		Optional<Friendship> result = friendshipRepository.findById(friendship.getId());
 		assertEquals(true, result.isPresent());
 		if (result.isPresent()) {
-			assertEquals(true, result.get().getUuid().compareTo(friendship.getUuid()) == 0);
+			assertEquals(true, result.get().getId().compareTo(friendship.getId()) == 0);
 		}
 
-		assertFalse(friendshipRepository.findByUuid(UUID.randomUUID()).isPresent());
+		assertFalse(friendshipRepository.findById("invalidId").isPresent());
 	}
 }

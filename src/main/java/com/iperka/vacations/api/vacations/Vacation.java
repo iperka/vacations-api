@@ -35,7 +35,7 @@ import net.fortuna.ical4j.model.property.Version;
  */
 @Entity
 @Table(name = "vacations", uniqueConstraints = {
-        @UniqueConstraint(columnNames = { "uuid" })
+        @UniqueConstraint(columnNames = { "id" })
 })
 @Data
 @EqualsAndHashCode(callSuper=false)

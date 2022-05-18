@@ -27,7 +27,7 @@ import lombok.EqualsAndHashCode;
  */
 @Entity
 @Table(name = "users", uniqueConstraints = {
-        @UniqueConstraint(columnNames = { "uuid" })
+        @UniqueConstraint(columnNames = { "id" })
 })
 @Data
 @EqualsAndHashCode(callSuper = false)

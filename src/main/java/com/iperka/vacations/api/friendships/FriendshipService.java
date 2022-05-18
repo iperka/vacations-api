@@ -1,7 +1,7 @@
 package com.iperka.vacations.api.friendships;
 
 import java.util.List;
-import java.util.UUID;
+
 
 import com.iperka.vacations.api.friendships.exceptions.FriendshipNotFoundException;
 import com.iperka.vacations.api.friendships.exceptions.FriendshipRelationAlreadyExistsException;
@@ -76,28 +76,28 @@ public interface FriendshipService {
     public abstract boolean existsByOwnerAndUserIgnoreCase(String owner, String user);
 
     /**
-     * Returns friendship with given UUID.
+     * Returns friendship with given String.
      * Bare in mind that these method should be explicit to administrative
      * roles.
      * 
      * @since 1.0.5
-     * @param uuid UUID of desired object.
+     * @param id String of desired object.
      * @return Friendship object.
      * @throws FriendshipNotFoundException if friendship could not be found.
      */
-    public abstract Friendship findByUuid(UUID uuid) throws FriendshipNotFoundException;
+    public abstract Friendship findById(String id) throws FriendshipNotFoundException;
 
     /**
-     * Returns friendship with given UUID and object must be owned
+     * Returns friendship with given String and object must be owned
      * by given user.
      * 
      * @since 1.0.5
-     * @param uuid  UUID of desired object.
+     * @param id  String of desired object.
      * @param owner Owner user id provided by Auth0.
      * @return Friendship object.
      * @throws FriendshipNotFoundException if friendship could not be found.
      */
-    public abstract Friendship findByUuidAndOwner(UUID uuid, String owner) throws FriendshipNotFoundException;
+    public abstract Friendship findByIdAndOwner(String id, String owner) throws FriendshipNotFoundException;
 
     /**
      * Creates and returns friendship.
@@ -132,24 +132,24 @@ public interface FriendshipService {
     public abstract Friendship updateByOwner(Friendship friendship, String owner) throws FriendshipNotFoundException;
 
     /**
-     * Deletes friendship with given UUID.
+     * Deletes friendship with given String.
      * Bare in mind that these method should be explicit to administrative
      * roles.
      * 
      * @since 1.0.5
-     * @param uuid UUID of desired object.
+     * @param id String of desired object.
      * @throws FriendshipNotFoundException if friendship could not be found.
      */
-    public abstract void deleteByUuid(UUID uuid) throws FriendshipNotFoundException;
+    public abstract void deleteById(String id) throws FriendshipNotFoundException;
 
     /**
-     * Deletes friendship with given UUID and object must be owned
+     * Deletes friendship with given String and object must be owned
      * by given user.
      * 
      * @since 1.0.5
-     * @param uuid  UUID of desired object.
+     * @param id  String of desired object.
      * @param owner Owner user id provided by Auth0.
      * @throws FriendshipNotFoundException if friendship could not be found.
      */
-    public abstract void deleteByUuidAndOwner(UUID uuid, String owner) throws FriendshipNotFoundException;
+    public abstract void deleteByIdAndOwner(String id, String owner) throws FriendshipNotFoundException;
 }

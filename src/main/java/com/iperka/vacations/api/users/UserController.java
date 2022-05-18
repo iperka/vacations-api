@@ -1,6 +1,6 @@
 package com.iperka.vacations.api.users;
 
-import java.util.UUID;
+
 
 import javax.validation.Valid;
 
@@ -270,12 +270,12 @@ public class UserController {
      * @param authentication Will be provided by Spring Security.
      * @param vacationDTO    Vacation object.
      */
-    @DeleteMapping(value = "/{uuid}")
+    @DeleteMapping(value = "/{id}")
     // @RequiresCaptcha
     // @formatter:off
     @Operation(
         summary = "Deletes User.", 
-        description = "Deletes User with given uuid.", 
+        description = "Deletes User with given id.", 
         security = {
             @SecurityRequirement(
                 name = OpenApiConfig.OAUTH2,
@@ -294,10 +294,10 @@ public class UserController {
         }
     )
     // @formatter:on
-    public ResponseEntity<GenericResponse<SimpleUserDTO>> deleteByUuid(
+    public ResponseEntity<GenericResponse<SimpleUserDTO>> deleteById(
     // @formatter:off
         final Authentication authentication,
-        @PathVariable("uuid") final UUID uuid
+        @PathVariable("id") final String id
      // @formatter:on
     ) {
         final String userId = Helpers.getUserId(authentication);
@@ -305,9 +305,9 @@ public class UserController {
 
         try {
             if (Helpers.hasScope(Scopes.USERS_ALL_WRITE, authentication)) {
-                this.userService.deleteByUuid(uuid);
+                this.userService.deleteById(id);
             } else {
-                this.userService.deleteByUuidAndOwner(uuid, userId);
+                this.userService.deleteByIdAndOwner(id, userId);
             }
         } catch (UserNotFoundException e) {
             return response.fromError(HttpStatus.NOT_FOUND, e.toApiError()).build();

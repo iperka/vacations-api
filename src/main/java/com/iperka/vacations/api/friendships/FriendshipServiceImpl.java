@@ -3,7 +3,7 @@ package com.iperka.vacations.api.friendships;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
+
 
 import javax.transaction.Transactional;
 
@@ -131,35 +131,35 @@ public class FriendshipServiceImpl extends Auditable implements FriendshipServic
     }
 
     /**
-     * Returns friendship with given UUID.
+     * Returns friendship with given String.
      * Bare in mind that these method should be explicit to administrative
      * roles.
      * 
      * @since 1.0.5
-     * @param uuid UUID of desired object.
+     * @param id String of desired object.
      * @return Friendship object.
      * @throws FriendshipNotFoundException if friendship could not be found.
      */
     @Override
     @PreAuthorize("hasAnyAuthority('SCOPE_friendships:all:read', 'SCOPE_friendships:all:write')")
-    public Friendship findByUuid(UUID uuid) throws FriendshipNotFoundException {
-        return friendshipRepository.findByUuid(uuid).orElseThrow(FriendshipNotFoundException::new);
+    public Friendship findById(String id) throws FriendshipNotFoundException {
+        return friendshipRepository.findById(id).orElseThrow(FriendshipNotFoundException::new);
     }
 
     /**
-     * Returns friendship with given UUID and object must be owned
+     * Returns friendship with given String and object must be owned
      * by given user.
      * 
      * @since 1.0.5
-     * @param uuid  UUID of desired object.
+     * @param id  String of desired object.
      * @param owner Owner user id provided by Auth0.
      * @return Friendship object.
      * @throws FriendshipNotFoundException if friendship could not be found.
      */
     @Override
     @PreAuthorize("hasAnyAuthority('SCOPE_friendships:read', 'SCOPE_friendships:write', 'SCOPE_friendships:all:read', 'SCOPE_friendships:all:write')")
-    public Friendship findByUuidAndOwner(UUID uuid, String owner) throws FriendshipNotFoundException {
-        return friendshipRepository.findByUuidAndOwner(uuid, owner.replace('_', '|'))
+    public Friendship findByIdAndOwner(String id, String owner) throws FriendshipNotFoundException {
+        return friendshipRepository.findByIdAndOwner(id, owner.replace('_', '|'))
                 .orElseThrow(FriendshipNotFoundException::new);
     }
 
@@ -242,7 +242,7 @@ public class FriendshipServiceImpl extends Auditable implements FriendshipServic
     @Override
     @PreAuthorize("hasAnyAuthority('SCOPE_friendships:all:write')")
     public Friendship update(Friendship friendship) throws FriendshipNotFoundException {
-        Friendship before = this.findByUuid(friendship.getUuid());
+        Friendship before = this.findById(friendship.getId());
 
         // Set immutable properties
         friendship.setOwner(before.getOwner().replace('_', '|'));
@@ -267,7 +267,7 @@ public class FriendshipServiceImpl extends Auditable implements FriendshipServic
     @PreAuthorize("hasAnyAuthority('SCOPE_friendships:write', 'SCOPE_friendships:all:write')")
     public Friendship updateByOwner(Friendship friendship, String owner)
             throws FriendshipNotFoundException {
-        Friendship before = this.findByUuidAndOwner(friendship.getUuid(), owner.replace('_', '|'));
+        Friendship before = this.findByIdAndOwner(friendship.getId(), owner.replace('_', '|'));
 
         // Set immutable properties
         friendship.setOwner(before.getOwner().replace('_', '|'));
@@ -279,37 +279,37 @@ public class FriendshipServiceImpl extends Auditable implements FriendshipServic
     }
 
     /**
-     * Deletes friendship with given UUID.
+     * Deletes friendship with given String.
      * Bare in mind that these method should be explicit to administrative
      * roles.
      * 
      * @since 1.0.5
-     * @param uuid UUID of desired object.
+     * @param id String of desired object.
      * @throws FriendshipNotFoundException if friendship could not be found.
      */
     @Override
     @Transactional
     @PreAuthorize("hasAuthority('SCOPE_friendships:all:write')")
-    public void deleteByUuid(UUID uuid) throws FriendshipNotFoundException {
-        Friendship friendship = this.findByUuid(uuid);
-        friendshipRepository.deleteByUuid(friendship.getUuid());
+    public void deleteById(String id) throws FriendshipNotFoundException {
+        Friendship friendship = this.findById(id);
+        friendshipRepository.deleteById(friendship.getId());
     }
 
     /**
-     * Deletes friendship with given UUID and object must be owned
+     * Deletes friendship with given String and object must be owned
      * by given user.
      * 
      * @since 1.0.5
-     * @param uuid  UUID of desired object.
+     * @param id  String of desired object.
      * @param owner Owner user id provided by Auth0.
      * @throws FriendshipNotFoundException if friendship could not be found.
      */
     @Override
     @Transactional
     @PreAuthorize("hasAnyAuthority('SCOPE_friendships:write', 'SCOPE_friendships:all:write')")
-    public void deleteByUuidAndOwner(UUID uuid, String owner) throws FriendshipNotFoundException {
-        Friendship friendship = this.findByUuidAndOwner(uuid, owner.replace('_', '|'));
-        friendshipRepository.deleteByUuidAndOwner(friendship.getUuid(), owner.replace('_', '|'));
+    public void deleteByIdAndOwner(String id, String owner) throws FriendshipNotFoundException {
+        Friendship friendship = this.findByIdAndOwner(id, owner.replace('_', '|'));
+        friendshipRepository.deleteByIdAndOwner(friendship.getId(), owner.replace('_', '|'));
     }
 
     // private Map<String, Object> getButton(String id, String text) {

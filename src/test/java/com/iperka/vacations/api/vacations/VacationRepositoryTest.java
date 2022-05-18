@@ -5,21 +5,20 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.util.Date;
 import java.util.Optional;
-import java.util.UUID;
 
 import com.iperka.vacations.api.vacations.dto.VacationDTO;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 
-@DataJpaTest
+@DataMongoTest
 class VacationRepositoryTest {
 	@Autowired
 	private VacationRepository vacationRepository;
 
 	@Test
-	void shouldFindVacationByUuid() {
+	void shouldFindVacationById() {
 		VacationDTO vacationDTO = new VacationDTO();
 		Vacation vacationBeforeSave = vacationDTO.toObject();
 		vacationBeforeSave.setOwner("me");
@@ -29,12 +28,12 @@ class VacationRepositoryTest {
 
 		Vacation vacation = vacationRepository.save(vacationBeforeSave);
 
-		Optional<Vacation> result = vacationRepository.findByUuid(vacation.getUuid());
+		Optional<Vacation> result = vacationRepository.findById(vacation.getId());
 		assertEquals(true, result.isPresent());
 		if (result.isPresent()) {
-			assertEquals(true, result.get().getUuid().compareTo(vacation.getUuid()) == 0);
+			assertEquals(true, result.get().getId().compareTo(vacation.getId()) == 0);
 		}
 
-		assertFalse(vacationRepository.findByUuid(UUID.randomUUID()).isPresent());
+		assertFalse(vacationRepository.findById("invalidId").isPresent());
 	}
 }

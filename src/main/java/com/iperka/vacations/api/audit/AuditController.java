@@ -1,7 +1,7 @@
 package com.iperka.vacations.api.audit;
 
 import java.util.List;
-import java.util.UUID;
+
 
 import com.iperka.vacations.api.audit.exceptions.AuditNotFoundException;
 import com.iperka.vacations.api.config.OpenApiConfig;
@@ -83,14 +83,14 @@ public class AuditController {
     public ResponseEntity<GenericResponse<List<Audit>>> findAll(
     // @formatter:off
         final Authentication authentication,
-        @ParameterObject @RequestParam(name = "objectUuid", required = false) final UUID objectUuid,
+        @ParameterObject @RequestParam(name = "objectId", required = false) final String objectId,
         @ParameterObject @PageableDefault(size = 20, sort = "createdAt", direction = Direction.DESC) final Pageable pageable
      // @formatter:on
     ) {
         // TODO: Evaluate permissions.
         Page<Audit> page;
-        if (objectUuid != null) {
-            page = auditService.findAllByObjectId(objectUuid, pageable);
+        if (objectId != null) {
+            page = auditService.findAllByObjectId(objectId, pageable);
         } else {
             page = auditService.findAll(pageable);
         }
@@ -98,18 +98,18 @@ public class AuditController {
     }
 
     /**
-     * Index route for /audit logs endpoint. Returns auditLog with given uuid.
+     * Index route for /audit logs endpoint. Returns auditLog with given id.
      * 
      * @since 1.0.0
      * @param authentication Will be provided by Spring Security.
-     * @param uuid           Uuid of demanded auditLog object.
+     * @param id           Id of demanded auditLog object.
      * @return A generic Response with auditLog as data property.
      */
-    @GetMapping(value = "/{uuid}")
+    @GetMapping(value = "/{id}")
     // @formatter:off
     @Operation(
-        summary = "Finds auditLog with given uuid.", 
-        description = "Finds auditLog with given uuid.", 
+        summary = "Finds auditLog with given id.", 
+        description = "Finds auditLog with given id.", 
         security = {
             @SecurityRequirement(
                 name = OpenApiConfig.OAUTH2,
@@ -126,16 +126,16 @@ public class AuditController {
         }
     )
     // @formatter:on
-    public ResponseEntity<GenericResponse<Audit>> findByUuid(
+    public ResponseEntity<GenericResponse<Audit>> findById(
     // @formatter:off
         final Authentication authentication,
-        @PathVariable("uuid") final UUID uuid
+        @PathVariable("id") final String id
      // @formatter:on
     ) {
         GenericResponse<Audit> response = new GenericResponse<>(HttpStatus.OK);
 
         try {
-            Audit auditLog = auditService.findById(uuid);
+            Audit auditLog = auditService.findById(id);
             response.setData(auditLog);
         } catch (AuditNotFoundException e) {
             log.info("Audit could not be found.");

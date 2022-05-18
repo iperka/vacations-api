@@ -2,7 +2,7 @@ package com.iperka.vacations.api.friendships;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
+
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,7 +19,7 @@ import org.springframework.stereotype.Repository;
  * @since 1.0.5
  */
 @Repository
-public interface FriendshipRepository extends PagingAndSortingRepository<Friendship, UUID> {
+public interface FriendshipRepository extends PagingAndSortingRepository<Friendship, String> {
     /**
      * Retrieves all friendships as {@link org.springframework.data.domain.Page}
      * object. Bare in mind that these method should be explicit to administrative
@@ -77,44 +77,44 @@ public interface FriendshipRepository extends PagingAndSortingRepository<Friends
     public boolean existsByOwnerAndUserIgnoreCase(String owner, String user);
 
     /**
-     * Returns friendship with given UUID.
+     * Returns friendship with given String.
      * Bare in mind that these method should be explicit to administrative
      * roles.
      * 
      * @since 1.0.5
-     * @param uuid UUID of desired object.
+     * @param id String of desired object.
      * @return Optional with Friendship object.
      */
-    public Optional<Friendship> findByUuid(UUID uuid);
+    public Optional<Friendship> findById(String id);
 
     /**
-     * Returns friendship with given UUID and object must be owned
+     * Returns friendship with given String and object must be owned
      * by given user.
      * 
      * @since 1.0.5
-     * @param uuid  UUID of desired object.
+     * @param id  String of desired object.
      * @param owner Owner user id provided by Auth0.
      * @return Optional with Friendship object.
      */
-    public Optional<Friendship> findByUuidAndOwner(UUID uuid, String owner);
+    public Optional<Friendship> findByIdAndOwner(String id, String owner);
 
     /**
-     * Deletes friendship with given UUID.
+     * Deletes friendship with given String.
      * Bare in mind that these method should be explicit to administrative
      * roles.
      * 
      * @since 1.0.5
-     * @param uuid UUID of desired object.
+     * @param id String of desired object.
      */
-    public void deleteByUuid(UUID uuid);
+    public void deleteById(String id);
 
     /**
-     * Deletes friendship with given UUID and object must be owned
+     * Deletes friendship with given String and object must be owned
      * by given user.
      * 
      * @since 1.0.5
-     * @param uuid  UUID of desired object.
+     * @param id  String of desired object.
      * @param owner Owner user id provided by Auth0.
      */
-    public void deleteByUuidAndOwner(UUID uuid, String owner);
+    public void deleteByIdAndOwner(String id, String owner);
 }

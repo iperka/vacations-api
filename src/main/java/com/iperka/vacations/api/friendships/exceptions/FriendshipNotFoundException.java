@@ -12,7 +12,7 @@ import com.iperka.vacations.api.helpers.CustomException;
  */
 public class FriendshipNotFoundException extends Exception implements CustomException {
     private static final String MESSAGE = "Friendship not found.";
-    private static final String CAUSE = "There is no friendship matching given uuid.";
+    private static final String CAUSE = "There is no friendship matching given id.";
 
     public APIError toApiError() {
         return new APIError("FriendshipNotFound", MESSAGE, CAUSE, null, 404);

@@ -12,13 +12,12 @@ spring:
     web.pageable:
       max-page-size: ${REST_MAX_PAGE_SIZE:100}
     rest.max-page-size: ${REST_MAX_PAGE_SIZE:100}
-  mongodb.embedded.version: 3.2.2
+  mongodb.embedded.version: 4.0.21
   security:
     oauth2:
       resourceserver:
         jwt:
           issuer-uri: ${auth0.domain}
-  jpa.open-in-view: false
   mail:
     host: ${MAIL_HOST:localhost}
     port: ${MAIL_PORT:25}
@@ -64,31 +63,29 @@ mail:
     name: ${MAIL_FROM_NAME:iperka}
 ---
 spring:
-  autoconfigure.exclude:
-    - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
-    - org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
-    - org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration
-  config.activate.on-profile: development
-  data:
-    mongodb:
-      database: ${MONGODB_DATABASE:festiqs-api-development}
-      uri: ${MONGODB_URI:mongodb://localhost:27017/?readPreference=primary&appname=MongoDB%20Compass&ssl=false}
+  config.activate.on-profile: test
 springdoc:
   api-docs.enabled: true
   swagger-ui.enabled: true
 ---
 spring:
-  autoconfigure.exclude:
-    - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
-    - org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
-    - org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration
+  config.activate.on-profile: development
+  data:
+    mongodb:
+      database: ${MONGODB_DATABASE:iperka-api-development}
+      uri: ${MONGODB_URI:mongodb://localhost:27017/}
+springdoc:
+  api-docs.enabled: true
+  swagger-ui.enabled: true
+---
+spring:
   config.activate.on-profile: production
   devtools:
     add-properties: false
   data:
     mongodb:
-      database: ${MONGODB_DATABASE:festiqs-api-production}
-      uri: ${MONGODB_URI:mongodb://localhost:27017/?readPreference=primary&appname=MongoDB%20Compass&ssl=false}
+      database: ${MONGODB_DATABASE:iperka-api-production}
+      uri: ${MONGODB_URI:mongodb://localhost:27017/}
 springdoc:
   api-docs.enabled: ${API_DOCS_ENABLED:false}
   # Requires API_DOCS_ENABLED

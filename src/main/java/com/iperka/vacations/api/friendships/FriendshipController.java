@@ -1,7 +1,7 @@
 package com.iperka.vacations.api.friendships;
 
 import java.util.List;
-import java.util.UUID;
+
 
 import javax.validation.Valid;
 
@@ -146,22 +146,22 @@ public class FriendshipController {
     }
 
     /**
-     * Index route for /friendships endpoint. Returns Friendships with given uuid
+     * Index route for /friendships endpoint. Returns Friendships with given id
      * (if
      * user
      * is authorized).
      * 
      * @since 1.0.5
      * @param authentication Will be provided by Spring Security.
-     * @param uuid           Id of demanded Friendships object.
+     * @param id           Id of demanded Friendships object.
      * @return A generic Response with Friendships as data property.
      */
-    @GetMapping(value = "/{uuid}")
+    @GetMapping(value = "/{id}")
     // @formatter:off
     @Operation(
-        summary = "Finds Friendships with given uuid.", 
+        summary = "Finds Friendships with given id.", 
         // TODO: Extend description.
-        description = "Finds Friendships with given uuid.", 
+        description = "Finds Friendships with given id.", 
         security = {
             @SecurityRequirement(
                 name = OpenApiConfig.OAUTH2,
@@ -178,10 +178,10 @@ public class FriendshipController {
         }
     )
     // @formatter:on
-    public ResponseEntity<GenericResponse<Friendship>> findByUuid(
+    public ResponseEntity<GenericResponse<Friendship>> findById(
     // @formatter:off
         final Authentication authentication,
-        @PathVariable("uuid") final UUID uuid
+        @PathVariable("id") final String id
      // @formatter:on
     ) {
         final String userId = Helpers.getUserId(authentication);
@@ -190,10 +190,10 @@ public class FriendshipController {
         try {
             if (Helpers.hasScope(Scopes.FRIENDSHIPS_ALL_READ, authentication)
                     || Helpers.hasScope(Scopes.FRIENDSHIPS_ALL_WRITE, authentication)) {
-                Friendship friendship = this.friendshipService.findByUuid(uuid);
+                Friendship friendship = this.friendshipService.findById(id);
                 response.setData(friendship);
             } else {
-                Friendship friendship = this.friendshipService.findByUuidAndOwner(uuid, userId);
+                Friendship friendship = this.friendshipService.findByIdAndOwner(id, userId);
                 response.setData(friendship);
             }
         } catch (FriendshipNotFoundException e) {
@@ -267,7 +267,7 @@ public class FriendshipController {
      * @param friendshipsDTO Friendship object.
      * @return A generic Response with created friendships as data property.
      */
-    @PutMapping(value = "/{uuid}")
+    @PutMapping(value = "/{id}")
     // @RequiresCaptcha
     // @formatter:off
     @Operation(
@@ -291,10 +291,10 @@ public class FriendshipController {
         }
     )
     // @formatter:on
-    public ResponseEntity<GenericResponse<Friendship>> updateByUuid(
+    public ResponseEntity<GenericResponse<Friendship>> updateById(
     // @formatter:off
         final Authentication authentication,
-        @PathVariable("uuid") final UUID uuid,
+        @PathVariable("id") final String id,
         @Valid @RequestBody(required = true, content = @Content(schema =  @Schema(implementation = FriendshipDTO.class))) @org.springframework.web.bind.annotation.RequestBody final FriendshipDTO friendshipsDTO
      // @formatter:on
     ) {
@@ -323,12 +323,12 @@ public class FriendshipController {
      * @param authentication Will be provided by Spring Security.
      * @param friendshipDTO  Friendship object.
      */
-    @DeleteMapping(value = "/{uuid}")
+    @DeleteMapping(value = "/{id}")
     // @RequiresCaptcha
     // @formatter:off
     @Operation(
         summary = "Deletes Friendships.", 
-        description = "Deletes Friendships with given uuid.", 
+        description = "Deletes Friendships with given id.", 
         security = {
             @SecurityRequirement(
                 name = OpenApiConfig.OAUTH2,
@@ -346,10 +346,10 @@ public class FriendshipController {
         }
     )
     // @formatter:on
-    public ResponseEntity<GenericResponse<Friendship>> deleteByUuid(
+    public ResponseEntity<GenericResponse<Friendship>> deleteById(
     // @formatter:off
         final Authentication authentication,
-        @PathVariable("uuid") final UUID uuid
+        @PathVariable("id") final String id
      // @formatter:on
     ) {
         final String userId = Helpers.getUserId(authentication);
@@ -357,9 +357,9 @@ public class FriendshipController {
 
         try {
             if (Helpers.hasScope(Scopes.FRIENDSHIPS_ALL_WRITE, authentication)) {
-                this.friendshipService.deleteByUuid(uuid);
+                this.friendshipService.deleteById(id);
             } else {
-                this.friendshipService.deleteByUuidAndOwner(uuid, userId);
+                this.friendshipService.deleteByIdAndOwner(id, userId);
             }
         } catch (FriendshipNotFoundException e) {
             log.info("Friendship could not be found.");
