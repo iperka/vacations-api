@@ -122,38 +122,40 @@ See https://github.com/iperka/vacations-google-script
 
 Please note that some default values are also provided by configuration profiles. For example if the profile is set to `development` the datasource will be an in memory database ready to test but with non persistent data.
 
-| Name                             | Description                                                            | Type                        | Default                                |
-| -------------------------------- | ---------------------------------------------------------------------- | --------------------------- | -------------------------------------- |
-| `SPRING_PROFILES_ACTIVE`         | Application configuration profile.                                     | `development \| production` | `development`                          |
-| `REST_MAX_PAGE_SIZE`             | Defines the maximum page size for `Pagable` parameters.                | `int`                       | `100`                                  |
-| `AUTH0_AUDIENCE`                 | Auth0 Audience configured in your Auth0 API. (Must end with `/`.)      | `string`                    | `https://api.vacations.iperka.com/`    |
-| `AUTH0_DOMAIN`                   | Auth0 Domain provided by Auth0. (Must end with `/`.)                   | `string`                    | `https://iperka.eu.auth0.com/`         |
-| `AUTH0_CLIENT_ID`                | Auth0 Client ID for Management API.                                    | `string`                    | `MY_CLIENT_ID`                         |
-| `AUTH0_CLIENT_SECRET`            | Auth0 Client Secret for Management API.                                | `string`                    | `MY_CLIENT_SECRET`                     |
-| `API_DOCS_PATH`                  | Relative path to provide OpenAPI v3 JSON.                              | `string`                    | `/openapi/v3`                          |
-| `API_DOCS_SHOW_ACTUATOR`         | When set to `true` the actuator routes will also be documented.        | `boolean`                   | `false`                                |
-| `API_DOCS_ENABLED`               | API Docs endpoint is enabled.                                          | `boolean`                   | `false`                                |
-| `SWAGGER_UI_ENABLED`             | Swagger UI endpoint is enabled. (Requires API Docs to be enabled too.) | `boolean`                   | `false`                                |
-| `SWAGGER_API_DOCS_PATH`          | Relative path for OpenAPI docs.                                        | `string`                    | `/openapi/v3`                          |
-| `MANAGEMENT_SERVER_PORT`         | Management Server port. (Will be used to expose actuator endpoints.)   | `int`                       | `8081`                                 |
-| `DATASOURCE_URL`                 | Spring Boot Datasource connection URL.                                 | `string`                    | -                                      |
-| `DATASOURCE_DRIVER`              | Spring Boot Datasource driver class name.                              | `string`                    | -                                      |
-| `DATASOURCE_USERNAME`            | Spring Boot Datasource username.                                       | `string`                    | -                                      |
-| `DATASOURCE_PASSWORD`            | Spring Boot Datasource password.                                       | `string`                    | -                                      |
-| `JPA_DDL_AUTO`                   | JPA DDL automation setting.                                            | `string`                    | `update`                               |
-| `JPA_HIBERNATE_DIALECT`          | JPA Hibernate dialect.                                                 | `string`                    | -                                      |
-| `SWAGGER_UI_OAUTH2_REDIRECT_URL` | Swagger UI OAuth2 redirect URL.                                        | `string`                    | `/oauth2-redirect.html`                |
-| `SERVER_SERVLET_CONTEXT_PATH`    | Servelt context path.                                                  | `string`                    | `/`                                    |
-| `API_SERVER_URL`                 | API Server url for OpenAPI requests.                                   | `string`                    | `https://api.vacations.iperka.com/v1/` |
-| `MAIL_HOST`                      | Mail Server host.                                                      | `string`                    | `localhost`                            |
-| `MAIL_PORT`                      | Mail Server port.                                                      | `number`                    | `25`                                   |
-| `MAIL_USERNAME`                  | Mail Server username.                                                  | `string`                    | `myUser`                               |
-| `MAIL_PASSWORD`                  | Mail Server password.                                                  | `string`                    | `myPassword`                           |
-| `MAIL_SMTP_AUTH`                 | Mail Server requires authentication.                                   | `boolean`                   | `true`                                 |
-| `MAIL_SMTP_STARTTLS_ENABLED`     | Mail Server allows `STARTTLS` connections.                             | `boolean`                   | `true`                                 |
-| `MAIL_FROM_ADDRESS`              | Will send Mails from this address.                                     | `email`                     | `no-reply@iperka.com`                  |
-| `MAIL_FROM_NAME`                 | Will send Mails from this name.                                        | `string`                    | `iperka`                               |
-| `GOOGLE_RECAPTCHA_SECRET`        | Google Recaptcha secret for validating requests.                       | `string`                    | `reCAPTCHA_site_secret`                |
-| `ONE_SIGNAL_ENABLED`             | If set to `true` the app will send push notifications.                 | `boolean`                   | `false`                                |
-| `ONE_SIGNAL_APP_ID`              | App Id provided by one signal.                                         | `string`                    | `MY_APP_ID`                            |
-| `ONE_SIGNAL_API_KEY`             | Api KEY provided by one signal.                                        | `string`                    | `MY_API_KEY`                           |
+| Name                             | Description                                                            | Type                        | Default                                       |
+| -------------------------------- | ---------------------------------------------------------------------- | --------------------------- | --------------------------------------------- |
+| `SPRING_PROFILES_ACTIVE`         | Application configuration profile.                                     | `development \| production` | `development`                                 |
+| `REST_MAX_PAGE_SIZE`             | Defines the maximum page size for `Pagable` parameters.                | `int`                       | `100`                                         |
+| `AUTH0_AUDIENCE`                 | Auth0 Audience configured in your Auth0 API. (Must end with `/`.)      | `string`                    | `https://api.vacations.iperka.com/`           |
+| `AUTH0_DOMAIN`                   | Auth0 Domain provided by Auth0. (Must end with `/`.)                   | `string`                    | `https://iperka.eu.auth0.com/`                |
+| `AUTH0_CLIENT_ID`                | Auth0 Client ID for Management API.                                    | `string`                    | `MY_CLIENT_ID`                                |
+| `AUTH0_CLIENT_SECRET`            | Auth0 Client Secret for Management API.                                | `string`                    | `MY_CLIENT_SECRET`                            |
+| `API_DOCS_PATH`                  | Relative path to provide OpenAPI v3 JSON.                              | `string`                    | `/openapi/v3`                                 |
+| `API_DOCS_SHOW_ACTUATOR`         | When set to `true` the actuator routes will also be documented.        | `boolean`                   | `false`                                       |
+| `API_DOCS_ENABLED`               | API Docs endpoint is enabled.                                          | `boolean`                   | `false`                                       |
+| `SWAGGER_UI_ENABLED`             | Swagger UI endpoint is enabled. (Requires API Docs to be enabled too.) | `boolean`                   | `false`                                       |
+| `SWAGGER_API_DOCS_PATH`          | Relative path for OpenAPI docs.                                        | `string`                    | `/openapi/v3`                                 |
+| `MANAGEMENT_SERVER_PORT`         | Management Server port. (Will be used to expose actuator endpoints.)   | `int`                       | `8081`                                        |
+| `DATASOURCE_URL`                 | Spring Boot Datasource connection URL.                                 | `string`                    | -                                             |
+| `DATASOURCE_DRIVER`              | Spring Boot Datasource driver class name.                              | `string`                    | -                                             |
+| `DATASOURCE_USERNAME`            | Spring Boot Datasource username.                                       | `string`                    | -                                             |
+| `DATASOURCE_PASSWORD`            | Spring Boot Datasource password.                                       | `string`                    | -                                             |
+| `JPA_DDL_AUTO`                   | JPA DDL automation setting.                                            | `string`                    | `update`                                      |
+| `JPA_HIBERNATE_DIALECT`          | JPA Hibernate dialect.                                                 | `string`                    | -                                             |
+| `MONGODB_DATABASE`               | MongoDB database.                                                      | `string`                    | `vacations-api-development`                   |
+| `MONGODB_URI`                    | MongoDB Connection URI to overwrite the default generated one.         | `string`                    | `mongodb+srv://<username>:<password>@<host>/` |
+| `SWAGGER_UI_OAUTH2_REDIRECT_URL` | Swagger UI OAuth2 redirect URL.                                        | `string`                    | `/oauth2-redirect.html`                       |
+| `SERVER_SERVLET_CONTEXT_PATH`    | Servelt context path.                                                  | `string`                    | `/`                                           |
+| `API_SERVER_URL`                 | API Server url for OpenAPI requests.                                   | `string`                    | `https://api.vacations.iperka.com/v1/`        |
+| `MAIL_HOST`                      | Mail Server host.                                                      | `string`                    | `localhost`                                   |
+| `MAIL_PORT`                      | Mail Server port.                                                      | `number`                    | `25`                                          |
+| `MAIL_USERNAME`                  | Mail Server username.                                                  | `string`                    | `myUser`                                      |
+| `MAIL_PASSWORD`                  | Mail Server password.                                                  | `string`                    | `myPassword`                                  |
+| `MAIL_SMTP_AUTH`                 | Mail Server requires authentication.                                   | `boolean`                   | `true`                                        |
+| `MAIL_SMTP_STARTTLS_ENABLED`     | Mail Server allows `STARTTLS` connections.                             | `boolean`                   | `true`                                        |
+| `MAIL_FROM_ADDRESS`              | Will send Mails from this address.                                     | `email`                     | `no-reply@iperka.com`                         |
+| `MAIL_FROM_NAME`                 | Will send Mails from this name.                                        | `string`                    | `iperka`                                      |
+| `GOOGLE_RECAPTCHA_SECRET`        | Google Recaptcha secret for validating requests.                       | `string`                    | `reCAPTCHA_site_secret`                       |
+| `ONE_SIGNAL_ENABLED`             | If set to `true` the app will send push notifications.                 | `boolean`                   | `false`                                       |
+| `ONE_SIGNAL_APP_ID`              | App Id provided by one signal.                                         | `string`                    | `MY_APP_ID`                                   |
+| `ONE_SIGNAL_API_KEY`             | Api KEY provided by one signal.                                        | `string`                    | `MY_API_KEY`                                  |
