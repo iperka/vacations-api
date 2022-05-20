@@ -1,8 +1,10 @@
 spring:
   profiles:
     active: development
+  banner:
+    location: classpath:/banner.txt
   main:
-    banner-mode: off
+    banner-mode: console
   mvc:
     throw-exception-if-no-handler-found: true
   web:
@@ -12,7 +14,7 @@ spring:
     web.pageable:
       max-page-size: ${REST_MAX_PAGE_SIZE:100}
     rest.max-page-size: ${REST_MAX_PAGE_SIZE:100}
-  mongodb.embedded.version: 4.0.21
+  mongodb.embedded.version: 3.2.2
   security:
     oauth2:
       resourceserver:
@@ -64,6 +66,13 @@ mail:
 ---
 spring:
   config.activate.on-profile: test
+  main:
+    banner-mode: off
+  # The embedded testing server is not an official mongodb so it's suggested to use the Atlas database
+  data:
+    mongodb:
+      database: ${MONGODB_DATABASE:vacations-api-test}
+      uri: ${MONGODB_URI:mongodb://localhost:27017/}
 springdoc:
   api-docs.enabled: true
   swagger-ui.enabled: true
@@ -72,7 +81,7 @@ spring:
   config.activate.on-profile: development
   data:
     mongodb:
-      database: ${MONGODB_DATABASE:iperka-api-development}
+      database: ${MONGODB_DATABASE:vacations-api-development}
       uri: ${MONGODB_URI:mongodb://localhost:27017/}
 springdoc:
   api-docs.enabled: true
@@ -84,7 +93,7 @@ spring:
     add-properties: false
   data:
     mongodb:
-      database: ${MONGODB_DATABASE:iperka-api-production}
+      database: ${MONGODB_DATABASE:vacations-api-production}
       uri: ${MONGODB_URI:mongodb://localhost:27017/}
 springdoc:
   api-docs.enabled: ${API_DOCS_ENABLED:false}
