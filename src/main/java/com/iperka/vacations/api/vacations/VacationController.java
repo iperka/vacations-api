@@ -7,7 +7,7 @@ import java.util.List;
 import javax.validation.Valid;
 
 import com.iperka.vacations.api.config.OpenApiConfig;
-import com.iperka.vacations.api.friendships.FriendshipService;
+// import com.iperka.vacations.api.friendships.FriendshipService;
 import com.iperka.vacations.api.helpers.APIError;
 import com.iperka.vacations.api.helpers.GenericResponse;
 import com.iperka.vacations.api.helpers.openapi.responses.BadRequestResponse;
@@ -71,8 +71,8 @@ public class VacationController {
     @Autowired
     private VacationService vacationService;
 
-    @Autowired
-    private FriendshipService friendshipService;
+    // @Autowired
+    // private FriendshipService friendshipService;
 
     /**
      * Index route for /vacations endpoint. Returns all vacations (if user is
@@ -232,12 +232,16 @@ public class VacationController {
             // Check if authenticated user has been granted vacations:all:read
             if (Helpers.hasScope(Scopes.VACATIONS_ALL_READ, authentication) && StringUtils.hasText(owner)) {
                 vacation = this.vacationService.findByOwnerAndStartDateGreaterThanEqualOrderByStartDateAsc(owner, date);
-            } else if (StringUtils.hasText(owner) && Helpers.isFriend(
-                    authentication,
-                    owner,
-                    friendshipService.findAllByOwnerOrUser(userId, userId))) {
-                vacation = this.vacationService.findByOwnerAndStartDateGreaterThanEqualOrderByStartDateAsc(owner, date);
-            } else {
+            }
+            // else if (StringUtils.hasText(owner) && Helpers.isFriend(
+            // authentication,
+            // owner,
+            // friendshipService.findAllByOwnerOrUser(userId, userId))) {
+            // vacation =
+            // this.vacationService.findByOwnerAndStartDateGreaterThanEqualOrderByStartDateAsc(owner,
+            // date);
+            // }
+            else {
                 if (StringUtils.hasText(owner)) {
                     return response
                             .fromError(HttpStatus.FORBIDDEN, new APIError("OAuthException",
