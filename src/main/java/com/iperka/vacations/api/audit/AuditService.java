@@ -1,6 +1,6 @@
 package com.iperka.vacations.api.audit;
 
-import java.util.UUID;
+
 
 import com.iperka.vacations.api.audit.exceptions.AuditNotFoundException;
 
@@ -33,17 +33,17 @@ public interface AuditService {
      * @param id Object id of desired Audit.
      * @return Audit object.
      */
-    public abstract Audit findById(UUID id) throws AuditNotFoundException;
+    public abstract Audit findById(String id) throws AuditNotFoundException;
 
     /**
      * Returns a Audit identified by given ObjectId as {@link Page}.
      * 
      * @since 1.0.0
-     * @param objectUuid Object uuid of desired Audit.
+     * @param objectId Object id of desired Audit.
      * @param pageable   Page request data.
      * @return Page object containing Audit logs.
      */
-    public abstract Page<Audit> findAllByObjectId(UUID objectUuid, Pageable pageable);
+    public abstract Page<Audit> findAllByObjectId(String objectId, Pageable pageable);
 
     /**
      * Returns a Audit created based on given object as {@link Audit}.

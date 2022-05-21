@@ -1,7 +1,7 @@
 package com.iperka.vacations.api.users;
 
 import java.util.Optional;
-import java.util.UUID;
+
 
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Repository;
  * @since 1.0.9
  */
 @Repository
-public interface UserRepository extends PagingAndSortingRepository<User, UUID> {
+public interface UserRepository extends PagingAndSortingRepository<User, String> {
     /**
      * Returns true if user with given owner already exists.
      * 
@@ -45,13 +45,13 @@ public interface UserRepository extends PagingAndSortingRepository<User, UUID> {
     public boolean existsByPhoneHash(String phoneHash);
 
     /**
-     * Returns user with UUID.
+     * Returns user with String.
      * 
      * @since 1.0.9
-     * @param uuid User uuid of desired object.
+     * @param id User id of desired object.
      * @return Optional with User object.
      */
-    public Optional<User> findByUuid(UUID uuid);
+    public Optional<User> findById(String id);
 
     /**
      * Returns user with given owner.
@@ -81,24 +81,24 @@ public interface UserRepository extends PagingAndSortingRepository<User, UUID> {
     public Optional<User> findByPhoneHash(String phoneHash);
 
     /**
-     * Deletes user with given UUID.
+     * Deletes user with given String.
      * Bare in mind that these method should be explicit to administrative
      * roles.
      * 
      * @since 1.0.9
-     * @param uuid UUID of desired object.
+     * @param id String of desired object.
      */
-    public void deleteByUuid(UUID uuid);
+    public void deleteById(String id);
 
     /**
-     * Deletes user with given UUID and object must be owned
+     * Deletes user with given String and object must be owned
      * by given user.
      * 
      * @since 1.0.9
-     * @param uuid  UUID of desired object.
+     * @param id  String of desired object.
      * @param owner Owner user id provided by Auth0.
      */
-    public void deleteByUuidAndOwner(UUID uuid, String owner);
+    public void deleteByIdAndOwner(String id, String owner);
 
     /**
      * Deletes all users, object must be owned

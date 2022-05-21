@@ -2,7 +2,7 @@ package com.iperka.vacations.api.vacations;
 
 import java.util.Date;
 import java.util.Optional;
-import java.util.UUID;
+
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,7 +19,7 @@ import org.springframework.stereotype.Repository;
  * @since 1.0.0
  */
 @Repository
-public interface VacationRepository extends PagingAndSortingRepository<Vacation, UUID> {
+public interface VacationRepository extends PagingAndSortingRepository<Vacation, String> {
     /**
      * Retrieves all vacations as {@link org.springframework.data.domain.Page}
      * object. Bare in mind that these method should be explicit to administrative
@@ -43,26 +43,26 @@ public interface VacationRepository extends PagingAndSortingRepository<Vacation,
     public Page<Vacation> findAllByOwner(Pageable pageable, String owner);
 
     /**
-     * Returns vacation with given UUID.
+     * Returns vacation with given String.
      * Bare in mind that these method should be explicit to administrative
      * roles.
      * 
      * @since 1.0.0
-     * @param uuid UUID of desired object.
+     * @param id String of desired object.
      * @return Optional with Vacation object.
      */
-    public Optional<Vacation> findByUuid(UUID uuid);
+    public Optional<Vacation> findById(String id);
 
     /**
-     * Returns vacation with given UUID and object must be owned
+     * Returns vacation with given String and object must be owned
      * by given user.
      * 
      * @since 1.0.0
-     * @param uuid  UUID of desired object.
+     * @param id  String of desired object.
      * @param owner Owner user id provided by Auth0.
      * @return Optional with Vacation object.
      */
-    public Optional<Vacation> findByUuidAndOwner(UUID uuid, String owner);
+    public Optional<Vacation> findByIdAndOwner(String id, String owner);
 
     /**
      * Returns next vacation for given user relative to given date.
@@ -75,22 +75,22 @@ public interface VacationRepository extends PagingAndSortingRepository<Vacation,
     public Optional<Vacation> findByOwnerAndStartDateGreaterThanEqualOrderByStartDateAsc(String owner, Date startDate);
 
     /**
-     * Deletes vacation with given UUID.
+     * Deletes vacation with given String.
      * Bare in mind that these method should be explicit to administrative
      * roles.
      * 
      * @since 1.0.0
-     * @param uuid UUID of desired object.
+     * @param id String of desired object.
      */
-    public void deleteByUuid(UUID uuid);
+    public void deleteById(String id);
 
     /**
-     * Deletes vacation with given UUID and object must be owned
+     * Deletes vacation with given String and object must be owned
      * by given user.
      * 
      * @since 1.0.0
-     * @param uuid  UUID of desired object.
+     * @param id  String of desired object.
      * @param owner Owner user id provided by Auth0.
      */
-    public void deleteByUuidAndOwner(UUID uuid, String owner);
+    public void deleteByIdAndOwner(String id, String owner);
 }

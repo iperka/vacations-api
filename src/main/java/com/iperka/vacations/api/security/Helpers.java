@@ -2,8 +2,8 @@ package com.iperka.vacations.api.security;
 
 import java.util.List;
 
-import com.iperka.vacations.api.friendships.Friendship;
-import com.iperka.vacations.api.friendships.FriendshipStatus;
+// import com.iperka.vacations.api.friendships.Friendship;
+// import com.iperka.vacations.api.friendships.FriendshipStatus;
 import com.iperka.vacations.api.helpers.Ownable;
 
 import org.springframework.security.core.Authentication;
@@ -36,20 +36,21 @@ public class Helpers {
         }
     }
 
+    @Deprecated
     public static boolean isFriend(final Authentication authentication, final String user,
-            List<Friendship> friendship) {
-        if (friendship.size() != 2) {
-            return false;
-        }
-        for (Friendship f : friendship) {
-            if (!f.getStatus().equals(FriendshipStatus.ACCEPTED)) {
-                return false;
-            }
-            if (!f.getUser().equals(Helpers.getUserId(authentication))
-                    && !f.getOwner().equals(Helpers.getUserId(authentication))) {
-                return false;
-            }
-        }
+            List<?> friendship) {
+        // if (friendship.size() != 2) {
+        // return false;
+        // }
+        // for (Friendship f : friendship) {
+        // if (!f.getStatus().equals(FriendshipStatus.ACCEPTED)) {
+        // return false;
+        // }
+        // if (!f.getUser().equals(Helpers.getUserId(authentication))
+        // && !f.getOwner().equals(Helpers.getUserId(authentication))) {
+        // return false;
+        // }
+        // }
         return true;
     }
 

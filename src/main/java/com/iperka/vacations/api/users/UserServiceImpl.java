@@ -1,6 +1,6 @@
 package com.iperka.vacations.api.users;
 
-import java.util.UUID;
+
 
 import javax.transaction.Transactional;
 
@@ -29,17 +29,17 @@ public class UserServiceImpl extends Auditable implements UserService {
     private UserRepository userRepository;
 
     /**
-     * Returns user with UUID.
+     * Returns user with String.
      * 
      * @since 1.0.9
-     * @param uuid User uuid of desired object.
+     * @param id User id of desired object.
      * @return Optional with User object.
      * @throws UserNotFoundException if user could not be found.
      */
     @Override
     @PreAuthorize("hasAnyAuthority('SCOPE_users:read', 'SCOPE_users:write','SCOPE_users:all:read', 'SCOPE_users:all:write')")
-    public User findByUuid(UUID uuid) throws UserNotFoundException {
-        return userRepository.findByUuid(uuid).orElseThrow(UserNotFoundException::new);
+    public User findById(String id) throws UserNotFoundException {
+        return userRepository.findById(id).orElseThrow(UserNotFoundException::new);
     }
 
     /**
@@ -118,42 +118,42 @@ public class UserServiceImpl extends Auditable implements UserService {
     @Override
     @PreAuthorize("hasAnyAuthority('SCOPE_users:write', 'SCOPE_users:all:write')")
     public User updateByOwner(User user, String owner) throws UserNotFoundException {
-        User before = this.findByUuid(user.getUuid());
+        User before = this.findById(user.getId());
         User after = userRepository.save(user);
         this.audit(AuditOperation.UPDATE, before, after);
         return after;
     }
 
     /**
-     * Deletes user with given UUID.
+     * Deletes user with given String.
      * Bare in mind that these method should be explicit to administrative
      * roles.
      * 
      * @since 1.0.9
-     * @param uuid UUID of desired object.
+     * @param id String of desired object.
      * @throws UserNotFoundException if user could not be found.
      */
     @Override
     @Transactional
     @PreAuthorize("hasAnyAuthority('SCOPE_users:write', 'SCOPE_users:all:write')")
-    public void deleteByUuid(UUID uuid) throws UserNotFoundException {
-        userRepository.deleteByUuid(uuid);
+    public void deleteById(String id) throws UserNotFoundException {
+        userRepository.deleteById(id);
     }
 
     /**
-     * Deletes user with given UUID and object must be owned
+     * Deletes user with given String and object must be owned
      * by given user.
      * 
      * @since 1.0.9
-     * @param uuid  UUID of desired object.
+     * @param id  String of desired object.
      * @param owner Owner user id provided by Auth0.
      * @throws UserNotFoundException if user could not be found.
      */
     @Override
     @Transactional
     @PreAuthorize("hasAnyAuthority('SCOPE_users:write', 'SCOPE_users:all:write')")
-    public void deleteByUuidAndOwner(UUID uuid, String owner) throws UserNotFoundException {
-        userRepository.deleteByUuidAndOwner(uuid, owner);
+    public void deleteByIdAndOwner(String id, String owner) throws UserNotFoundException {
+        userRepository.deleteByIdAndOwner(id, owner);
     }
 
     /**

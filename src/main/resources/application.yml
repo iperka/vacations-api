@@ -1,8 +1,13 @@
 spring:
   profiles:
     active: development
+  cloud.gcp:
+    logging.enabled: false
+    trace.pubsub.enabled: false
+  banner:
+    location: classpath:/banner.txt
   main:
-    banner-mode: off
+    banner-mode: console
   mvc:
     throw-exception-if-no-handler-found: true
   web:
@@ -12,12 +17,12 @@ spring:
     web.pageable:
       max-page-size: ${REST_MAX_PAGE_SIZE:100}
     rest.max-page-size: ${REST_MAX_PAGE_SIZE:100}
+  mongodb.embedded.version: 3.2.2
   security:
     oauth2:
       resourceserver:
         jwt:
           issuer-uri: ${auth0.domain}
-  jpa.open-in-view: false
   mail:
     host: ${MAIL_HOST:localhost}
     port: ${MAIL_PORT:25}
@@ -63,33 +68,70 @@ mail:
     name: ${MAIL_FROM_NAME:iperka}
 ---
 spring:
+  config.activate.on-profile: test
+  cloud.gcp:
+    logging.enabled: false
+    trace.pubsub.enabled: false
+  main:
+    banner-mode: off
+  # The embedded testing server is not an official mongodb so it's suggested to use the Atlas database
+  data:
+    mongodb:
+      database: ${MONGODB_DATABASE:vacations-api-test}
+      uri: ${MONGODB_URI:mongodb://localhost:27017/}
+springdoc:
+  api-docs.enabled: true
+  swagger-ui.enabled: true
+---
+spring:
   config.activate.on-profile: development
-  h2:
-    console:
-      enabled: true
-  datasource:
-    url: jdbc:h2:mem:vacations-development
-    driverClassName: org.h2.Driver
-    username: sa
-    password:
+  cloud.gcp:
+    logging.enabled: false
+    trace.pubsub.enabled: false
+  data:
+    mongodb:
+      database: ${MONGODB_DATABASE:vacations-api-development}
+      uri: ${MONGODB_URI:mongodb://localhost:27017/}
 springdoc:
   api-docs.enabled: true
   swagger-ui.enabled: true
 ---
 spring:
   config.activate.on-profile: production
+  cloud.gcp:
+    logging.enabled: false
+    trace.pubsub.enabled: false
   devtools:
     add-properties: false
-  datasource:
-    url: ${DATASOURCE_URL}
-    driver-class-name: ${DATASOURCE_DRIVER}
-    username: ${DATASOURCE_USERNAME}
-    password: ${DATASOURCE_PASSWORD}
-  jpa:
-    hibernate.ddl-auto: ${JPA_DDL_AUTO:validate}
-    properties:
-      hibernate:
-        dialect: ${JPA_HIBERNATE_DIALECT}
+  data:
+    mongodb:
+      database: ${MONGODB_DATABASE:vacations-api-production}
+      uri: ${MONGODB_URI:mongodb://localhost:27017/}
+springdoc:
+  api-docs.enabled: ${API_DOCS_ENABLED:false}
+  # Requires API_DOCS_ENABLED
+  swagger-ui.enabled: ${SWAGGER_UI_ENABLED:false}
+---
+spring:
+  config.activate.on-profile: cloud
+  sleuth.sampler:
+    # To send 100% of traces to Stackdriver Trace
+    probability: 1.0
+    # To ignore some frequently used URL patterns that are not useful in trace
+    web.skipPattern: (^cleanup.*|.+favicon.*)
+    # avoid "async" traces
+    scheduled.enabled: false
+    # You should disable Spring Integration instrumentation by Sleuth as it's unnecessary when Pub/Sub tracing is enabled
+    integration.enabled: false
+  cloud.gcp:
+    logging.enabled: true
+    trace.pubsub.enabled: true
+  devtools:
+    add-properties: false
+  data:
+    mongodb:
+      database: ${MONGODB_DATABASE:vacations-api-production}
+      # uri: ${sm://mongodb-uri}
 springdoc:
   api-docs.enabled: ${API_DOCS_ENABLED:false}
   # Requires API_DOCS_ENABLED

@@ -32,6 +32,8 @@ jobs:
           distribution: adopt
           java-version: 11
       - name: Run unit tests
+        env:
+          MONGODB_URI: mongodb+srv://${{ secrets.MONGODB_USER }}:${{ secrets.MONGODB_PASSWORD }}@cluster0.odxiv.mongodb.net/?retryWrites=true&w=majority
         run: mvn test
 
   build:
