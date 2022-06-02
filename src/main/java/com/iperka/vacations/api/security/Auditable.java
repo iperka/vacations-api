@@ -46,16 +46,16 @@ public abstract class Auditable {
         // Evaluate description.
         switch (operation.toString()) {
             case "CREATE":
-                description = String.format("Created %s with uuid %s.", after.getClass().getName(),
-                        after.getUuid());
+                description = String.format("Created %s with id %s.", after.getClass().getName(),
+                        after.getId());
                 break;
             case "UPDATE":
-                description = String.format("Update %s with uuid %s.", after.getClass().getName(),
-                        after.getUuid());
+                description = String.format("Update %s with id %s.", after.getClass().getName(),
+                        after.getId());
                 break;
             case "DELETE":
-                description = String.format("Delete %s with uuid %s.", after.getClass().getName(),
-                        after.getUuid());
+                description = String.format("Delete %s with id %s.", after.getClass().getName(),
+                        after.getId());
                 break;
 
             default:
@@ -97,12 +97,12 @@ public abstract class Auditable {
 
             // Write to database
             this.auditService
-                    .create(new Audit(after.getClass().getName(), after.getUuid(), operation, diff, description));
+                    .create(new Audit(after.getClass().getName(), after.getId(), operation, diff, description));
             return;
         }
 
         // Write to database
         this.auditService
-                .create(new Audit(after.getClass().getName(), after.getUuid(), operation, null, description));
+                .create(new Audit(after.getClass().getName(), after.getId(), operation, null, description));
     }
 }

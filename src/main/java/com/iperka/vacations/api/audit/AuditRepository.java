@@ -1,6 +1,6 @@
 package com.iperka.vacations.api.audit;
 
-import java.util.UUID;
+
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,6 +16,6 @@ import org.springframework.stereotype.Repository;
  * @since 1.0.0
  */
 @Repository
-public interface AuditRepository extends PagingAndSortingRepository<Audit, UUID> {
-    public Page<Audit> findAllByObjectUuid(UUID objectUuid, Pageable pageable);
+public interface AuditRepository extends PagingAndSortingRepository<Audit, String> {
+    public Page<Audit> findAllByObjectId(String objectId, Pageable pageable);
 }

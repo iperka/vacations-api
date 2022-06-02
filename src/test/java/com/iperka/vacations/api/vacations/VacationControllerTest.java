@@ -9,7 +9,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.util.UUID;
+
 
 import com.iperka.vacations.api.security.Scopes;
 
@@ -19,10 +19,12 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@ActiveProfiles("test")
 class VacationControllerTest {
     @Autowired
     private MockMvc mockMvc;
@@ -47,7 +49,7 @@ class VacationControllerTest {
         this.mockMvc.perform(get("/vacations")).andExpect(status().isOk())
                 .andExpect(content().string(containsString("OK")));
 
-        this.mockMvc.perform(get("/vacations/" + UUID.randomUUID().toString())).andExpect(status().isNotFound())
+        this.mockMvc.perform(get("/vacations/invalidId")).andExpect(status().isNotFound())
                 .andExpect(content().string(containsString("NotFound")));
 
         this.mockMvc.perform(post("/vacations")).andExpect(status().isForbidden())

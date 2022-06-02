@@ -3,12 +3,11 @@ package com.iperka.vacations.api.vacations;
 import java.time.Year;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 import javax.validation.Valid;
 
 import com.iperka.vacations.api.config.OpenApiConfig;
-import com.iperka.vacations.api.friendships.FriendshipService;
+// import com.iperka.vacations.api.friendships.FriendshipService;
 import com.iperka.vacations.api.helpers.APIError;
 import com.iperka.vacations.api.helpers.GenericResponse;
 import com.iperka.vacations.api.helpers.openapi.responses.BadRequestResponse;
@@ -72,8 +71,8 @@ public class VacationController {
     @Autowired
     private VacationService vacationService;
 
-    @Autowired
-    private FriendshipService friendshipService;
+    // @Autowired
+    // private FriendshipService friendshipService;
 
     /**
      * Index route for /vacations endpoint. Returns all vacations (if user is
@@ -233,12 +232,16 @@ public class VacationController {
             // Check if authenticated user has been granted vacations:all:read
             if (Helpers.hasScope(Scopes.VACATIONS_ALL_READ, authentication) && StringUtils.hasText(owner)) {
                 vacation = this.vacationService.findByOwnerAndStartDateGreaterThanEqualOrderByStartDateAsc(owner, date);
-            } else if (StringUtils.hasText(owner) && Helpers.isFriend(
-                    authentication,
-                    owner,
-                    friendshipService.findAllByOwnerOrUser(userId, userId))) {
-                vacation = this.vacationService.findByOwnerAndStartDateGreaterThanEqualOrderByStartDateAsc(owner, date);
-            } else {
+            }
+            // else if (StringUtils.hasText(owner) && Helpers.isFriend(
+            // authentication,
+            // owner,
+            // friendshipService.findAllByOwnerOrUser(userId, userId))) {
+            // vacation =
+            // this.vacationService.findByOwnerAndStartDateGreaterThanEqualOrderByStartDateAsc(owner,
+            // date);
+            // }
+            else {
                 if (StringUtils.hasText(owner)) {
                     return response
                             .fromError(HttpStatus.FORBIDDEN, new APIError("OAuthException",
@@ -259,21 +262,21 @@ public class VacationController {
     }
 
     /**
-     * Index route for /vacations endpoint. Returns Vacations with given uuid (if
+     * Index route for /vacations endpoint. Returns Vacations with given id (if
      * user
      * is authorized).
      * 
      * @since 1.0.0
      * @param authentication Will be provided by Spring Security.
-     * @param uuid           Id of demanded Vacations object.
+     * @param id             Id of demanded Vacations object.
      * @return A generic Response with Vacations as data property.
      */
-    @GetMapping(value = "/{uuid}")
+    @GetMapping(value = "/{id}")
     // @formatter:off
     @Operation(
-        summary = "Finds Vacations with given uuid.", 
+        summary = "Finds Vacations with given id.", 
         // TODO: Extend description.
-        description = "Finds Vacations with given uuid.", 
+        description = "Finds Vacations with given id.", 
         security = {
             @SecurityRequirement(
                 name = OpenApiConfig.OAUTH2,
@@ -290,10 +293,10 @@ public class VacationController {
         }
     )
     // @formatter:on
-    public ResponseEntity<GenericResponse<Vacation>> findByUuid(
+    public ResponseEntity<GenericResponse<Vacation>> findById(
     // @formatter:off
         final Authentication authentication,
-        @PathVariable("uuid") final UUID uuid
+        @PathVariable("id") final String id
      // @formatter:on
     ) {
         final String userId = Helpers.getUserId(authentication);
@@ -302,10 +305,10 @@ public class VacationController {
         try {
             if (Helpers.hasScope(Scopes.VACATIONS_ALL_READ, authentication)
                     || Helpers.hasScope(Scopes.VACATIONS_ALL_WRITE, authentication)) {
-                Vacation vacation = this.vacationService.findByUuid(uuid);
+                Vacation vacation = this.vacationService.findById(id);
                 response.setData(vacation);
             } else {
-                Vacation vacation = this.vacationService.findByUuidAndOwner(uuid, userId);
+                Vacation vacation = this.vacationService.findByIdAndOwner(id, userId);
                 response.setData(vacation);
             }
         } catch (VacationNotFoundException e) {
@@ -317,19 +320,19 @@ public class VacationController {
     }
 
     /**
-     * Returns vacation with given UUID as ICal object.
+     * Returns vacation with given String as ICal object.
      * 
      * @since 1.0.0
      * @param authentication Will be provided by Spring Security.
-     * @param uuid           Id of demanded Vacations object.
+     * @param id             Id of demanded Vacations object.
      * @return A generic Response with Vacation ICal as data property.
      */
-    @GetMapping(value = "/{uuid}/ical")
+    @GetMapping(value = "/{id}/ical")
     // @formatter:off
     @Operation(
-        summary = "Finds Vacations with given uuid.", 
+        summary = "Finds Vacations with given id.", 
         // TODO: Extend description.
-        description = "Finds Vacations with given uuid.", 
+        description = "Finds Vacations with given id.", 
         security = {
             @SecurityRequirement(
                 name = OpenApiConfig.OAUTH2,
@@ -346,10 +349,10 @@ public class VacationController {
         }
     )
     // @formatter:on
-    public ResponseEntity<GenericResponse<String>> findByUuidAsIcal(
+    public ResponseEntity<GenericResponse<String>> findByIdAsIcal(
     // @formatter:off
         final Authentication authentication,
-        @PathVariable("uuid") final UUID uuid
+        @PathVariable("id") final String id
      // @formatter:on
     ) {
         final String userId = Helpers.getUserId(authentication);
@@ -358,10 +361,10 @@ public class VacationController {
         try {
             if (Helpers.hasScope(Scopes.VACATIONS_ALL_READ, authentication)
                     || Helpers.hasScope(Scopes.VACATIONS_ALL_WRITE, authentication)) {
-                Vacation vacation = this.vacationService.findByUuid(uuid);
+                Vacation vacation = this.vacationService.findById(id);
                 response.setData(vacation.toICal());
             } else {
-                Vacation vacation = this.vacationService.findByUuidAndOwner(uuid, userId);
+                Vacation vacation = this.vacationService.findByIdAndOwner(id, userId);
                 response.setData(vacation.toICal());
             }
         } catch (VacationNotFoundException e) {
@@ -430,7 +433,7 @@ public class VacationController {
      * @param vacationsDTO   Vacation object.
      * @return A generic Response with created vacations as data property.
      */
-    @PutMapping(value = "/{uuid}")
+    @PutMapping(value = "/{id}")
     // @RequiresCaptcha
     // @formatter:off
     @Operation(
@@ -454,10 +457,10 @@ public class VacationController {
         }
     )
     // @formatter:on
-    public ResponseEntity<GenericResponse<Vacation>> updateByUuid(
+    public ResponseEntity<GenericResponse<Vacation>> updateById(
     // @formatter:off
         final Authentication authentication,
-        @PathVariable("uuid") final UUID uuid,
+        @PathVariable("id") final String id,
         @Valid @RequestBody(required = true, content = @Content(schema =  @Schema(implementation = VacationDTO.class))) @org.springframework.web.bind.annotation.RequestBody final VacationDTO vacationsDTO
      // @formatter:on
     ) {
@@ -488,12 +491,12 @@ public class VacationController {
      * @param authentication Will be provided by Spring Security.
      * @param vacationDTO    Vacation object.
      */
-    @DeleteMapping(value = "/{uuid}")
+    @DeleteMapping(value = "/{id}")
     // @RequiresCaptcha
     // @formatter:off
     @Operation(
         summary = "Deletes Vacations.", 
-        description = "Deletes Vacations with given uuid.", 
+        description = "Deletes Vacations with given id.", 
         security = {
             @SecurityRequirement(
                 name = OpenApiConfig.OAUTH2,
@@ -511,10 +514,10 @@ public class VacationController {
         }
     )
     // @formatter:on
-    public ResponseEntity<GenericResponse<Vacation>> deleteByUuid(
+    public ResponseEntity<GenericResponse<Vacation>> deleteById(
     // @formatter:off
         final Authentication authentication,
-        @PathVariable("uuid") final UUID uuid
+        @PathVariable("id") final String id
      // @formatter:on
     ) {
         final String userId = Helpers.getUserId(authentication);
@@ -522,9 +525,9 @@ public class VacationController {
 
         try {
             if (Helpers.hasScope(Scopes.VACATIONS_ALL_WRITE, authentication)) {
-                this.vacationService.deleteByUuid(uuid);
+                this.vacationService.deleteById(id);
             } else {
-                this.vacationService.deleteByUuidAndOwner(uuid, userId);
+                this.vacationService.deleteByIdAndOwner(id, userId);
             }
         } catch (VacationNotFoundException e) {
             log.info("Vacation could not be found.");
