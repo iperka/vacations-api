@@ -1,6 +1,6 @@
 package com.iperka.vacations.api.audit;
 
-import java.util.UUID;
+
 
 import com.iperka.vacations.api.audit.exceptions.AuditNotFoundException;
 
@@ -46,8 +46,8 @@ public class AuditServiceImpl implements AuditService {
      */
     @Override
     @PreAuthorize("hasAnyAuthority('SCOPE_audits:all:read', 'SCOPE_audits:all:write')")
-    public Audit findById(UUID uuid) throws AuditNotFoundException {
-        return auditRepository.findById(uuid).orElseThrow(AuditNotFoundException::new);
+    public Audit findById(String id) throws AuditNotFoundException {
+        return auditRepository.findById(id).orElseThrow(AuditNotFoundException::new);
     }
 
     /**
@@ -60,8 +60,8 @@ public class AuditServiceImpl implements AuditService {
      */
     @Override
     @PreAuthorize("hasAnyAuthority('SCOPE_audits:all:read', 'SCOPE_audits:all:write')")
-    public Page<Audit> findAllByObjectId(UUID objectUuid, Pageable pageable) {
-        return auditRepository.findAllByObjectUuid(objectUuid, pageable);
+    public Page<Audit> findAllByObjectId(String objectId, Pageable pageable) {
+        return auditRepository.findAllByObjectId(objectId, pageable);
     }
 
     /**

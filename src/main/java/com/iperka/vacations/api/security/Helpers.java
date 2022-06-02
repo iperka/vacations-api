@@ -3,6 +3,8 @@ package com.iperka.vacations.api.security;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.jwt.Jwt;
 
+// import com.iperka.vacations.api.friendships.Friendship;
+// import com.iperka.vacations.api.friendships.FriendshipStatus;
 import com.iperka.vacations.api.helpers.Ownable;
 
 import lombok.extern.slf4j.Slf4j;

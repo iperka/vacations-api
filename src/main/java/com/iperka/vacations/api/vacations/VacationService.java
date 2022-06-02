@@ -3,7 +3,7 @@ package com.iperka.vacations.api.vacations;
 import java.time.Year;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
+
 
 import com.iperka.vacations.api.vacations.exceptions.VacationNotFoundException;
 
@@ -43,28 +43,28 @@ public interface VacationService {
     public abstract Page<Vacation> findAllByOwner(Pageable pageable, String owner);
 
     /**
-     * Returns vacation with given UUID.
+     * Returns vacation with given String.
      * Bare in mind that these method should be explicit to administrative
      * roles.
      * 
      * @since 1.0.0
-     * @param uuid UUID of desired object.
+     * @param id String of desired object.
      * @return Vacation object.
      * @throws VacationNotFoundException if vacation could not be found.
      */
-    public abstract Vacation findByUuid(UUID uuid) throws VacationNotFoundException;
+    public abstract Vacation findById(String id) throws VacationNotFoundException;
 
     /**
-     * Returns vacation with given UUID and object must be owned
+     * Returns vacation with given String and object must be owned
      * by given user.
      * 
      * @since 1.0.0
-     * @param uuid  UUID of desired object.
+     * @param id  String of desired object.
      * @param owner Owner user id provided by Auth0.
      * @return Vacation object.
      * @throws VacationNotFoundException if vacation could not be found.
      */
-    public abstract Vacation findByUuidAndOwner(UUID uuid, String owner) throws VacationNotFoundException;
+    public abstract Vacation findByIdAndOwner(String id, String owner) throws VacationNotFoundException;
 
     /**
      * Returns next vacation for given user relative to given date.
@@ -110,26 +110,26 @@ public interface VacationService {
     public abstract Vacation updateByOwner(Vacation vacation, String owner) throws VacationNotFoundException;
 
     /**
-     * Deletes vacation with given UUID.
+     * Deletes vacation with given String.
      * Bare in mind that these method should be explicit to administrative
      * roles.
      * 
      * @since 1.0.0
-     * @param uuid UUID of desired object.
+     * @param id String of desired object.
      * @throws VacationNotFoundException if vacation could not be found.
      */
-    public abstract void deleteByUuid(UUID uuid) throws VacationNotFoundException;
+    public abstract void deleteById(String id) throws VacationNotFoundException;
 
     /**
-     * Deletes vacation with given UUID and object must be owned
+     * Deletes vacation with given String and object must be owned
      * by given user.
      * 
      * @since 1.0.0
-     * @param uuid  UUID of desired object.
+     * @param id  String of desired object.
      * @param owner Owner user id provided by Auth0.
      * @throws VacationNotFoundException if vacation could not be found.
      */
-    public abstract void deleteByUuidAndOwner(UUID uuid, String owner) throws VacationNotFoundException;
+    public abstract void deleteByIdAndOwner(String id, String owner) throws VacationNotFoundException;
 
     /**
      * Calculates dates between start and end date and returns a List with the

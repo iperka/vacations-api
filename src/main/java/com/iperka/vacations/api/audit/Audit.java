@@ -1,7 +1,7 @@
 package com.iperka.vacations.api.audit;
 
 import java.util.Map;
-import java.util.UUID;
+
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,6 +14,7 @@ import com.vladmihalcea.hibernate.type.json.JsonType;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.TypeDefs;
+import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.lang.NonNull;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -32,12 +33,13 @@ import lombok.NoArgsConstructor;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Entity
-@Table(name = "audits", uniqueConstraints = { @UniqueConstraint(columnNames = { "uuid" }) })
+@Table(name = "audits", uniqueConstraints = { @UniqueConstraint(columnNames = { "id" }) })
 @AllArgsConstructor
 @NoArgsConstructor
 @TypeDefs({
         @TypeDef(name = "json", typeClass = JsonType.class)
 })
+@Document(collection = "audits")
 public class Audit extends GenericFields {
     @NonNull
     @Schema(example = "com.iperka.vacations.api.Example")
@@ -45,8 +47,8 @@ public class Audit extends GenericFields {
 
     @NonNull
     @Column(columnDefinition = "BINARY(16)", nullable = false, unique = true)
-    @Schema(description = "Unique identifier for object.", example = "67394e83-1ea5-495e-adf3-80ee93514f92", required = true, format = "uuid")
-    private UUID objectUuid;
+    @Schema(description = "Unique identifier for object.", example = "3069422c032-1652891906326", required = true)
+    private String objectId;
 
     @NonNull
     @Schema(example = "created")
@@ -57,7 +59,7 @@ public class Audit extends GenericFields {
     @Column(columnDefinition = "json")
     private Map<String, Map<String, String>> diff;
 
-    @Schema(example = "Created com.iperka.vacations.api.Example with uuid 61d484033f9d4360db2114c2.")
+    @Schema(example = "Created com.iperka.vacations.api.Example with id 3069422c032-1652891906326.")
     private String description;
 
     public String getOperation() {

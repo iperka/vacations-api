@@ -14,9 +14,11 @@ import com.iperka.vacations.api.helpers.GenericFields;
 import com.iperka.vacations.api.helpers.Ownable;
 
 import org.hibernate.validator.constraints.Length;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.component.VEvent;
 import net.fortuna.ical4j.model.property.CalScale;
@@ -28,14 +30,16 @@ import net.fortuna.ical4j.model.property.Version;
  * the structure of a basic vacation.
  * 
  * @author Michael Beutler
- * @version 1.0.0
+ * @version 1.0.1
  * @since 1.0.0
  */
 @Entity
 @Table(name = "vacations", uniqueConstraints = {
-        @UniqueConstraint(columnNames = { "uuid" })
+        @UniqueConstraint(columnNames = { "id" })
 })
 @Data
+@EqualsAndHashCode(callSuper=false)
+@Document(collection = "vacations")
 public class Vacation extends GenericFields implements Ownable {
     /**
      * Unique string used for naming the vacation.

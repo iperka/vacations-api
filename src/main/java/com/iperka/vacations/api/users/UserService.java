@@ -1,6 +1,6 @@
 package com.iperka.vacations.api.users;
 
-import java.util.UUID;
+
 
 import com.iperka.vacations.api.users.exceptions.EmailAndOrPhoneAlreadyConnectedException;
 import com.iperka.vacations.api.users.exceptions.UserNotFoundException;
@@ -16,14 +16,14 @@ import com.iperka.vacations.api.users.exceptions.UserNotFoundException;
  */
 public interface UserService {
     /**
-     * Returns user with UUID.
+     * Returns user with String.
      * 
      * @since 1.0.9
-     * @param uuid User uuid of desired object.
+     * @param id User id of desired object.
      * @return Optional with User object.
      * @throws UserNotFoundException if user could not be found.
      */
-    public abstract User findByUuid(UUID uuid) throws UserNotFoundException;
+    public abstract User findById(String id) throws UserNotFoundException;
 
     /**
      * Returns user with given owner.
@@ -77,26 +77,26 @@ public interface UserService {
     public abstract User updateByOwner(User user, String owner) throws UserNotFoundException;
 
     /**
-     * Deletes user with given UUID.
+     * Deletes user with given String.
      * Bare in mind that these method should be explicit to administrative
      * roles.
      * 
      * @since 1.0.9
-     * @param uuid UUID of desired object.
+     * @param id String of desired object.
      * @throws UserNotFoundException if user could not be found.
      */
-    public abstract void deleteByUuid(UUID uuid) throws UserNotFoundException;
+    public abstract void deleteById(String id) throws UserNotFoundException;
 
     /**
-     * Deletes user with given UUID and object must be owned
+     * Deletes user with given String and object must be owned
      * by given user.
      * 
      * @since 1.0.9
-     * @param uuid  UUID of desired object.
+     * @param id  String of desired object.
      * @param owner Owner user id provided by Auth0.
      * @throws UserNotFoundException if user could not be found.
      */
-    public abstract void deleteByUuidAndOwner(UUID uuid, String owner) throws UserNotFoundException;
+    public abstract void deleteByIdAndOwner(String id, String owner) throws UserNotFoundException;
 
     /**
      * Deletes all users, object must be owned
