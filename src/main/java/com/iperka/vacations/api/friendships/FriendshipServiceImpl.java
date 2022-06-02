@@ -40,6 +40,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Service
 @Slf4j
+@Deprecated
 public class FriendshipServiceImpl extends Auditable implements FriendshipService {
     @Autowired
     private FriendshipRepository friendshipRepository;
@@ -97,7 +98,8 @@ public class FriendshipServiceImpl extends Auditable implements FriendshipServic
      * @param user     Related user id provided by Auth0.
      * @return List with Friendship objects.
      */
-    public List<Friendship> findAllByOwnerOrUser(String owner, String user) {
+   @Deprecated 
+public List<Friendship> findAllByOwnerOrUser(String owner, String user) {
         return friendshipRepository.findAllByOwnerOrUser(owner.replace('_', '|'), user.replace('_', '|'));
     }
 

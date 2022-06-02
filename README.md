@@ -10,12 +10,15 @@ Access iperka vacations with the API. This API is built with Java Spring Boot an
   - [1.3. Installation 💽](#13-installation-)
   - [1.4. Local Deployment 🐳](#14-local-deployment-)
   - [1.5. Deployment ⛴](#15-deployment-)
-  - [1.6. Built With 📦](#16-built-with-)
-  - [1.7. Authors 👨‍💻](#17-authors-)
-  - [1.8. License 📃](#18-license-)
-  - [1.9. Contributing 🤝](#19-contributing-)
-  - [1.10. Acknowledgments 🐛](#110-acknowledgments-)
-  - [1.11. Environment variables 💻](#111-environment-variables-)
+  - [1.6. Changes 📊](#16-changes-)
+    - [v1.0.11 -> v1.0.12 (BREAKING CHANGE)](#v1011---v1012-breaking-change)
+    - [v1.0.12 -> v1.0.13 (BREAKING CHANGE)](#v1012---v1013-breaking-change)
+  - [1.7. Built With 📦](#17-built-with-)
+  - [1.8. Authors 👨‍💻](#18-authors-)
+  - [1.9. License 📃](#19-license-)
+  - [1.10. Contributing 🤝](#110-contributing-)
+  - [1.11. Acknowledgments 🐛](#111-acknowledgments-)
+  - [1.12. Environment variables 💻](#112-environment-variables-)
 
 ## 1.2. Getting Started 🚀
 
@@ -52,11 +55,8 @@ To run a docker container with the image in production mode use the following co
 # Adjust values to your needs
 $ docker run \
     -e "SPRING_PROFILES_ACTIVE=production" \
-    -e "DATASOURCE_URL=jdbc:h2:mem:vacations-development" \
-    -e "DATASOURCE_DRIVER=org.h2.Driver" \
-    -e "DATASOURCE_USERNAME=sa" \
-    -e "DATASOURCE_PASSWORD=secret" \
-    -e "JPA_DDL_AUTO=update" \
+    -e "MONGODB_URI=mongodb+srv://<username>:<password>@<host>/" \
+    -e "MONGODB_DATABASE=vacations-api-development" \
     -e "AUTH0_DOMAIN=https://my-domain.eu.auth0.com/" \
     -e "AUTH0_AUDIENCE=https://api.example.com/vacations/" \
     -e "API_SERVER_URL=http://localhost:8080/" \
@@ -88,27 +88,49 @@ To uninstall the chart:
 
     helm delete my-vacations-api
 
-## 1.6. Built With 📦
+## 1.6. Changes 📊
+
+This section describes major changes to the API. When the API is updated, the version number is increased and breaking changes are marked with a `BREAKING CHANGE` label.
+
+We try our best to maintain backwards compatibility, but if you have any questions or suggestions please contact us.
+
+### v1.0.11 -> v1.0.12 (BREAKING CHANGE)
+
+Due to high costs of relational databases, the API is now using a NoSQL database.
+This allows for cheaper cloud deployments and faster development cycles.
+
+- JPA is no longer used.
+- MongoDB is used instead.
+- Environmental variables related to relational databases are deprecated.
+
+### v1.0.12 -> v1.0.13 (BREAKING CHANGE)
+
+This version change finally drops the failed concept of `com.iperka.vacations.api.friendships`.
+
+- `com.iperka.vacations.api.friendships` has been marked as deprecated.
+- When fetching next vacations you are no longer able to retrieve vacations from your friends.
+
+## 1.7. Built With 📦
 
 - [Maven](https://maven.apache.org/) - Dependency Management
 - [Spring Boot](https://spring.io/) - Java Framework
 - [Auth0](https://auth0.com/) - Authentication Provider
 
-## 1.7. Authors 👨‍💻
+## 1.8. Authors 👨‍💻
 
 - **Michael Beutler** - _Initial work_ - [MichaelBeutler](https://github.com/MichaelBeutler)
 
-## 1.8. License 📃
+## 1.9. License 📃
 
 [MIT](https://choosealicense.com/licenses/mit/)
 
-## 1.9. Contributing 🤝
+## 1.10. Contributing 🤝
 
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
 Please make sure to update tests as appropriate and meet the quality gate requirements.
 
-## 1.10. Acknowledgments 🐛
+## 1.11. Acknowledgments 🐛
 
 There is already a Google Script to integrate the Vacations API into your Google Calendar.
 See https://github.com/iperka/vacations-google-script
@@ -116,44 +138,42 @@ See https://github.com/iperka/vacations-google-script
 - Ingrate vacations into your calendar.
 - Add new workflows to your company.
 - Simplify vacations.
+- Create your own social network.
 - etc...
 
-## 1.11. Environment variables 💻
+## 1.12. Environment variables 💻
 
 Please note that some default values are also provided by configuration profiles. For example if the profile is set to `development` the datasource will be an in memory database ready to test but with non persistent data.
 
-| Name                             | Description                                                            | Type                        | Default                                |
-| -------------------------------- | ---------------------------------------------------------------------- | --------------------------- | -------------------------------------- |
-| `SPRING_PROFILES_ACTIVE`         | Application configuration profile.                                     | `development \| production` | `development`                          |
-| `REST_MAX_PAGE_SIZE`             | Defines the maximum page size for `Pagable` parameters.                | `int`                       | `100`                                  |
-| `AUTH0_AUDIENCE`                 | Auth0 Audience configured in your Auth0 API. (Must end with `/`.)      | `string`                    | `https://api.vacations.iperka.com/`    |
-| `AUTH0_DOMAIN`                   | Auth0 Domain provided by Auth0. (Must end with `/`.)                   | `string`                    | `https://iperka.eu.auth0.com/`         |
-| `AUTH0_CLIENT_ID`                | Auth0 Client ID for Management API.                                    | `string`                    | `MY_CLIENT_ID`                         |
-| `AUTH0_CLIENT_SECRET`            | Auth0 Client Secret for Management API.                                | `string`                    | `MY_CLIENT_SECRET`                     |
-| `API_DOCS_PATH`                  | Relative path to provide OpenAPI v3 JSON.                              | `string`                    | `/openapi/v3`                          |
-| `API_DOCS_SHOW_ACTUATOR`         | When set to `true` the actuator routes will also be documented.        | `boolean`                   | `false`                                |
-| `API_DOCS_ENABLED`               | API Docs endpoint is enabled.                                          | `boolean`                   | `false`                                |
-| `SWAGGER_UI_ENABLED`             | Swagger UI endpoint is enabled. (Requires API Docs to be enabled too.) | `boolean`                   | `false`                                |
-| `SWAGGER_API_DOCS_PATH`          | Relative path for OpenAPI docs.                                        | `string`                    | `/openapi/v3`                          |
-| `MANAGEMENT_SERVER_PORT`         | Management Server port. (Will be used to expose actuator endpoints.)   | `int`                       | `8081`                                 |
-| `DATASOURCE_URL`                 | Spring Boot Datasource connection URL.                                 | `string`                    | -                                      |
-| `DATASOURCE_DRIVER`              | Spring Boot Datasource driver class name.                              | `string`                    | -                                      |
-| `DATASOURCE_USERNAME`            | Spring Boot Datasource username.                                       | `string`                    | -                                      |
-| `DATASOURCE_PASSWORD`            | Spring Boot Datasource password.                                       | `string`                    | -                                      |
-| `JPA_DDL_AUTO`                   | JPA DDL automation setting.                                            | `string`                    | `update`                               |
-| `JPA_HIBERNATE_DIALECT`          | JPA Hibernate dialect.                                                 | `string`                    | -                                      |
-| `SWAGGER_UI_OAUTH2_REDIRECT_URL` | Swagger UI OAuth2 redirect URL.                                        | `string`                    | `/oauth2-redirect.html`                |
-| `SERVER_SERVLET_CONTEXT_PATH`    | Servelt context path.                                                  | `string`                    | `/`                                    |
-| `API_SERVER_URL`                 | API Server url for OpenAPI requests.                                   | `string`                    | `https://api.vacations.iperka.com/v1/` |
-| `MAIL_HOST`                      | Mail Server host.                                                      | `string`                    | `localhost`                            |
-| `MAIL_PORT`                      | Mail Server port.                                                      | `number`                    | `25`                                   |
-| `MAIL_USERNAME`                  | Mail Server username.                                                  | `string`                    | `myUser`                               |
-| `MAIL_PASSWORD`                  | Mail Server password.                                                  | `string`                    | `myPassword`                           |
-| `MAIL_SMTP_AUTH`                 | Mail Server requires authentication.                                   | `boolean`                   | `true`                                 |
-| `MAIL_SMTP_STARTTLS_ENABLED`     | Mail Server allows `STARTTLS` connections.                             | `boolean`                   | `true`                                 |
-| `MAIL_FROM_ADDRESS`              | Will send Mails from this address.                                     | `email`                     | `no-reply@iperka.com`                  |
-| `MAIL_FROM_NAME`                 | Will send Mails from this name.                                        | `string`                    | `iperka`                               |
-| `GOOGLE_RECAPTCHA_SECRET`        | Google Recaptcha secret for validating requests.                       | `string`                    | `reCAPTCHA_site_secret`                |
-| `ONE_SIGNAL_ENABLED`             | If set to `true` the app will send push notifications.                 | `boolean`                   | `false`                                |
-| `ONE_SIGNAL_APP_ID`              | App Id provided by one signal.                                         | `string`                    | `MY_APP_ID`                            |
-| `ONE_SIGNAL_API_KEY`             | Api KEY provided by one signal.                                        | `string`                    | `MY_API_KEY`                           |
+| Name                             | Description                                                            | Type                        | Default                                       |
+| -------------------------------- | ---------------------------------------------------------------------- | --------------------------- | --------------------------------------------- |
+| `SPRING_PROFILES_ACTIVE`         | Application configuration profile.                                     | `development \| production` | `development`                                 |
+| `REST_MAX_PAGE_SIZE`             | Defines the maximum page size for `Pagable` parameters.                | `int`                       | `100`                                         |
+| `AUTH0_AUDIENCE`                 | Auth0 Audience configured in your Auth0 API. (Must end with `/`.)      | `string`                    | `https://api.vacations.iperka.com/`           |
+| `AUTH0_DOMAIN`                   | Auth0 Domain provided by Auth0. (Must end with `/`.)                   | `string`                    | `https://iperka.eu.auth0.com/`                |
+| `AUTH0_CLIENT_ID`                | Auth0 Client ID for Management API.                                    | `string`                    | `MY_CLIENT_ID`                                |
+| `AUTH0_CLIENT_SECRET`            | Auth0 Client Secret for Management API.                                | `string`                    | `MY_CLIENT_SECRET`                            |
+| `API_DOCS_PATH`                  | Relative path to provide OpenAPI v3 JSON.                              | `string`                    | `/openapi/v3`                                 |
+| `API_DOCS_SHOW_ACTUATOR`         | When set to `true` the actuator routes will also be documented.        | `boolean`                   | `false`                                       |
+| `API_DOCS_ENABLED`               | API Docs endpoint is enabled.                                          | `boolean`                   | `false`                                       |
+| `SWAGGER_UI_ENABLED`             | Swagger UI endpoint is enabled. (Requires API Docs to be enabled too.) | `boolean`                   | `false`                                       |
+| `SWAGGER_API_DOCS_PATH`          | Relative path for OpenAPI docs.                                        | `string`                    | `/openapi/v3`                                 |
+| `MANAGEMENT_SERVER_PORT`         | Management Server port. (Will be used to expose actuator endpoints.)   | `int`                       | `8081`                                        |
+| `MANAGEMENT_SERVER_PORT`         | Management Server port. (Will be used to expose actuator endpoints.)   | `int`                       | `8081`                                        |
+| `MONGODB_DATABASE`               | MongoDB database.                                                      | `string`                    | `vacations-api-development`                   |
+| `MONGODB_URI`                    | MongoDB Connection URI to overwrite the default generated one.         | `string`                    | `mongodb+srv://<username>:<password>@<host>/` |
+| `SWAGGER_UI_OAUTH2_REDIRECT_URL` | Swagger UI OAuth2 redirect URL.                                        | `string`                    | `/oauth2-redirect.html`                       |
+| `SERVER_SERVLET_CONTEXT_PATH`    | Servelt context path.                                                  | `string`                    | `/`                                           |
+| `API_SERVER_URL`                 | API Server url for OpenAPI requests.                                   | `string`                    | `https://api.vacations.iperka.com/v1/`        |
+| `MAIL_HOST`                      | Mail Server host.                                                      | `string`                    | `localhost`                                   |
+| `MAIL_PORT`                      | Mail Server port.                                                      | `number`                    | `25`                                          |
+| `MAIL_USERNAME`                  | Mail Server username.                                                  | `string`                    | `myUser`                                      |
+| `MAIL_PASSWORD`                  | Mail Server password.                                                  | `string`                    | `myPassword`                                  |
+| `MAIL_SMTP_AUTH`                 | Mail Server requires authentication.                                   | `boolean`                   | `true`                                        |
+| `MAIL_SMTP_STARTTLS_ENABLED`     | Mail Server allows `STARTTLS` connections.                             | `boolean`                   | `true`                                        |
+| `MAIL_FROM_ADDRESS`              | Will send Mails from this address.                                     | `email`                     | `no-reply@iperka.com`                         |
+| `MAIL_FROM_NAME`                 | Will send Mails from this name.                                        | `string`                    | `iperka`                                      |
+| `GOOGLE_RECAPTCHA_SECRET`        | Google Recaptcha secret for validating requests.                       | `string`                    | `reCAPTCHA_site_secret`                       |
+| `ONE_SIGNAL_ENABLED`             | If set to `true` the app will send push notifications.                 | `boolean`                   | `false`                                       |
+| `ONE_SIGNAL_APP_ID`              | App Id provided by one signal.                                         | `string`                    | `MY_APP_ID`                                   |
+| `ONE_SIGNAL_API_KEY`             | Api KEY provided by one signal.                                        | `string`                    | `MY_API_KEY`                                  |

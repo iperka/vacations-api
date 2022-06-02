@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Deprecated
 public class FriendshipDTO implements DTO<Friendship> {
     @NotNull
     private String user;

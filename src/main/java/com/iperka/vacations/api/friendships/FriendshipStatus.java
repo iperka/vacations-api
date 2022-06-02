@@ -1,5 +1,6 @@
 package com.iperka.vacations.api.friendships;
 
+@Deprecated
 public enum FriendshipStatus {
     ACCEPTED("accepted"),
     BLOCKED("blocked");

@@ -17,8 +17,9 @@ import lombok.Data;
  * The {@link com.iperka.vacations.api.friendships.Friendship} class defines
  * the structure of a basic friendship.
  * 
+ * @deprecated Concept of friendship is not used anymore.
  * @author Michael Beutler
- * @version 1.0.0
+ * @version 1.0.1
  * @since 1.0.5
  */
 @Entity
@@ -26,6 +27,7 @@ import lombok.Data;
         @UniqueConstraint(columnNames = { "uuid" })
 })
 @Data
+@Deprecated
 public class Friendship extends GenericFields {
     /**
      * Defines the user connected with this object.

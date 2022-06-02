@@ -23,6 +23,8 @@ import lombok.extern.slf4j.Slf4j;
  * version will be null if the API will be ran on the local computer. (Must be
  * packaged as jar in order to function)
  * 
+ * TODO: Add deprecation warning.
+ * 
  * @author Michael Beutler
  * @version 1.0.0
  * @since 1.0.0

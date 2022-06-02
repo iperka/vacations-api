@@ -56,6 +56,7 @@ import lombok.extern.slf4j.Slf4j;
  * 
  * @author Michael Beutler
  * @version 1.0.0
+ * @deprecated Concept has been dropped.
  * @since 1.0.5
  */
 @Slf4j
@@ -63,6 +64,7 @@ import lombok.extern.slf4j.Slf4j;
 @Validated
 @RequestMapping(value = "/friendships", produces = MediaType.APPLICATION_JSON_VALUE)
 @Tag(name = "Friendships", description = "Endpoints for CRUD operations with friendships.")
+@Deprecated
 public class FriendshipController {
 
     @Autowired
@@ -75,6 +77,7 @@ public class FriendshipController {
      * Index route for /friendships endpoint. Returns all friendships (if user is
      * authorized).
      * 
+     * @deprecated Concept has been dropped.
      * @since 1.0.5
      * @param authentication Will be provided by Spring Security.
      * @param pageable       Adds built in pagination.
@@ -84,6 +87,7 @@ public class FriendshipController {
     // @formatter:off
     @Operation(
         summary = "Finds all friendships.", 
+        deprecated = true,
         // TODO: Extend description.
         description = "Finds all friendships owned by authenticated user.", 
         security = {
@@ -101,6 +105,7 @@ public class FriendshipController {
         }
     )
     // @formatter:on
+    @Deprecated
     public ResponseEntity<GenericResponse<List<Friendship>>> findAll(
     // @formatter:off
         final Authentication authentication,
@@ -147,10 +152,9 @@ public class FriendshipController {
 
     /**
      * Index route for /friendships endpoint. Returns Friendships with given uuid
-     * (if
-     * user
-     * is authorized).
+     * (if user is authorized).
      * 
+     * @deprecated Concept has been dropped.
      * @since 1.0.5
      * @param authentication Will be provided by Spring Security.
      * @param uuid           Id of demanded Friendships object.
@@ -160,6 +164,7 @@ public class FriendshipController {
     // @formatter:off
     @Operation(
         summary = "Finds Friendships with given uuid.", 
+        deprecated = true,
         // TODO: Extend description.
         description = "Finds Friendships with given uuid.", 
         security = {
@@ -178,6 +183,7 @@ public class FriendshipController {
         }
     )
     // @formatter:on
+    @Deprecated
     public ResponseEntity<GenericResponse<Friendship>> findByUuid(
     // @formatter:off
         final Authentication authentication,
@@ -208,6 +214,7 @@ public class FriendshipController {
      * Index route for /friendships endpoint. Creates a new Friendships. (if user is
      * authorized).
      * 
+     * @deprecated Concept has been dropped.
      * @since 1.0.5
      * @param authentication Will be provided by Spring Security.
      * @param friendshipsDTO Friendship object.
@@ -218,6 +225,7 @@ public class FriendshipController {
     // @formatter:off
     @Operation(
         summary = "Creates a Friendships.", 
+        deprecated = true,
         // TODO: Extend description.
         description = "Creates a new Friendships.", 
         security = {
@@ -237,6 +245,7 @@ public class FriendshipController {
         }
     )
     // @formatter:on
+    @Deprecated
     public ResponseEntity<GenericResponse<Friendship>> create(
     // @formatter:off
         final Authentication authentication,
@@ -262,6 +271,7 @@ public class FriendshipController {
      * Index route for /friendships endpoint. Updates an existing Friendships.
      * (if user is authorized).
      * 
+     * @deprecated Concept has been dropped.
      * @since 1.0.5
      * @param authentication Will be provided by Spring Security.
      * @param friendshipsDTO Friendship object.
@@ -272,6 +282,7 @@ public class FriendshipController {
     // @formatter:off
     @Operation(
         summary = "Updates a Friendships.", 
+        deprecated = true,
         // TODO: Extend description.
         description = "Updates a new Friendships.", 
         security = {
@@ -291,6 +302,7 @@ public class FriendshipController {
         }
     )
     // @formatter:on
+    @Deprecated
     public ResponseEntity<GenericResponse<Friendship>> updateByUuid(
     // @formatter:off
         final Authentication authentication,
@@ -319,6 +331,7 @@ public class FriendshipController {
      * Index route for /friendships endpoint. Updates an existing Friendships.
      * (if user is authorized).
      * 
+     * @deprecated Concept has been dropped.
      * @since 1.0.5
      * @param authentication Will be provided by Spring Security.
      * @param friendshipDTO  Friendship object.
@@ -328,6 +341,7 @@ public class FriendshipController {
     // @formatter:off
     @Operation(
         summary = "Deletes Friendships.", 
+        deprecated = true,
         description = "Deletes Friendships with given uuid.", 
         security = {
             @SecurityRequirement(
@@ -346,6 +360,7 @@ public class FriendshipController {
         }
     )
     // @formatter:on
+    @Deprecated
     public ResponseEntity<GenericResponse<Friendship>> deleteByUuid(
     // @formatter:off
         final Authentication authentication,
@@ -374,6 +389,7 @@ public class FriendshipController {
      * 
      * @author Michael Beutler
      * @version 1.0.0
+     * @deprecated Concept has been dropped.
      * @since 1.0.5
      */
     private final class FriendshipListResponse extends GenericResponse<List<Friendship>> {
@@ -392,6 +408,7 @@ public class FriendshipController {
      * 
      * @author Michael Beutler
      * @version 1.0.0
+     * @deprecated Concept has been dropped.
      * @since 1.0.5
      */
     private final class FriendshipResponse extends GenericResponse<Friendship> {
@@ -411,6 +428,7 @@ public class FriendshipController {
      * 
      * @author Michael Beutler
      * @version 1.0.0
+     * @deprecated Concept has been dropped.
      * @since 1.0.5
      */
     private final class FriendshipCreatedResponse extends CreatedResponse<Friendship> {
@@ -421,6 +439,7 @@ public class FriendshipController {
      * 
      * @author Michael Beutler
      * @version 1.0.0
+     * @deprecated Concept has been dropped.
      * @since 1.0.5
      */
     private final class FriendshipUpdatedResponse extends UpdatedResponse<Friendship> {

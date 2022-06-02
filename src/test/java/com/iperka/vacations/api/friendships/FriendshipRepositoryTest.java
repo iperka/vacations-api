@@ -6,13 +6,13 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import java.util.Optional;
 import java.util.UUID;
 
-import com.iperka.vacations.api.friendships.dto.FriendshipDTO;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 
-@DataJpaTest
+import com.iperka.vacations.api.friendships.dto.FriendshipDTO;
+
+@DataMongoTest
 class FriendshipRepositoryTest {
 	@Autowired
 	private FriendshipRepository friendshipRepository;

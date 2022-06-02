@@ -27,8 +27,16 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
  * the security configuration for each route. It uses the Auth0 SDK for
  * validating given JWT's.
  * 
+ * <h2>Changes</h2>
+ * <h3>v1.0.13</h3>
+ * <ul>
+ * <li>Friendship concept has been removed.</li>
+ * </ul>
+ * 
+ * <hr />
+ * 
  * @author Michael Beutler
- * @version 1.0.3
+ * @version 1.0.4
  * @since 1.0.0
  */
 @Configuration
@@ -37,7 +45,13 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private static final String ROUTE_VACATIONS = "/vacations/**";
+
+    /**
+     * @deprecated The friendship scope is deprecated since v1.0.13.
+     */
+    @Deprecated
     private static final String ROUTE_FRIENDSHIPS = "/friendships/**";
+    
     private static final String ROUTE_USERS = "/users/**";
     private static final String ROUTE_AUDITS = "/audits/**";
 

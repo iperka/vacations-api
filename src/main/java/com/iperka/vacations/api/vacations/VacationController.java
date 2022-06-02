@@ -7,23 +7,6 @@ import java.util.UUID;
 
 import javax.validation.Valid;
 
-import com.iperka.vacations.api.config.OpenApiConfig;
-import com.iperka.vacations.api.friendships.FriendshipService;
-import com.iperka.vacations.api.helpers.APIError;
-import com.iperka.vacations.api.helpers.GenericResponse;
-import com.iperka.vacations.api.helpers.openapi.responses.BadRequestResponse;
-import com.iperka.vacations.api.helpers.openapi.responses.ConflictResponse;
-import com.iperka.vacations.api.helpers.openapi.responses.CreatedResponse;
-import com.iperka.vacations.api.helpers.openapi.responses.ForbiddenResponse;
-import com.iperka.vacations.api.helpers.openapi.responses.InternalServerErrorResponse;
-import com.iperka.vacations.api.helpers.openapi.responses.InvalidCaptchaResponse;
-import com.iperka.vacations.api.helpers.openapi.responses.UnauthorizedResponse;
-import com.iperka.vacations.api.helpers.openapi.responses.UpdatedResponse;
-import com.iperka.vacations.api.security.Helpers;
-import com.iperka.vacations.api.security.Scopes;
-import com.iperka.vacations.api.vacations.dto.VacationDTO;
-import com.iperka.vacations.api.vacations.exceptions.VacationNotFoundException;
-
 import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -45,6 +28,22 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.iperka.vacations.api.config.OpenApiConfig;
+import com.iperka.vacations.api.helpers.APIError;
+import com.iperka.vacations.api.helpers.GenericResponse;
+import com.iperka.vacations.api.helpers.openapi.responses.BadRequestResponse;
+import com.iperka.vacations.api.helpers.openapi.responses.ConflictResponse;
+import com.iperka.vacations.api.helpers.openapi.responses.CreatedResponse;
+import com.iperka.vacations.api.helpers.openapi.responses.ForbiddenResponse;
+import com.iperka.vacations.api.helpers.openapi.responses.InternalServerErrorResponse;
+import com.iperka.vacations.api.helpers.openapi.responses.InvalidCaptchaResponse;
+import com.iperka.vacations.api.helpers.openapi.responses.UnauthorizedResponse;
+import com.iperka.vacations.api.helpers.openapi.responses.UpdatedResponse;
+import com.iperka.vacations.api.security.Helpers;
+import com.iperka.vacations.api.security.Scopes;
+import com.iperka.vacations.api.vacations.dto.VacationDTO;
+import com.iperka.vacations.api.vacations.exceptions.VacationNotFoundException;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -58,8 +57,16 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * RestController endpoint for /vacations route.
  * 
+ * <h2>Changes</h2>
+ * <h3>v1.0.13</h3>
+ * <ul>
+ * <li>Friendship concept has been removed.</li>
+ * </ul>
+ * 
+ * <hr />
+ * 
  * @author Michael Beutler
- * @version 1.0.0
+ * @version 1.0.1
  * @since 1.0.0
  */
 @Slf4j
@@ -71,9 +78,6 @@ public class VacationController {
 
     @Autowired
     private VacationService vacationService;
-
-    @Autowired
-    private FriendshipService friendshipService;
 
     /**
      * Index route for /vacations endpoint. Returns all vacations (if user is
@@ -232,11 +236,6 @@ public class VacationController {
             Vacation vacation;
             // Check if authenticated user has been granted vacations:all:read
             if (Helpers.hasScope(Scopes.VACATIONS_ALL_READ, authentication) && StringUtils.hasText(owner)) {
-                vacation = this.vacationService.findByOwnerAndStartDateGreaterThanEqualOrderByStartDateAsc(owner, date);
-            } else if (StringUtils.hasText(owner) && Helpers.isFriend(
-                    authentication,
-                    owner,
-                    friendshipService.findAllByOwnerOrUser(userId, userId))) {
                 vacation = this.vacationService.findByOwnerAndStartDateGreaterThanEqualOrderByStartDateAsc(owner, date);
             } else {
                 if (StringUtils.hasText(owner)) {
