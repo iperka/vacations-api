@@ -107,7 +107,7 @@ This allows for cheaper cloud deployments and faster development cycles.
 
 This version change finally drops the failed concept of `com.iperka.vacations.api.friendships`.
 
-- `com.iperka.vacations.api.friendships` has been marked as deprecated.
+- `com.iperka.vacations.api.friendships` has been marked as deprecated and removed.
 - When fetching next vacations you are no longer able to retrieve vacations from your friends.
 
 ## 1.7. Built With 📦

@@ -60,10 +60,6 @@ public class OpenApiConfig {
             Scopes.VACATIONS_WRITE, 
             Scopes.VACATIONS_ALL_READ, 
             Scopes.VACATIONS_ALL_WRITE,
-            Scopes.FRIENDSHIPS_READ, 
-            Scopes.FRIENDSHIPS_WRITE, 
-            Scopes.FRIENDSHIPS_ALL_READ, 
-            Scopes.FRIENDSHIPS_ALL_WRITE,
             Scopes.USERS_READ,
             Scopes.USERS_WRITE,
             Scopes.USERS_ALL_READ,
@@ -84,10 +80,6 @@ public class OpenApiConfig {
                        .addString(Scopes.VACATIONS_WRITE, "Create, update and delete owned vacations.") 
                        .addString(Scopes.VACATIONS_ALL_READ, "Read all vacations.") 
                        .addString(Scopes.VACATIONS_ALL_WRITE, "Create, update and delete all vacations.") 
-                       .addString(Scopes.FRIENDSHIPS_READ, "Read owned friendships.")
-                       .addString(Scopes.FRIENDSHIPS_WRITE, "Create, update and delete owned friendships.") 
-                       .addString(Scopes.FRIENDSHIPS_ALL_READ, "Read all friendships.") 
-                       .addString(Scopes.FRIENDSHIPS_ALL_WRITE, "Create, update and delete all friendships.") 
                        .addString(Scopes.USERS_READ, "Read basic user metadata.") 
                        .addString(Scopes.USERS_WRITE, "Update basic user metadata.") 
                        .addString(Scopes.USERS_ALL_READ, "Read all users.") 
